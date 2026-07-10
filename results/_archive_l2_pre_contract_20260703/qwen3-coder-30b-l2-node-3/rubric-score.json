@@ -1,0 +1,196 @@
+{
+  "track": "node",
+  "base_url": "http://127.0.0.1:4000",
+  "backend_booted": true,
+  "pass_rate": 0.6552,
+  "passed": 19,
+  "total": 29,
+  "checks": [
+    {
+      "name": "health_ok",
+      "group": "boot",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "login_admin_ok",
+      "group": "auth",
+      "passed": true,
+      "detail": "{'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc4MjQwODkwOCwiZXhwIjoxNzgyNDk1MzA4fQ.3DpMFQ6Xij5_9MxQWtNm1rD7KuYgf8dgt6ui6sNguxY', 'user': {'id': 1, 'name': 'Admin User', 'email': 'admin@example.com', 'role': 'admin'}}"
+    },
+    {
+      "name": "user_no_password_field",
+      "group": "security",
+      "passed": true,
+      "detail": "['id', 'name', 'email', 'role']"
+    },
+    {
+      "name": "login_bad_creds_401",
+      "group": "auth",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "me_without_token_401",
+      "group": "auth",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "me_with_token_200",
+      "group": "auth",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "login_member_ok",
+      "group": "auth",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "member_create_project_403",
+      "group": "rbac",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "admin_create_project",
+      "group": "projects",
+      "passed": true,
+      "detail": "201"
+    },
+    {
+      "name": "project_list_contains",
+      "group": "projects",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "project_get_by_id",
+      "group": "projects",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "project_edit",
+      "group": "projects",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "project_archive",
+      "group": "projects",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "validation_project_no_name_400",
+      "group": "validation",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "task_create",
+      "group": "tasks",
+      "passed": true,
+      "detail": "201"
+    },
+    {
+      "name": "task_list",
+      "group": "tasks",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "task_get",
+      "group": "tasks",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "task_update_status",
+      "group": "tasks",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "task_filter_status",
+      "group": "tasks",
+      "passed": false,
+      "detail": "200"
+    },
+    {
+      "name": "task_search",
+      "group": "tasks",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "comment_add",
+      "group": "comments",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "comment_list",
+      "group": "comments",
+      "passed": false,
+      "detail": "200"
+    },
+    {
+      "name": "task_delete",
+      "group": "tasks",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "validation_task_no_title_400",
+      "group": "validation",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "validation_task_bad_priority_400",
+      "group": "validation",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "dashboard_summary_keys",
+      "group": "dashboard",
+      "passed": false,
+      "detail": "missing=['totalProjects', 'totalTasks', 'tasksByStatus', 'highPriorityOpen', 'myTasks', 'overdue']"
+    },
+    {
+      "name": "protected_route_no_token_401",
+      "group": "security",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "frontend_build",
+      "group": "frontend",
+      "passed": false,
+      "detail": "1"
+    },
+    {
+      "name": "lockfile_present",
+      "group": "reproducibility",
+      "passed": true,
+      "detail": "2/2 npm dir(s) committed a package-lock.json (checked pre-install)"
+    }
+  ],
+  "build": {
+    "ok": false,
+    "returncode": 1,
+    "stdout_tail": "ese files.\ntype: boolean\ndefault: false\n\n--checkJs\nEnable error reporting in type-checked JavaScript files.\ntype: boolean\ndefault: false\n\n--jsx\nSpecify what JSX code is generated.\none of: preserve, react, react-native, react-jsx, react-jsxdev\ndefault: undefined\n\n--declaration, -d\nGenerate .d.ts files from TypeScript and JavaScript files in your project.\ntype: boolean\ndefault: `false`, unless `composite` is set\n\n--declarationMap\nCreate sourcemaps for d.ts files.\ntype: boolean\ndefault: false\n\n--emitDeclarationOnly\nOnly output d.ts files and not JavaScript files.\ntype: boolean\ndefault: false\n\n--sourceMap\nCreate source map files for emitted JavaScript files.\ntype: boolean\ndefault: false\n\n--outFile\nSpecify a file that bundles all outputs into one JavaScript file. If 'declaration' is true, also designates a file that bundles all .d.ts output.\n\n--outDir\nSpecify an output folder for all emitted files.\n\n--removeComments\nDisable emitting comments.\ntype: boolean\ndefault: false\n\n--noEmit\nDisable emitting files from a compilation.\ntype: boolean\ndefault: false\n\n--strict\nEnable all strict type-checking options.\ntype: boolean\ndefault: false\n\n--types\nSpecify type package names to be included without being referenced in a source file.\n\n--esModuleInterop\nEmit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility.\ntype: boolean\ndefault: false\n\nYou can learn about all of the compiler options at https://aka.ms/tsc\n\n",
+    "stderr_tail": "Missing: @jridgewell/gen-mapping@0.3.13 from lock file\nnpm error Missing: @jridgewell/trace-mapping@0.3.31 from lock file\nnpm error Missing: @babel/compat-data@7.29.7 from lock file\nnpm error Missing: @babel/helper-validator-option@7.29.7 from lock file\nnpm error Missing: @babel/helper-module-imports@7.29.7 from lock file\nnpm error Missing: @babel/helper-plugin-utils@7.29.7 from lock file\nnpm error Missing: @babel/helper-globals@7.29.7 from lock file\nnpm error Missing: @babel/helper-string-parser@7.29.7 from lock file\nnpm error Missing: @jridgewell/resolve-uri@3.1.2 from lock file\nnpm error\nnpm error Clean install a project\nnpm error\nnpm error Usage:\nnpm error npm ci\nnpm error\nnpm error Options:\nnpm error [--install-strategy <hoisted|nested|shallow|linked>] [--legacy-bundling]\nnpm error [--global-style] [--omit <dev|optional|peer> [--omit <dev|optional|peer> ...]]\nnpm error [--include <prod|dev|optional|peer> [--include <prod|dev|optional|peer> ...]]\nnpm error [--strict-peer-deps] [--foreground-scripts] [--ignore-scripts] [--no-audit]\nnpm error [--no-bin-links] [--no-fund] [--dry-run]\nnpm error [-w|--workspace <workspace-name> [-w|--workspace <workspace-name> ...]]\nnpm error [-ws|--workspaces] [--include-workspace-root] [--install-links]\nnpm error\nnpm error aliases: clean-install, ic, install-clean, isntall-clean\nnpm error\nnpm error Run \"npm help ci\" for more info\nnpm error A complete log of this run can be found in: /home/mani/.npm/_logs/2026-06-25T17_35_08_988Z-debug-0.log\n"
+  },
+  "tests": {
+    "ok": false,
+    "returncode": 1,
+    "stdout_tail": "",
+    "stderr_tail": "npm error Missing script: \"test\"\nnpm error\nnpm error To see a list of scripts, run:\nnpm error   npm run\nnpm error A complete log of this run can be found in: /home/mani/.npm/_logs/2026-06-25T17_35_16_628Z-debug-0.log\n"
+  }
+}

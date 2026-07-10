@@ -1,0 +1,12 @@
+
+=== Layer 1 (SWE-bench) success — 3-way ===
+  gpt-oss-120b: pass@1 11/29 = 0.379  Wilson95 [0.227,0.560]  Jeffreys95 [0.221,0.560]
+  qwen3-coder-30b: pass@1 7/29 = 0.241  Wilson95 [0.122,0.421]  Jeffreys95 [0.115,0.416]
+  pairwise McNemar (Holm-Bonferroni, alpha=0.05):
+    gpt-oss-120b vs qwen3-coder-30b: b=6 c=2 p=0.2891 p_adj=0.2891 ns
+
+=== Layer 2 (app-case) rubric pass-rate ===
+  gpt-oss-120b/node: mean=0.263 std=0.306 n=19
+  gpt-oss-120b/python: mean=0.046 std=0.016 n=3
+  qwen3-coder-30b/node: mean=0.155 std=0.247 n=20
+  qwen3-coder-30b/python: mean=0.000 std=0.000 n=3

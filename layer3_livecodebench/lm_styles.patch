@@ -1,0 +1,46 @@
+diff --git a/lcb_runner/lm_styles.py b/lcb_runner/lm_styles.py
+index d10b211..98b48e6 100644
+--- a/lcb_runner/lm_styles.py
++++ b/lcb_runner/lm_styles.py
+@@ -861,6 +861,41 @@ LanguageModelList: list[LanguageModel] = [
+         datetime(2024, 4, 1),
+         "https://huggingface.co/agentica-org/DeepCoder-14B-Preview",
+     ),
++    # --- DGX Spark coding-model benchmark (Layer 3) ----------------------------
++    # Local vLLM/TRT-LLM OpenAI-compatible endpoint. The first field (model_name)
++    # MUST equal the vLLM --served-model-name; it is sent verbatim as the OpenAI
++    # `model=` param. The OpenAI client base_url comes from $OPENAI_BASE_URL and the
++    # key from $OPENAI_KEY (set before the process starts). release_date is metadata
++    # only — problem-window filtering is done with --end_date (contest_date), not this.
++    LanguageModel(
++        "qwen3-coder-30b",
++        "qwen3-coder-30b",
++        LMStyle.OpenAIChat,
++        datetime(2025, 4, 1),  # Qwen3-Coder training cutoff (Apr 2025)
++        "local-vllm",
++    ),
++    LanguageModel(
++        "gpt-oss-120b",
++        "gpt-oss-120b",
++        LMStyle.OpenAIChat,
++        datetime(2024, 6, 1),  # gpt-oss training cutoff (Jun 2024) — earliest of the fleet
++        "local-vllm",
++    ),
++    LanguageModel(
++        "nemotron-super",
++        "nemotron-super",
++        LMStyle.OpenAIChat,
++        datetime(2026, 2, 1),  # Nemotron-3-Super training cutoff (Feb 2026)
++        "local-trtllm",
++    ),
++    LanguageModel(
++        "tiny-smoke-test",
++        "tiny-smoke-test",
++        LMStyle.OpenAIChat,
++        datetime(2025, 1, 1),  # plumbing model (Qwen3-0.6B); not a benchmarked result
++        "local-vllm",
++    ),
++    # ---------------------------------------------------------------------------
+ ]
+ 
+ LanguageModelStore: dict[str, LanguageModel] = {

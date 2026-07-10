@@ -1,0 +1,10 @@
+{
+  "run_id": "qwen3-coder-30b-l1-psf__requests-1142-1",
+  "window_start_epoch_ms": 1782453967793,
+  "window_end_epoch_ms": 1782454043860,
+  "duration_ms": 76067,
+  "exit_code": 0,
+  "command": "opencode run --format json -m vllm-local/qwen3-coder-30b --dir /tmp/swebench-work/qwen3-coder-30b-l1-psf__requests-1142-1 You are fixing a real GitHub issue in this repository. Make the minimal code change that resolves the issue. Do NOT modify or write tests; the graders run hidden tests. Issue:\n\nrequests.get is ALWAYS sending content length\nHi,\n\nIt seems like that request.get always adds 'content-length' header to the request.\nI think that the right behavior is not to add this header automatically in GET requests or add the possibility to not send it.\n\nFor example http://amazon.com returns 503 for every get request that contains 'content-length' header.\n\nThanks,\n\nOren\n\n",
+  "interval_seconds": 0.25,
+  "metrics_url": "http://127.0.0.1:8000/metrics"
+}

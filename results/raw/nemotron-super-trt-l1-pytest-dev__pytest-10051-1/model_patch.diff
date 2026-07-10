@@ -1,0 +1,55 @@
+diff --git a/src/_pytest/logging.py b/src/_pytest/logging.py
+index a4f4214..8c307b4 100644
+--- a/src/_pytest/logging.py
++++ b/src/_pytest/logging.py
+@@ -342,8 +342,9 @@ class LogCaptureHandler(logging_StreamHandler):
+         super().emit(record)
+ 
+     def reset(self) -> None:
+-        self.records = []
+-        self.stream = StringIO()
++        self.records.clear()
++        self.stream.seek(0)
++        self.stream.truncate(0)
+ 
+     def handleError(self, record: logging.LogRecord) -> None:
+         if logging.raiseExceptions:
+diff --git a/test_fix.py b/test_fix.py
+new file mode 100644
+index 0000000..7a366e6
+--- /dev/null
++++ b/test_fix.py
+@@ -0,0 +1,32 @@
++import logging
++
++def test(caplog) -> None:
++    def verify_consistency() -> None:
++        assert caplog.get_records("call") == caplog.records
++
++    verify_consistency()
++    logging.warning("test")
++    verify_consistency()
++    caplog.clear()
++    verify_consistency()  # should not fail after fix
++
++if __name__ == "__main__":
++    # This is just to demonstrate the fix; in reality, this test would be run by pytest
++    # We'll simulate the caplog fixture behavior for demonstration
++    class MockCaplog:
++        def __init__(self):
++            self.records = []
++            self._records_for_when = {}
++        
++        def get_records(self, when):
++            return self._records_for_when.get(when, [])
++        
++        def clear(self):
++            self.records.clear()
++            # Also update the stored list for 'when' if it exists
++            # In our fix, we rely on the fact that the stored list is the same as self.records
++            # So clearing self.records should also clear the stored list
++            
++    # However, to properly test, we need to run within pytest
++    # Let's just print a message indicating the fix is in place
++    print("Fix applied: LogCaptureHandler.reset now clears the list in-place")
+\ No newline at end of file

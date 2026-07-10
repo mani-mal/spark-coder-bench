@@ -1,0 +1,53 @@
+{
+  "timestamp_utc": "20260625T184939Z",
+  "host": "spark-ae6d",
+  "profile": "qwen3-coder-30b",
+  "model_id": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+  "served_model_name": "qwen3-coder-30b",
+  "serving": {
+    "image": "nvcr.io/nvidia/vllm:26.02-py3",
+    "vllm_version": "0.15.1+befbc472",
+    "port": 8000,
+    "gpu_memory_utilization": 0.80,
+    "max_model_len": 65536,
+    "max_num_seqs": 1,
+    "max_num_batched_tokens": 16384,
+    "seed": 0,
+    "decode_temperature": 0.2,
+    "kv_cache_dtype": "auto",
+    "extra_args": "--dtype auto --trust-remote-code --seed 0 --enable-auto-tool-choice --tool-call-parser qwen3_coder"
+  },
+  "platform": {
+    "gpu_name": "NVIDIA GB10",
+    "driver_version": "580.159.03",
+    "cuda_version": "13.0",
+    "os": "Ubuntu 24.04.4 LTS",
+    "arch": "aarch64",
+    "dcgm_version": "not installed",
+    "tegrastats": "not installed"
+  },
+  "power_measurement_level": "GPU-only (nvidia-smi power.draw)",
+  "bandwidth_source": "nvidia-smi utilization.memory (proxy; DCGM not installed)",
+  "model_metadata": {"arch": "moe", "total_params_b": 30.5, "active_params_b": 3.3, "num_experts": 128, "experts_per_token": 8, "quant": "bf16", "license": "Apache-2.0", "role": "strong generalist coder", "params_source": "config.json (verified) + registry", "n_shared_experts": null, "model_type": "qwen3_moe", "config_torch_dtype": "bfloat16", "config_quantization": null, "sparsity_active_fraction": 0.1082},
+  "sanity_check": {
+  "model": "qwen3-coder-30b",
+  "prompt": "Write a Python function `nth_prime(n)` that returns the n-th prime number (1-indexed), with a short docstring and three example assertions. Then explain in two sentences how it works.",
+  "ok": true,
+  "coherent": true,
+  "repetition_detected": false,
+  "metrics": {
+    "tokens": 121,
+    "distinct_ratio": 0.7355,
+    "max_consecutive_5gram_repeat": 0,
+    "top_5gram_share": 0.0085
+  },
+  "completion_preview": "```python\ndef nth_prime(n):\n    \"\"\"\n    Returns the n-th prime number (1-indexed).\n    \n    >>> nth_prime(1)\n    2\n    >>> nth_prime(5)\n    11\n    >>> nth_prime(10)\n    29\n    \"\"\"\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    \n    primes = []\n    candidate = 2\n    \n    while len(primes) < n:\n        is_prime = True\n        for p in primes:\n            if p * p > candidate:\n    "
+},
+  "moe_residency": {
+    "all_experts_resident": true,
+    "offload_detected": false,
+    "unified_mem_used_mib_after_load": 107248,
+    "evidence": "no --cpu-offload-gb flag in serving args; vLLM loads all expert weights into unified memory by default"
+  },
+  "fairness_note": "Quantization differs by model (native: Qwen bf16, Nemotron NVFP4, DeepSeek bf16) — disclosed confound; no NVFP4 checkpoints for the bf16 models and FP4 on SM121 is unsafe. max_model_len and gpu_memory_utilization also differ under the 128GB unified-memory limit. seed, temperature, kv_cache_dtype, max_num_seqs and the OpenCode/vLLM versions are held identical. The intended variable is model identity."
+}

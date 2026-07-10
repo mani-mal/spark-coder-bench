@@ -1,0 +1,196 @@
+{
+  "track": "node",
+  "base_url": "http://127.0.0.1:4000",
+  "backend_booted": false,
+  "pass_rate": 0.069,
+  "passed": 2,
+  "total": 29,
+  "checks": [
+    {
+      "name": "health_ok",
+      "group": "boot",
+      "passed": false,
+      "detail": "HTTPConnectionPool(host='127.0.0.1', port=4000): Max retries exceeded with url: /api/health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0xe9deae7e2300>: Failed to establish a new connection: [Errno 111] Connection refused'))"
+    },
+    {
+      "name": "login_admin_ok",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "user_no_password_field",
+      "group": "security",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "login_bad_creds_401",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "me_without_token_401",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "me_with_token_200",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "login_member_ok",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "member_create_project_403",
+      "group": "rbac",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "admin_create_project",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_list_contains",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_get_by_id",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_edit",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_archive",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "validation_project_no_name_400",
+      "group": "validation",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_create",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_list",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_get",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_update_status",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_filter_status",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_search",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "comment_add",
+      "group": "comments",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "comment_list",
+      "group": "comments",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_delete",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "validation_task_no_title_400",
+      "group": "validation",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "validation_task_bad_priority_400",
+      "group": "validation",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "dashboard_summary_keys",
+      "group": "dashboard",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "protected_route_no_token_401",
+      "group": "security",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "frontend_build",
+      "group": "frontend",
+      "passed": true,
+      "detail": "0"
+    },
+    {
+      "name": "lockfile_present",
+      "group": "reproducibility",
+      "passed": true,
+      "detail": "2/2 npm dir(s) committed a package-lock.json (checked pre-install)"
+    }
+  ],
+  "build": {
+    "ok": true,
+    "returncode": 0,
+    "stdout_tail": "\nadded 420 packages, and audited 421 packages in 2s\n\n81 packages are looking for funding\n  run `npm fund` for details\n\n21 vulnerabilities (20 moderate, 1 high)\n\nTo address issues that do not require attention, run:\n  npm audit fix\n\nTo address all issues (including breaking changes), run:\n  npm audit fix --force\n\nRun `npm audit` for details.\n\n> taskflow-local-frontend@1.0.0 build\n> vite build\n\nvite v4.5.14 building for production...\ntransforming...\n\u2713 92 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                  0.31 kB \u2502 gzip:  0.24 kB\ndist/assets/index-2ae0fc69.js  216.18 kB \u2502 gzip: 72.24 kB\n\u2713 built in 576ms\n",
+    "stderr_tail": "npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.\nnpm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me\n"
+  },
+  "tests": {
+    "ok": true,
+    "returncode": 0,
+    "stdout_tail": "\n> taskflow-local-backend@1.0.0 test\n> jest\n\n",
+    "stderr_tail": "PASS __tests__/auth.test.ts\n  Auth routes\n    \u2713 should login successfully with admin credentials (63 ms)\n    \u2713 should fail login with wrong password (66 ms)\n\nTest Suites: 1 passed, 1 total\nTests:       2 passed, 2 total\nSnapshots:   0 total\nTime:        0.877 s, estimated 2 s\nRan all test suites.\n"
+  }
+}

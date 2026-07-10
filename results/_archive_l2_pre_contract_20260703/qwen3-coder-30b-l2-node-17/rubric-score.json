@@ -1,0 +1,196 @@
+{
+  "track": "node",
+  "base_url": "http://127.0.0.1:4000",
+  "backend_booted": true,
+  "pass_rate": 0.069,
+  "passed": 2,
+  "total": 29,
+  "checks": [
+    {
+      "name": "health_ok",
+      "group": "boot",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "login_admin_ok",
+      "group": "auth",
+      "passed": false,
+      "detail": "('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+    },
+    {
+      "name": "user_no_password_field",
+      "group": "security",
+      "passed": false,
+      "detail": "no login"
+    },
+    {
+      "name": "login_bad_creds_401",
+      "group": "auth",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "me_without_token_401",
+      "group": "auth",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "me_with_token_200",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "login_member_ok",
+      "group": "auth",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "member_create_project_403",
+      "group": "rbac",
+      "passed": false,
+      "detail": "no member token"
+    },
+    {
+      "name": "admin_create_project",
+      "group": "projects",
+      "passed": false,
+      "detail": "no admin token"
+    },
+    {
+      "name": "project_list_contains",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_get_by_id",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_edit",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_archive",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "validation_project_no_name_400",
+      "group": "validation",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_create",
+      "group": "tasks",
+      "passed": false,
+      "detail": "no admin token"
+    },
+    {
+      "name": "task_list",
+      "group": "tasks",
+      "passed": false,
+      "detail": "no admin token"
+    },
+    {
+      "name": "task_get",
+      "group": "tasks",
+      "passed": false,
+      "detail": "no admin token"
+    },
+    {
+      "name": "task_update_status",
+      "group": "tasks",
+      "passed": false,
+      "detail": "no admin token"
+    },
+    {
+      "name": "task_filter_status",
+      "group": "tasks",
+      "passed": false,
+      "detail": "no admin token"
+    },
+    {
+      "name": "task_search",
+      "group": "tasks",
+      "passed": false,
+      "detail": "no admin token"
+    },
+    {
+      "name": "comment_add",
+      "group": "tasks",
+      "passed": false,
+      "detail": "no admin token"
+    },
+    {
+      "name": "comment_list",
+      "group": "tasks",
+      "passed": false,
+      "detail": "no admin token"
+    },
+    {
+      "name": "task_delete",
+      "group": "tasks",
+      "passed": false,
+      "detail": "no admin token"
+    },
+    {
+      "name": "validation_task_no_title_400",
+      "group": "validation",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "validation_task_bad_priority_400",
+      "group": "validation",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "dashboard_summary_keys",
+      "group": "dashboard",
+      "passed": false,
+      "detail": "no admin token"
+    },
+    {
+      "name": "protected_route_no_token_401",
+      "group": "security",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "frontend_build",
+      "group": "frontend",
+      "passed": false,
+      "detail": "1"
+    },
+    {
+      "name": "lockfile_present",
+      "group": "reproducibility",
+      "passed": true,
+      "detail": "2/2 npm dir(s) committed a package-lock.json (checked pre-install)"
+    }
+  ],
+  "build": {
+    "ok": false,
+    "returncode": 1,
+    "stdout_tail": "\nadded 56 packages, and audited 57 packages in 633ms\n\n16 packages are looking for funding\n  run `npm fund` for details\n\nfound 0 vulnerabilities\n",
+    "stderr_tail": "npm error Missing script: \"build\"\nnpm error\nnpm error To see a list of scripts, run:\nnpm error   npm run\nnpm error A complete log of this run can be found in: /home/mani/.npm/_logs/2026-06-26T13_40_47_568Z-debug-0.log\n"
+  },
+  "tests": {
+    "ok": false,
+    "returncode": 1,
+    "stdout_tail": "\n> taskflow-local-backend@1.0.0 test\n> jest\n\n::ffff:127.0.0.1 - - [26/Jun/2026:13:40:48 +0000] \"GET /api/health HTTP/1.1\" 200 15 \"-\" \"-\"\n::ffff:127.0.0.1 - - [26/Jun/2026:13:40:53 +0000] \"POST /api/auth/login HTTP/1.1\" 401 37 \"-\" \"-\"\n::ffff:127.0.0.1 - - [26/Jun/2026:13:40:53 +0000] \"POST /api/auth/login HTTP/1.1\" 401 37 \"-\" \"-\"\n",
+    "stderr_tail": "gn(\n         |                         ^\n      36 |         { id: user.id, email: user.email, role: user.role },\n      37 |         process.env.JWT_SECRET,\n      38 |         { expiresIn: '24h' }\n\n      at Object.<anonymous>.module.exports [as sign] (node_modules/jsonwebtoken/sign.js:111:20)\n      at Statement.sign (routes/auth.js:35:25)\n\n  \u25cf Authentication \u203a POST /api/auth/login \u203a should return a token for valid credentials\n\n    thrown: \"Exceeded timeout of 5000 ms for a test.\n    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout.\"\n\n      4 | describe('Authentication', () => {\n      5 |   describe('POST /api/auth/login', () => {\n    > 6 |     it('should return a token for valid credentials', async () => {\n        |     ^\n      7 |       const response = await request(app)\n      8 |         .post('/api/auth/login')\n      9 |         .send({\n\n      at it (__tests__/auth.test.js:6:5)\n      at describe (__tests__/auth.test.js:5:3)\n      at Object.describe (__tests__/auth.test.js:4:1)\n\nA worker process has failed to exit gracefully and has been force exited. This is likely caused by tests leaking due to improper teardown. Try running with --detectOpenHandles to find leaks. Active timers can also cause this, ensure that .unref() was called on them.\nTest Suites: 2 failed, 1 passed, 3 total\nTests:       2 failed, 3 passed, 5 total\nSnapshots:   0 total\nTime:        5.975 s\nRan all test suites.\n"
+  }
+}

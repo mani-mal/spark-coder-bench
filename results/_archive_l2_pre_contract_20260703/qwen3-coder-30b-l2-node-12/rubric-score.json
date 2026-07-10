@@ -1,0 +1,196 @@
+{
+  "track": "node",
+  "base_url": "http://127.0.0.1:4000",
+  "backend_booted": true,
+  "pass_rate": 0.5862,
+  "passed": 17,
+  "total": 29,
+  "checks": [
+    {
+      "name": "health_ok",
+      "group": "boot",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "login_admin_ok",
+      "group": "auth",
+      "passed": true,
+      "detail": "{'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3ODI0NzU3NzgsImV4cCI6MTc4MjU2MjE3OH0.RHcQfhlnp8WfYUoqVh5Y7zVdEh2qSmYVba7YoK6vBPk', 'user': {'id': 1, 'name': 'Admin User', 'email': 'admin@example.com', 'role': 'admin'}"
+    },
+    {
+      "name": "user_no_password_field",
+      "group": "security",
+      "passed": true,
+      "detail": "['id', 'name', 'email', 'role']"
+    },
+    {
+      "name": "login_bad_creds_401",
+      "group": "auth",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "me_without_token_401",
+      "group": "auth",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "me_with_token_200",
+      "group": "auth",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "login_member_ok",
+      "group": "auth",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "member_create_project_403",
+      "group": "rbac",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "admin_create_project",
+      "group": "projects",
+      "passed": true,
+      "detail": "201"
+    },
+    {
+      "name": "project_list_contains",
+      "group": "projects",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "project_get_by_id",
+      "group": "projects",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "project_edit",
+      "group": "projects",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "project_archive",
+      "group": "projects",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "validation_project_no_name_400",
+      "group": "validation",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "task_create",
+      "group": "tasks",
+      "passed": true,
+      "detail": "201"
+    },
+    {
+      "name": "task_list",
+      "group": "tasks",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "task_get",
+      "group": "tasks",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "task_update_status",
+      "group": "tasks",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "task_filter_status",
+      "group": "tasks",
+      "passed": false,
+      "detail": "200"
+    },
+    {
+      "name": "task_search",
+      "group": "tasks",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "comment_add",
+      "group": "comments",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "comment_list",
+      "group": "comments",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "task_delete",
+      "group": "tasks",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "validation_task_no_title_400",
+      "group": "validation",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "validation_task_bad_priority_400",
+      "group": "validation",
+      "passed": false,
+      "detail": "201"
+    },
+    {
+      "name": "dashboard_summary_keys",
+      "group": "dashboard",
+      "passed": false,
+      "detail": "missing=['tasksByStatus', 'highPriorityOpen', 'myTasks', 'overdue']"
+    },
+    {
+      "name": "protected_route_no_token_401",
+      "group": "security",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "frontend_build",
+      "group": "frontend",
+      "passed": false,
+      "detail": "1"
+    },
+    {
+      "name": "lockfile_present",
+      "group": "reproducibility",
+      "passed": false,
+      "detail": "0/2 npm dir(s) committed a package-lock.json (checked pre-install)"
+    }
+  ],
+  "build": {
+    "ok": false,
+    "returncode": 1,
+    "stdout_tail": "\nadded 93 packages, and audited 94 packages in 3s\n\n13 packages are looking for funding\n  run `npm fund` for details\n\n2 vulnerabilities (1 moderate, 1 high)\n\nTo address all issues (including breaking changes), run:\n  npm audit fix --force\n\nRun `npm audit` for details.\n\n> taskflow-local-frontend@1.0.0 build\n> vite build\n\nvite v4.5.14 building for production...\ntransforming...\n\u2713 18 modules transformed.\n\u2713 built in 132ms\n",
+    "stderr_tail": "m error [--install-strategy <hoisted|nested|shallow|linked>] [--legacy-bundling]\nnpm error [--global-style] [--omit <dev|optional|peer> [--omit <dev|optional|peer> ...]]\nnpm error [--include <prod|dev|optional|peer> [--include <prod|dev|optional|peer> ...]]\nnpm error [--strict-peer-deps] [--foreground-scripts] [--ignore-scripts] [--no-audit]\nnpm error [--no-bin-links] [--no-fund] [--dry-run]\nnpm error [-w|--workspace <workspace-name> [-w|--workspace <workspace-name> ...]]\nnpm error [-ws|--workspaces] [--include-workspace-root] [--install-links]\nnpm error\nnpm error aliases: clean-install, ic, install-clean, isntall-clean\nnpm error\nnpm error Run \"npm help ci\" for more info\nnpm error A complete log of this run can be found in: /home/mani/.npm/_logs/2026-06-26T12_09_38_846Z-debug-0.log\nCould not resolve \"./App.css\" from \"src/App.tsx\"\nfile: /home/mani/projects/taskflow-local-app-benchmark/apps/node-track/frontend/src/App.tsx\nerror during build:\nRollupError: Could not resolve \"./App.css\" from \"src/App.tsx\"\n    at error (file:///home/mani/projects/taskflow-local-app-benchmark/apps/node-track/frontend/node_modules/rollup/dist/es/shared/node-entry.js:2287:30)\n    at ModuleLoader.handleInvalidResolvedId (file:///home/mani/projects/taskflow-local-app-benchmark/apps/node-track/frontend/node_modules/rollup/dist/es/shared/node-entry.js:24889:24)\n    at file:///home/mani/projects/taskflow-local-app-benchmark/apps/node-track/frontend/node_modules/rollup/dist/es/shared/node-entry.js:24851:26\n"
+  },
+  "tests": {
+    "ok": false,
+    "returncode": 1,
+    "stdout_tail": "\n> taskflow-local-backend@1.0.0 test\n> jest\n\n  console.log\n    Database initialized successfully\n\n      at log (server.js:60:13)\n\n",
+    "stderr_tail": "FAIL tests/auth.test.js\n  Authentication\n    POST /api/auth/login\n      \u2715 should login with valid credentials (73 ms)\n      \u2713 should fail with invalid credentials (50 ms)\n\n  \u25cf Authentication \u203a POST /api/auth/login \u203a should login with valid credentials\n\n    listen EADDRINUSE: address already in use :::4000\n\n      64 |     \n      65 |     // Start server\n    > 66 |     app.listen(PORT, () => {\n         |         ^\n      67 |       console.log(`Server running on port ${PORT}`);\n      68 |     });\n      69 |   })\n\n      at Function.listen (node_modules/express/lib/application.js:635:24)\n      at listen (server.js:66:9)\n\nTest Suites: 1 failed, 1 total\nTests:       1 failed, 1 passed, 2 total\nSnapshots:   0 total\nTime:        0.435 s\nRan all test suites.\n"
+  }
+}

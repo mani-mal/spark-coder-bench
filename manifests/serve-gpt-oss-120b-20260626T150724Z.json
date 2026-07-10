@@ -1,0 +1,53 @@
+{
+  "timestamp_utc": "20260626T150724Z",
+  "host": "spark-ae6d",
+  "profile": "gpt-oss-120b",
+  "model_id": "openai/gpt-oss-120b",
+  "served_model_name": "gpt-oss-120b",
+  "serving": {
+    "image": "nvcr.io/nvidia/vllm:26.02-py3",
+    "vllm_version": "0.15.1+befbc472",
+    "port": 8000,
+    "gpu_memory_utilization": 0.80,
+    "max_model_len": 65536,
+    "max_num_seqs": 1,
+    "max_num_batched_tokens": 16384,
+    "seed": 0,
+    "decode_temperature": 0.2,
+    "kv_cache_dtype": "auto",
+    "extra_args": "--dtype auto --trust-remote-code --seed 0 --enable-auto-tool-choice --tool-call-parser openai --reasoning-parser openai_gptoss"
+  },
+  "platform": {
+    "gpu_name": "NVIDIA GB10",
+    "driver_version": "580.159.03",
+    "cuda_version": "13.0",
+    "os": "Ubuntu 24.04.4 LTS",
+    "arch": "aarch64",
+    "dcgm_version": "not installed",
+    "tegrastats": "not installed"
+  },
+  "power_measurement_level": "GPU-only (nvidia-smi power.draw)",
+  "bandwidth_source": "nvidia-smi utilization.memory (proxy; DCGM not installed)",
+  "model_metadata": {"arch": "moe", "total_params_b": 116.8, "active_params_b": 5.1, "num_experts": 128, "experts_per_token": 4, "quant": "mxfp4", "license": "Apache-2.0", "role": "external agentic anchor + second 4-bit MoE (OpenAI open model, MXFP4, Blackwell-tuned) \u2014 replaces DeepSeek as model #3; lets us separate model effects from FP4-on-Blackwell effects alongside Nemotron NVFP4", "params_source": "config.json (verified) + registry", "n_shared_experts": null, "model_type": "gpt_oss", "config_torch_dtype": null, "config_quantization": {"quant_method": "mxfp4", "present": true}, "sparsity_active_fraction": 0.0437},
+  "sanity_check": {
+  "model": "gpt-oss-120b",
+  "prompt": "Write a Python function `nth_prime(n)` that returns the n-th prime number (1-indexed), with a short docstring and three example assertions. Then explain in two sentences how it works.",
+  "ok": true,
+  "coherent": true,
+  "repetition_detected": false,
+  "metrics": {
+    "tokens": 183,
+    "distinct_ratio": 0.6721,
+    "max_consecutive_5gram_repeat": 0,
+    "top_5gram_share": 0.0056
+  },
+  "completion_preview": "```python\ndef nth_prime(n: int) -> int:\n    \"\"\"\n    Return the n\u2011th prime number (1\u2011indexed).\n\n    Parameters\n    ----------\n    n : int\n        Position of the desired prime (must be \u2265 1).\n\n    Returns\n    -------\n    int\n        The n\u2011th prime.\n\n    Examples\n    --------\n    >>> nth_prime(1)\n    2\n    >>> nth_prime(5)\n    11\n    >>> nth_prime(10)\n    29\n    \"\"\"\n    if n < 1:\n        raise ValueE"
+},
+  "moe_residency": {
+    "all_experts_resident": true,
+    "offload_detected": false,
+    "unified_mem_used_mib_after_load": 109008,
+    "evidence": "no --cpu-offload-gb flag in serving args; vLLM loads all expert weights into unified memory by default"
+  },
+  "fairness_note": "Quantization differs by model (native: Qwen bf16, Nemotron NVFP4, DeepSeek bf16) — disclosed confound; no NVFP4 checkpoints for the bf16 models and FP4 on SM121 is unsafe. max_model_len and gpu_memory_utilization also differ under the 128GB unified-memory limit. seed, temperature, kv_cache_dtype, max_num_seqs and the OpenCode/vLLM versions are held identical. The intended variable is model identity."
+}

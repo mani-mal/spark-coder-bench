@@ -1,0 +1,200 @@
+{
+  "track": "node",
+  "base_url": "http://127.0.0.1:4000",
+  "backend_booted": true,
+  "pass_rate": 0.4828,
+  "passed": 14,
+  "total": 29,
+  "checks": [
+    {
+      "name": "health_ok",
+      "group": "boot",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "login_admin_ok",
+      "group": "auth",
+      "passed": true,
+      "detail": "{'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc4MzEwMDY5NCwiZXhwIjoxNzgzMTI5NDk0fQ.ENSp0yeVIEgWQhlyImnaaB4YiE7tTfrhuNRV8R8nzfc', 'user': {'id': 1, 'name': 'Admin', 'email': 'admin@example.com', 'role': 'admin', 'createdAt': '2026-07-03T17:44:53.856Z', "
+    },
+    {
+      "name": "user_no_password_field",
+      "group": "security",
+      "passed": true,
+      "detail": "['id', 'name', 'email', 'role', 'createdAt', 'updatedAt']"
+    },
+    {
+      "name": "login_bad_creds_401",
+      "group": "auth",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "me_without_token_401",
+      "group": "auth",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "me_with_token_200",
+      "group": "auth",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "login_member_ok",
+      "group": "auth",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "member_create_project_403",
+      "group": "rbac",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "admin_create_project",
+      "group": "projects",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "project_list_contains",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_get_by_id",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_edit",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_archive",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "validation_project_no_name_400",
+      "group": "validation",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "task_create",
+      "group": "tasks",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "task_list",
+      "group": "tasks",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "task_get",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_update_status",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_filter_status",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_search",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "comment_add",
+      "group": "comments",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "comment_list",
+      "group": "comments",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_delete",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "validation_task_no_title_400",
+      "group": "validation",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "validation_task_bad_priority_400",
+      "group": "validation",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "dashboard_summary_keys",
+      "group": "dashboard",
+      "passed": false,
+      "detail": "missing=['totalProjects', 'totalTasks', 'tasksByStatus', 'highPriorityOpen', 'myTasks', 'overdue']"
+    },
+    {
+      "name": "protected_route_no_token_401",
+      "group": "security",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "frontend_build",
+      "group": "frontend",
+      "passed": true,
+      "detail": "0"
+    },
+    {
+      "name": "lockfile_present",
+      "group": "reproducibility",
+      "passed": false,
+      "detail": "0/2 npm dir(s) committed a package-lock.json (checked pre-install)"
+    }
+  ],
+  "build": {
+    "ok": true,
+    "returncode": 0,
+    "stdout_tail": "\nadded 63 packages, and audited 64 packages in 4s\n\n7 packages are looking for funding\n  run `npm fund` for details\n\n2 vulnerabilities (1 moderate, 1 high)\n\nTo address all issues (including breaking changes), run:\n  npm audit fix --force\n\nRun `npm audit` for details.\n\n> taskflow-node-frontend@0.1.0 build\n> vite build\n\nvite v5.4.21 building for production...\ntransforming...\n\u2713 30 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                  0.33 kB \u2502 gzip:  0.24 kB\ndist/assets/index-mvWQTFHX.js  143.74 kB \u2502 gzip: 46.26 kB\n\u2713 built in 361ms\n",
+    "stderr_tail": "npm error code EUSAGE\nnpm error\nnpm error The `npm ci` command can only install with an existing package-lock.json or\nnpm error npm-shrinkwrap.json with lockfileVersion >= 1. Run an install with npm@5 or\nnpm error later to generate a package-lock.json file, then try again.\nnpm error\nnpm error Clean install a project\nnpm error\nnpm error Usage:\nnpm error npm ci\nnpm error\nnpm error Options:\nnpm error [--install-strategy <hoisted|nested|shallow|linked>] [--legacy-bundling]\nnpm error [--global-style] [--omit <dev|optional|peer> [--omit <dev|optional|peer> ...]]\nnpm error [--include <prod|dev|optional|peer> [--include <prod|dev|optional|peer> ...]]\nnpm error [--strict-peer-deps] [--foreground-scripts] [--ignore-scripts] [--no-audit]\nnpm error [--no-bin-links] [--no-fund] [--dry-run]\nnpm error [-w|--workspace <workspace-name> [-w|--workspace <workspace-name> ...]]\nnpm error [-ws|--workspaces] [--include-workspace-root] [--install-links]\nnpm error\nnpm error aliases: clean-install, ic, install-clean, isntall-clean\nnpm error\nnpm error Run \"npm help ci\" for more info\nnpm error A complete log of this run can be found in: /home/mani/.npm/_logs/2026-07-03T17_44_54_833Z-debug-0.log\n\u001b[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.\u001b[39m\n"
+  },
+  "tests": {
+    "ok": false,
+    "returncode": 1,
+    "stdout_tail": "\n> taskflow-node-backend@0.1.0 test\n> jest\n\n",
+    "stderr_tail": "01);\n         |                            ^\n      25 |     taskId = res.body.id;\n      26 |     expect(res.body.title).toBe('My Task');\n      27 |     expect(res.body.priority).toBe('high');\n\n      at Object.toBe (tests/task.test.js:24:28)\n\n  \u25cf Task endpoints \u203a update status\n\n    expect(received).toBe(expected) // Object.is equality\n\n    Expected: \"in_progress\"\n    Received: undefined\n\n      34 |       .send({ status: 'in_progress' });\n      35 |     expect(res.statusCode).toBe(200);\n    > 36 |     expect(res.body.status).toBe('in_progress');\n         |                             ^\n      37 |   });\n      38 |\n      39 |   test('validation failure missing title', async () => {\n\n      at Object.toBe (tests/task.test.js:36:29)\n\nPASS tests/auth.test.js\nFAIL tests/project.test.js\n  \u25cf Project endpoints \u203a admin can create project\n\n    expect(received).toBe(expected) // Object.is equality\n\n    Expected: 201\n    Received: 500\n\n      18 |       .set('Authorization', `Bearer ${adminToken}`)\n      19 |       .send({ name: 'Test Project', description: 'desc' });\n    > 20 |     expect(res.statusCode).toBe(201);\n         |                            ^\n      21 |     expect(res.body).toHaveProperty('id');\n      22 |     expect(res.body.name).toBe('Test Project');\n      23 |   });\n\n      at Object.toBe (tests/project.test.js:20:28)\n\nTest Suites: 2 failed, 1 passed, 3 total\nTests:       3 failed, 5 passed, 8 total\nSnapshots:   0 total\nTime:        0.567 s, estimated 2 s\nRan all test suites.\n"
+  },
+  "passed_reachable": 14,
+  "total_reachable": 25,
+  "pass_rate_25": 0.56,
+  "contract_present": false
+}

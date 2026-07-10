@@ -1,0 +1,18 @@
+diff --git a/sphinx/ext/autodoc/__init__.py b/sphinx/ext/autodoc/__init__.py
+index e16ab8c..14d005a 100644
+--- a/sphinx/ext/autodoc/__init__.py
++++ b/sphinx/ext/autodoc/__init__.py
+@@ -1596,6 +1596,13 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type:
+                 sig = stringify_signature(overload, **kwargs)
+                 sigs.append(sig)
+         else:
++            # When autodoc_typehints is "description", strip return annotation from class signature
++            if (self.config.autodoc_typehints == 'description' and 
++                sig and ' -> ' in sig):
++                # Remove the return annotation from the signature
++                parts = sig.rsplit(' -> ', 1)
++                if len(parts) == 2:
++                    sig = parts[0]
+             sigs.append(sig)
+ 
+         return "\n".join(sigs)

@@ -1,0 +1,34 @@
+diff --git a/seaborn/_core/scales.py b/seaborn/_core/scales.py
+index 55874bf..c4767b1 100644
+--- a/seaborn/_core/scales.py
++++ b/seaborn/_core/scales.py
+@@ -379,6 +379,29 @@ class ContinuousBase(Scale):
+             locs = axis.major.locator()
+             locs = locs[(vmin <= locs) & (locs <= vmax)]
+             labels = axis.major.formatter.format_ticks(locs)
++                # Include offset from ScalarFormatter in legend labels, if any
++                formatter = axis.major.formatter
++                offset_text = ''
++                # Prefer get_offset() if available (Matplotlib >= 3.5)
++                if hasattr(formatter, 'get_offset'):
++                    try:
++                        offset_text = formatter.get_offset()
++                    except Exception:
++                        pass
++                # Fallback to .offset attribute (numeric) and format it
++                if not offset_text and hasattr(formatter, 'offset'):
++                    try:
++                        # offset may be a number; format similar to tick label
++                        offset_val = formatter.offset
++                        if offset_val:
++                            offset_text = f"{offset_val:g} "
++                    except Exception:
++                        pass
++                if offset_text:
++                    # Ensure spacing between offset and label
++                if not offset_text.endswith(' '):
++                    offset_text = offset_text + ' '
++                labels = [f"{offset_text}{lbl}" for lbl in labels]
+             new._legend = list(locs), list(labels)
+ 
+         return new

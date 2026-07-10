@@ -1,0 +1,196 @@
+{
+  "track": "node",
+  "base_url": "http://127.0.0.1:4000",
+  "backend_booted": true,
+  "pass_rate": 0.2414,
+  "passed": 7,
+  "total": 29,
+  "checks": [
+    {
+      "name": "health_ok",
+      "group": "boot",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "login_admin_ok",
+      "group": "auth",
+      "passed": true,
+      "detail": "{'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc4MjQ3OTAzNCwiZXhwIjoxNzgyNTY1NDM0fQ.jDDT0fqASY9MxiFmx4lRM-RjaW_9LUzDjaPdNhjbPWs', 'user': {'id': 1, 'name': 'Admin User', 'email': 'admin@example.com', 'role': 'admin'}}"
+    },
+    {
+      "name": "user_no_password_field",
+      "group": "security",
+      "passed": true,
+      "detail": "['id', 'name', 'email', 'role']"
+    },
+    {
+      "name": "login_bad_creds_401",
+      "group": "auth",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "me_without_token_401",
+      "group": "auth",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "me_with_token_200",
+      "group": "auth",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "login_member_ok",
+      "group": "auth",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "member_create_project_403",
+      "group": "rbac",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "admin_create_project",
+      "group": "projects",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "project_list_contains",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_get_by_id",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_edit",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_archive",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "validation_project_no_name_400",
+      "group": "validation",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "task_create",
+      "group": "tasks",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "task_list",
+      "group": "tasks",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "task_get",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_update_status",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_filter_status",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_search",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "comment_add",
+      "group": "comments",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "comment_list",
+      "group": "comments",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_delete",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "validation_task_no_title_400",
+      "group": "validation",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "validation_task_bad_priority_400",
+      "group": "validation",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "dashboard_summary_keys",
+      "group": "dashboard",
+      "passed": false,
+      "detail": "missing=['totalProjects', 'totalTasks', 'tasksByStatus', 'highPriorityOpen', 'myTasks', 'overdue']"
+    },
+    {
+      "name": "protected_route_no_token_401",
+      "group": "security",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "frontend_build",
+      "group": "frontend",
+      "passed": false,
+      "detail": "2"
+    },
+    {
+      "name": "lockfile_present",
+      "group": "reproducibility",
+      "passed": false,
+      "detail": "0/2 npm dir(s) committed a package-lock.json (checked pre-install)"
+    }
+  ],
+  "build": {
+    "ok": false,
+    "returncode": 2,
+    "stdout_tail": "\nadded 140 packages, and audited 141 packages in 4s\n\n29 packages are looking for funding\n  run `npm fund` for details\n\n4 vulnerabilities (2 moderate, 1 high, 1 critical)\n\nTo address all issues (including breaking changes), run:\n  npm audit fix --force\n\nRun `npm audit` for details.\n\n> taskflow-frontend@0.0.0 build\n> tsc && vite build\n\nsrc/App.test.tsx(9,1): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.\nsrc/App.test.tsx(10,3): error TS2582: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.\nsrc/App.test.tsx(12,5): error TS2304: Cannot find name 'expect'.\nsrc/App.tsx(1,1): error TS6192: All imports in import declaration are unused.\n",
+    "stderr_tail": "npm error code EUSAGE\nnpm error\nnpm error The `npm ci` command can only install with an existing package-lock.json or\nnpm error npm-shrinkwrap.json with lockfileVersion >= 1. Run an install with npm@5 or\nnpm error later to generate a package-lock.json file, then try again.\nnpm error\nnpm error Clean install a project\nnpm error\nnpm error Usage:\nnpm error npm ci\nnpm error\nnpm error Options:\nnpm error [--install-strategy <hoisted|nested|shallow|linked>] [--legacy-bundling]\nnpm error [--global-style] [--omit <dev|optional|peer> [--omit <dev|optional|peer> ...]]\nnpm error [--include <prod|dev|optional|peer> [--include <prod|dev|optional|peer> ...]]\nnpm error [--strict-peer-deps] [--foreground-scripts] [--ignore-scripts] [--no-audit]\nnpm error [--no-bin-links] [--no-fund] [--dry-run]\nnpm error [-w|--workspace <workspace-name> [-w|--workspace <workspace-name> ...]]\nnpm error [-ws|--workspaces] [--include-workspace-root] [--install-links]\nnpm error\nnpm error aliases: clean-install, ic, install-clean, isntall-clean\nnpm error\nnpm error Run \"npm help ci\" for more info\nnpm error A complete log of this run can be found in: /home/mani/.npm/_logs/2026-06-26T13_03_54_193Z-debug-0.log\n"
+  },
+  "tests": {
+    "ok": true,
+    "returncode": 0,
+    "stdout_tail": "\n> taskflow-local@1.0.0 test\n> echo 'Tests would run here'\n\nTests would run here\n",
+    "stderr_tail": ""
+  }
+}

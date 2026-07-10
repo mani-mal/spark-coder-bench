@@ -1,0 +1,19 @@
+# extra_llm_api_options — gpt-oss-120b (MXFP4 MoE) on DGX Spark GB10 (sm_121a).
+# FINAL serving attempt: mirror nemotron's KNOWN-GOOD executor shape as closely as the MXFP4
+# arch allows. Prior attempts on this box:
+#   - cuda graphs on (bare default)  -> SEGFAULT at batch_size=4 graph capture
+#   - cuda graphs off (eager) + disable_overlap_scheduler:true -> executor DEADLOCK
+#     (server ready, GPU idle ~10%, requests never scheduled, no iter logs)
+#   - harmony 400 fixed separately via DISABLE_HARMONY_ADAPTER=1 (passthrough env)
+# This config: keep eager (avoid the capture segfault), but add the executor knobs nemotron
+# runs with (chunked prefill, stream_interval) and DROP disable_overlap_scheduler (a likely
+# cause of the eager scheduling deadlock). print_iter_log:true so we can SEE if the executor
+# iterates during a request.
+kv_cache_config:
+  free_gpu_memory_fraction: 0.8
+moe_config:
+  backend: AUTO
+cuda_graph_config: null
+enable_chunked_prefill: true
+stream_interval: 1
+print_iter_log: true

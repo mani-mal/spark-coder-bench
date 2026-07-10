@@ -1,0 +1,45 @@
+diff --git a/pylint/pyreverse/diagrams.py b/pylint/pyreverse/diagrams.py
+index bf9f67a..9f628a2 100644
+--- a/pylint/pyreverse/diagrams.py
++++ b/pylint/pyreverse/diagrams.py
+@@ -77,13 +77,19 @@ class ClassDiagram(Figure, FilterMixIn):
+         raise KeyError(relation_type)
+ 
+     def get_attrs(self, node):
+-        """return visible attributes, possibly with class name"""
++        """return visible attributes, possibly with class name and type hints"""
+         attrs = []
+         properties = [
+             (n, m)
+             for n, m in node.items()
+             if isinstance(m, astroid.FunctionDef) and decorated_with_property(m)
+         ]
++        # attempt to locate __init__ function for type hint lookup
++        init_func = None
++        for member in node.values():
++            if isinstance(member, astroid.FunctionDef) and member.name == "__init__":
++                init_func = member
++                break
+         for node_name, associated_nodes in (
+             list(node.instance_attrs_type.items())
+             + list(node.locals_type.items())
+@@ -92,6 +98,19 @@ class ClassDiagram(Figure, FilterMixIn):
+             if not self.show_attr(node_name):
+                 continue
+             names = self.class_names(associated_nodes)
++            # If no class names inferred, try to use type hint from __init__
++            if not names and init_func is not None:
++                # map argument names to annotations
++                for arg, annotation in zip(init_func.args.args, getattr(init_func.args, "annotations", [])):
++                    if arg.name == node_name and annotation is not None:
++                        # annotation may be a Name node; get its name attribute
++                        try:
++                            ann_name = annotation.as_string()
++                        except Exception:
++                            ann_name = getattr(annotation, "name", None)
++                        if ann_name:
++                            names = [ann_name]
++                        break
+             if names:
+                 node_name = "{} : {}".format(node_name, ", ".join(names))
+             attrs.append(node_name)

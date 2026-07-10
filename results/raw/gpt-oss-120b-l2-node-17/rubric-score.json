@@ -1,0 +1,199 @@
+{
+  "track": "node",
+  "base_url": "http://127.0.0.1:4000",
+  "backend_booted": true,
+  "pass_rate": 0.9655,
+  "passed": 28,
+  "total": 29,
+  "checks": [
+    {
+      "name": "health_ok",
+      "group": "boot",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "login_admin_ok",
+      "group": "auth",
+      "passed": true,
+      "detail": "{'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzgzMTA2NDUyLCJleHAiOjE3ODM3MTEyNTJ9.CdXL0ROv9DlN-pMuXpOFdisqI4OtS9qGKdD4eJIMctc', 'user': {'id': 1, 'name': 'Admin User', 'email': 'admin@example.com', 'role': 'admin', 'createdAt': '2026-07-03 19:13:42', 'updat"
+    },
+    {
+      "name": "user_no_password_field",
+      "group": "security",
+      "passed": true,
+      "detail": "['id', 'name', 'email', 'role', 'createdAt', 'updatedAt']"
+    },
+    {
+      "name": "login_bad_creds_401",
+      "group": "auth",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "me_without_token_401",
+      "group": "auth",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "me_with_token_200",
+      "group": "auth",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "login_member_ok",
+      "group": "auth",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "member_create_project_403",
+      "group": "rbac",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "admin_create_project",
+      "group": "projects",
+      "passed": true,
+      "detail": "201"
+    },
+    {
+      "name": "project_list_contains",
+      "group": "projects",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "project_get_by_id",
+      "group": "projects",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "project_edit",
+      "group": "projects",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "project_archive",
+      "group": "projects",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "validation_project_no_name_400",
+      "group": "validation",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "task_create",
+      "group": "tasks",
+      "passed": true,
+      "detail": "201"
+    },
+    {
+      "name": "task_list",
+      "group": "tasks",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "task_get",
+      "group": "tasks",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "task_update_status",
+      "group": "tasks",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "task_filter_status",
+      "group": "tasks",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "task_search",
+      "group": "tasks",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "comment_add",
+      "group": "comments",
+      "passed": true,
+      "detail": "201"
+    },
+    {
+      "name": "comment_list",
+      "group": "comments",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "task_delete",
+      "group": "tasks",
+      "passed": true,
+      "detail": "204"
+    },
+    {
+      "name": "validation_task_no_title_400",
+      "group": "validation",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "validation_task_bad_priority_400",
+      "group": "validation",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "dashboard_summary_keys",
+      "group": "dashboard",
+      "passed": true,
+      "detail": "ok"
+    },
+    {
+      "name": "protected_route_no_token_401",
+      "group": "security",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "frontend_build",
+      "group": "frontend",
+      "passed": true,
+      "detail": "0"
+    },
+    {
+      "name": "lockfile_present",
+      "group": "reproducibility",
+      "passed": true,
+      "detail": "2/2 npm dir(s) committed a package-lock.json (checked pre-install)"
+    }
+  ],
+  "build": {
+    "ok": true,
+    "returncode": 0,
+    "stdout_tail": "\nadded 26 packages, and audited 27 packages in 536ms\n\n10 packages are looking for funding\n  run `npm fund` for details\n\nfound 0 vulnerabilities\n\n> frontend@1.0.0 build\n> vite build\n\nvite v8.1.3 building client environment for production...\n\u001b[2K\ntransforming...\u2713 25 modules transformed.\nrendering chunks...\ncomputing gzip size...\n../dist-frontend/index.html                  0.30 kB \u2502 gzip:  0.23 kB\n../dist-frontend/assets/index-BXE3oCY2.js  235.11 kB \u2502 gzip: 75.35 kB\n\n\u2713 built in 121ms\n",
+    "stderr_tail": "\n(!) outDir /home/mani/projects/taskflow-local-app-benchmark/apps/node-track/dist-frontend is not inside project root and will not be emptied.\nUse --emptyOutDir to override.\n\n"
+  },
+  "tests": {
+    "ok": false,
+    "returncode": null,
+    "error": "timeout after 900s"
+  },
+  "passed_reachable": 24,
+  "total_reachable": 25,
+  "pass_rate_25": 0.96,
+  "contract_present": true
+}

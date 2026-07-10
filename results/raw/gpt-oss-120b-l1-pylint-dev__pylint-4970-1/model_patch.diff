@@ -1,0 +1,29 @@
+diff --git a/a.py b/a.py
+new file mode 100644
+index 0000000..c2119dc
+--- /dev/null
++++ b/a.py
+@@ -0,0 +1,2 @@
++def foo():
++    return 1
+diff --git a/b.py b/b.py
+new file mode 100644
+index 0000000..c2119dc
+--- /dev/null
++++ b/b.py
+@@ -0,0 +1,2 @@
++def foo():
++    return 1
+diff --git a/pylint/checkers/similar.py b/pylint/checkers/similar.py
+index c65b1c8..cfb0d87 100644
+--- a/pylint/checkers/similar.py
++++ b/pylint/checkers/similar.py
+@@ -524,7 +524,7 @@ class Similar:
+                 lineset1, start_index_1, lineset2, start_index_2, nb_common_lines
+             )
+ 
+-            if eff_cmn_nb > self.min_lines:
++            if self.min_lines > 0 and eff_cmn_nb > self.min_lines:
+                 yield com
+ 
+     def _iter_sims(self) -> Generator[Commonality, None, None]:

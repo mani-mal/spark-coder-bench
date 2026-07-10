@@ -1,0 +1,10 @@
+{
+  "run_id": "gpt-oss-120b-l1-sympy__sympy-12481-1",
+  "window_start_epoch_ms": 1782450374371,
+  "window_end_epoch_ms": 1782451085819,
+  "duration_ms": 711448,
+  "exit_code": 0,
+  "command": "opencode run --format json -m vllm-local/gpt-oss-120b --dir /tmp/swebench-work/gpt-oss-120b-l1-sympy__sympy-12481-1 You are fixing a real GitHub issue in this repository. Make the minimal code change that resolves the issue. Do NOT modify or write tests; the graders run hidden tests. Issue:\n\n`Permutation` constructor fails with non-disjoint cycles\nCalling `Permutation([[0,1],[0,1]])` raises a `ValueError` instead of constructing the identity permutation.  If the cycles passed in are non-disjoint, they should be applied in left-to-right order and the resulting permutation should be returned.\r\n\r\nThis should be easy to compute.  I don't see a reason why non-disjoint cycles should be forbidden.\n",
+  "interval_seconds": 0.25,
+  "metrics_url": "http://127.0.0.1:8000/metrics"
+}

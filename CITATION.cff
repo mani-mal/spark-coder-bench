@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use this benchmark harness or its results, please cite it as below."
+title: "DGX Spark Coding-Model Benchmark: a systems + methodology case study of local coding-agent evaluation"
+abstract: >-
+  A three-layer benchmark (SWE-bench Verified agentic repair, a TaskFlow app-build
+  acceptance rubric, and LiveCodeBench single-shot code generation) evaluating three
+  MoE coding models (gpt-oss-120b, Qwen3-Coder-30B-A3B, NVIDIA Nemotron-3-Super-120B-A12B)
+  served locally on a single NVIDIA DGX Spark (GB10). The contribution is the serving-
+  feasibility matrix, failure taxonomy, and measurement pitfalls of local coding-agent
+  evaluation, not a clean model ranking.
+type: software
+authors:
+  - alias: mani-mal
+repository-code: "https://github.com/mani-mal/dgx-spark-coding-model-benchmark"
+url: "https://github.com/mani-mal/dgx-spark-coding-model-benchmark"
+license: MIT
+keywords:
+  - coding-agent evaluation
+  - DGX Spark
+  - MoE
+  - SWE-bench
+  - LiveCodeBench
+  - vLLM
+  - TensorRT-LLM
+date-released: "2026-07-03"

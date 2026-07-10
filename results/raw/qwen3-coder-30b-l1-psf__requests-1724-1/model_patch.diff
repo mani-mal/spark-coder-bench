@@ -1,0 +1,18 @@
+diff --git a/requests/models.py b/requests/models.py
+index f82f56a..0b00176 100644
+--- a/requests/models.py
++++ b/requests/models.py
+@@ -308,6 +308,13 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+         self.method = method
+         if self.method is not None:
+             self.method = self.method.upper()
++            # Ensure method is a native string to prevent UnicodeDecodeError in Python 2.7
++            if isinstance(self.method, str):
++                # Convert unicode to native string in Python 2
++                try:
++                    self.method = self.method.encode('ascii')
++                except UnicodeEncodeError:
++                    pass  # Keep as unicode if encoding fails
+ 
+     def prepare_url(self, url, params):
+         """Prepares the given HTTP URL."""

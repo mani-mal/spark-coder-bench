@@ -1,0 +1,31 @@
+# extra_llm_api_options for Nemotron-3-Super-120B-A12B-NVFP4 — L3 (LiveCodeBench) variant.
+#
+# IDENTICAL to nemotron-super.yaml EXCEPT speculative_config (MTP) is removed. On 2026-07-01
+# the MTP path wedged the executor mid-generation (~400 tokens in) with repeated
+# "[kv cache manager] storeContextBlocks: Can not find sequence for request N" — the classic
+# speculative-decoding KV-manager failure — leaving the server unable to schedule any further
+# request (GPU idle, zero iters). See docs/findings/2026-07-01-nemotron-trt-warmup-wedge.md and
+# 2026-07-01-nemotron-trt-mtp-wedge.md.
+#
+# Why this is quality-safe for L3: MTP (multi-token prediction) is a DECODE-THROUGHPUT
+# optimization; the accepted tokens are verified against the base model, so it is designed to
+# be output-equivalent to standard autoregressive decoding. L3 measures pass@1 CODE QUALITY,
+# which is unaffected. The tradeoff is that nemotron's L3 THROUGHPUT is not comparable to its
+# MTP-enabled L1/L2 throughput — disclosed in the run notes. All other knobs (FP8 KV, 1M seq,
+# CUTLASS MoE, chunked prefill) are held identical to the L1/L2 serving config.
+kv_cache_config:
+  dtype: fp8
+  enable_block_reuse: false
+  free_gpu_memory_fraction: 0.9
+  mamba_ssm_cache_dtype: float16
+  mamba_ssm_stochastic_rounding: true
+  mamba_ssm_philox_rounds: 5
+moe_config:
+  backend: CUTLASS
+cuda_graph_config:
+  enable_padding: true
+  max_batch_size: 8
+enable_attention_dp: false
+enable_chunked_prefill: true
+stream_interval: 1
+print_iter_log: true

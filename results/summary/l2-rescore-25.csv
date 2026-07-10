@@ -1,0 +1,7 @@
+model,track,N,mean_pass_29,mean_pass_25,working_app_29,working_app_25
+gpt-oss-120b,node,20,0.7241,0.744,16/20,17/20
+gpt-oss-120b,python,8,0.069,0.075,0/8,0/8
+nemotron-super,node,4,0.0086,0.01,0/4,0/4
+nemotron-super,python,4,0.0,0.0,0/4,0/4
+qwen3-coder-30b,node,20,0.1776,0.2044,3/20,3/20
+qwen3-coder-30b,python,8,0.0043,0.005,0/8,0/8

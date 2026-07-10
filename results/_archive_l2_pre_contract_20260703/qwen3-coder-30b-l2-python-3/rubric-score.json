@@ -1,0 +1,196 @@
+{
+  "track": "python",
+  "base_url": "http://127.0.0.1:4000",
+  "backend_booted": false,
+  "pass_rate": 0.0,
+  "passed": 0,
+  "total": 29,
+  "checks": [
+    {
+      "name": "health_ok",
+      "group": "boot",
+      "passed": false,
+      "detail": "HTTPConnectionPool(host='127.0.0.1', port=4000): Max retries exceeded with url: /api/health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0xf6a5a6d8b200>: Failed to establish a new connection: [Errno 111] Connection refused'))"
+    },
+    {
+      "name": "login_admin_ok",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "user_no_password_field",
+      "group": "security",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "login_bad_creds_401",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "me_without_token_401",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "me_with_token_200",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "login_member_ok",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "member_create_project_403",
+      "group": "rbac",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "admin_create_project",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_list_contains",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_get_by_id",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_edit",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_archive",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "validation_project_no_name_400",
+      "group": "validation",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_create",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_list",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_get",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_update_status",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_filter_status",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_search",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "comment_add",
+      "group": "comments",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "comment_list",
+      "group": "comments",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_delete",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "validation_task_no_title_400",
+      "group": "validation",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "validation_task_bad_priority_400",
+      "group": "validation",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "dashboard_summary_keys",
+      "group": "dashboard",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "protected_route_no_token_401",
+      "group": "security",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "frontend_build",
+      "group": "frontend",
+      "passed": false,
+      "detail": "2"
+    },
+    {
+      "name": "lockfile_present",
+      "group": "reproducibility",
+      "passed": false,
+      "detail": "0/1 npm dir(s) committed a package-lock.json (checked pre-install)"
+    }
+  ],
+  "build": {
+    "ok": false,
+    "returncode": 2,
+    "stdout_tail": "\nadded 90 packages, and audited 91 packages in 4s\n\n13 packages are looking for funding\n  run `npm fund` for details\n\n2 vulnerabilities (1 moderate, 1 high)\n\nTo address all issues (including breaking changes), run:\n  npm audit fix --force\n\nRun `npm audit` for details.\n\n> taskflow-frontend@0.0.0 build\n> tsc && vite build\n\nsrc/App.tsx(1,1): error TS6133: 'React' is declared but its value is never read.\n",
+    "stderr_tail": "npm error code EUSAGE\nnpm error\nnpm error The `npm ci` command can only install with an existing package-lock.json or\nnpm error npm-shrinkwrap.json with lockfileVersion >= 1. Run an install with npm@5 or\nnpm error later to generate a package-lock.json file, then try again.\nnpm error\nnpm error Clean install a project\nnpm error\nnpm error Usage:\nnpm error npm ci\nnpm error\nnpm error Options:\nnpm error [--install-strategy <hoisted|nested|shallow|linked>] [--legacy-bundling]\nnpm error [--global-style] [--omit <dev|optional|peer> [--omit <dev|optional|peer> ...]]\nnpm error [--include <prod|dev|optional|peer> [--include <prod|dev|optional|peer> ...]]\nnpm error [--strict-peer-deps] [--foreground-scripts] [--ignore-scripts] [--no-audit]\nnpm error [--no-bin-links] [--no-fund] [--dry-run]\nnpm error [-w|--workspace <workspace-name> [-w|--workspace <workspace-name> ...]]\nnpm error [-ws|--workspaces] [--include-workspace-root] [--install-links]\nnpm error\nnpm error aliases: clean-install, ic, install-clean, isntall-clean\nnpm error\nnpm error Run \"npm help ci\" for more info\nnpm error A complete log of this run can be found in: /home/mani/.npm/_logs/2026-06-25T19_39_13_445Z-debug-0.log\n"
+  },
+  "tests": {
+    "ok": false,
+    "returncode": 127,
+    "stdout_tail": "",
+    "stderr_tail": "/home/mani/projects/taskflow-local-app-benchmark/apps/python-track/backend/.venv/bin/python: No module named pytest\n/bin/sh: 1: pytest: not found\n"
+  }
+}

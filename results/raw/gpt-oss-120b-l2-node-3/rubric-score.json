@@ -1,0 +1,200 @@
+{
+  "track": "node",
+  "base_url": "http://127.0.0.1:4000",
+  "backend_booted": true,
+  "pass_rate": 0.5172,
+  "passed": 15,
+  "total": 29,
+  "checks": [
+    {
+      "name": "health_ok",
+      "group": "boot",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "login_admin_ok",
+      "group": "auth",
+      "passed": true,
+      "detail": "{'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzgzMDk2ODM0LCJleHAiOjE3ODM3MDE2MzR9.9MsKz8_S0mCJKwcXzshYGyMtYt2FO4R8bAVMea9kEd0', 'user': {'id': 1, 'name': 'Admin User', 'email': 'admin@example.com', 'role': 'admin', 'createdAt': '2026-07-03T16:37:21.324Z', '"
+    },
+    {
+      "name": "user_no_password_field",
+      "group": "security",
+      "passed": true,
+      "detail": "['id', 'name', 'email', 'role', 'createdAt', 'updatedAt']"
+    },
+    {
+      "name": "login_bad_creds_401",
+      "group": "auth",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "me_without_token_401",
+      "group": "auth",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "me_with_token_200",
+      "group": "auth",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "login_member_ok",
+      "group": "auth",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "member_create_project_403",
+      "group": "rbac",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "admin_create_project",
+      "group": "projects",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "project_list_contains",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_get_by_id",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_edit",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_archive",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "validation_project_no_name_400",
+      "group": "validation",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "task_create",
+      "group": "tasks",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "task_list",
+      "group": "tasks",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "task_get",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_update_status",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_filter_status",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_search",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "comment_add",
+      "group": "comments",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "comment_list",
+      "group": "comments",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_delete",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "validation_task_no_title_400",
+      "group": "validation",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "validation_task_bad_priority_400",
+      "group": "validation",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "dashboard_summary_keys",
+      "group": "dashboard",
+      "passed": false,
+      "detail": "missing=['totalProjects', 'totalTasks', 'tasksByStatus', 'highPriorityOpen', 'myTasks', 'overdue']"
+    },
+    {
+      "name": "protected_route_no_token_401",
+      "group": "security",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "frontend_build",
+      "group": "frontend",
+      "passed": true,
+      "detail": "0"
+    },
+    {
+      "name": "lockfile_present",
+      "group": "reproducibility",
+      "passed": true,
+      "detail": "2/2 npm dir(s) committed a package-lock.json (checked pre-install)"
+    }
+  ],
+  "build": {
+    "ok": true,
+    "returncode": 0,
+    "stdout_tail": "\nadded 89 packages, and audited 90 packages in 639ms\n\n13 packages are looking for funding\n  run `npm fund` for details\n\n2 vulnerabilities (1 moderate, 1 high)\n\nTo address all issues (including breaking changes), run:\n  npm audit fix --force\n\nRun `npm audit` for details.\n\n> taskflow-local-frontend@0.1.0 build\n> vite build\n\nvite v4.5.14 building for production...\ntransforming...\n\u2713 89 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                  0.33 kB \u2502 gzip:  0.24 kB\ndist/assets/index-394d95e6.js  210.81 kB \u2502 gzip: 71.01 kB\n\u2713 built in 633ms\n",
+    "stderr_tail": ""
+  },
+  "tests": {
+    "ok": true,
+    "returncode": 0,
+    "stdout_tail": "\n> taskflow-local-backend@0.1.0 test\n> jest --detectOpenHandles\n\n",
+    "stderr_tail": "PASS __tests__/auth.test.js\n  Auth routes\n    \u2713 login success returns token and user without passwordHash (133 ms)\n    \u2713 login failure with wrong password (52 ms)\n    \u2713 protected route without token returns 401 (3 ms)\n\nTest Suites: 1 passed, 1 total\nTests:       3 passed, 3 total\nSnapshots:   0 total\nTime:        0.387 s, estimated 1 s\nRan all test suites.\n"
+  },
+  "passed_reachable": 15,
+  "total_reachable": 25,
+  "pass_rate_25": 0.6,
+  "contract_present": false
+}

@@ -1,0 +1,200 @@
+{
+  "track": "node",
+  "base_url": "http://127.0.0.1:4000",
+  "backend_booted": true,
+  "pass_rate": 0.8621,
+  "passed": 25,
+  "total": 29,
+  "checks": [
+    {
+      "name": "health_ok",
+      "group": "boot",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "login_admin_ok",
+      "group": "auth",
+      "passed": true,
+      "detail": "{'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3ODMxMTM1MjAsImV4cCI6MTc4MzE5OTkyMH0.eMIOTXz40GzfjRE5jKh9IWgFJ6Q-_rhaQJSPH8Ayr1Q', 'user': {'id': 2, 'name': 'Admin User', 'email': 'admin@example.com', 'role': 'admin'}"
+    },
+    {
+      "name": "user_no_password_field",
+      "group": "security",
+      "passed": true,
+      "detail": "['id', 'name', 'email', 'role']"
+    },
+    {
+      "name": "login_bad_creds_401",
+      "group": "auth",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "me_without_token_401",
+      "group": "auth",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "me_with_token_200",
+      "group": "auth",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "login_member_ok",
+      "group": "auth",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "member_create_project_403",
+      "group": "rbac",
+      "passed": false,
+      "detail": "201"
+    },
+    {
+      "name": "admin_create_project",
+      "group": "projects",
+      "passed": true,
+      "detail": "201"
+    },
+    {
+      "name": "project_list_contains",
+      "group": "projects",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "project_get_by_id",
+      "group": "projects",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "project_edit",
+      "group": "projects",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "project_archive",
+      "group": "projects",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "validation_project_no_name_400",
+      "group": "validation",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "task_create",
+      "group": "tasks",
+      "passed": true,
+      "detail": "201"
+    },
+    {
+      "name": "task_list",
+      "group": "tasks",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "task_get",
+      "group": "tasks",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "task_update_status",
+      "group": "tasks",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "task_filter_status",
+      "group": "tasks",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "task_search",
+      "group": "tasks",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "comment_add",
+      "group": "comments",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "comment_list",
+      "group": "comments",
+      "passed": false,
+      "detail": "none"
+    },
+    {
+      "name": "task_delete",
+      "group": "tasks",
+      "passed": true,
+      "detail": "204"
+    },
+    {
+      "name": "validation_task_no_title_400",
+      "group": "validation",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "validation_task_bad_priority_400",
+      "group": "validation",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "dashboard_summary_keys",
+      "group": "dashboard",
+      "passed": true,
+      "detail": "ok"
+    },
+    {
+      "name": "protected_route_no_token_401",
+      "group": "security",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "frontend_build",
+      "group": "frontend",
+      "passed": false,
+      "detail": "1"
+    },
+    {
+      "name": "lockfile_present",
+      "group": "reproducibility",
+      "passed": true,
+      "detail": "2/2 npm dir(s) committed a package-lock.json (checked pre-install)"
+    }
+  ],
+  "build": {
+    "ok": false,
+    "returncode": 1,
+    "stdout_tail": "\nadded 202 packages, and audited 203 packages in 1s\n\n43 packages are looking for funding\n  run `npm fund` for details\n\n8 vulnerabilities (1 moderate, 7 high)\n\nTo address issues that do not require attention, run:\n  npm audit fix\n\nTo address all issues (including breaking changes), run:\n  npm audit fix --force\n\nRun `npm audit` for details.\n\n> taskflow-frontend@0.0.0 build\n> vite build\n\nvite v4.5.14 building for production...\n\u2713 0 modules transformed.\n\u2713 built in 3ms\n",
+    "stderr_tail": "npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.\nnpm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead\nnpm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported\nnpm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me\nnpm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead\nnpm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.\nCould not resolve entry module \"index.html\".\nerror during build:\nRollupError: Could not resolve entry module \"index.html\".\n    at error (file:///home/mani/projects/taskflow-local-app-benchmark/apps/node-track/frontend/node_modules/rollup/dist/es/shared/node-entry.js:2287:30)\n    at ModuleLoader.loadEntryModule (file:///home/mani/projects/taskflow-local-app-benchmark/apps/node-track/frontend/node_modules/rollup/dist/es/shared/node-entry.js:24910:20)\n    at async Promise.all (index 0)\n"
+  },
+  "tests": {
+    "ok": false,
+    "returncode": 1,
+    "stdout_tail": "",
+    "stderr_tail": "npm error Missing script: \"test\"\nnpm error\nnpm error To see a list of scripts, run:\nnpm error   npm run\nnpm error A complete log of this run can be found in: /home/mani/.npm/_logs/2026-07-03T21_18_42_093Z-debug-0.log\n"
+  },
+  "passed_reachable": 21,
+  "total_reachable": 25,
+  "pass_rate_25": 0.84,
+  "contract_present": true
+}

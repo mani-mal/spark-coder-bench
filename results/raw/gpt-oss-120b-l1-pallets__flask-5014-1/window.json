@@ -1,0 +1,10 @@
+{
+  "run_id": "gpt-oss-120b-l1-pallets__flask-5014-1",
+  "window_start_epoch_ms": 1782447780942,
+  "window_end_epoch_ms": 1782447820892,
+  "duration_ms": 39950,
+  "exit_code": 0,
+  "command": "opencode run --format json -m vllm-local/gpt-oss-120b --dir /tmp/swebench-work/gpt-oss-120b-l1-pallets__flask-5014-1 You are fixing a real GitHub issue in this repository. Make the minimal code change that resolves the issue. Do NOT modify or write tests; the graders run hidden tests. Issue:\n\nRequire a non-empty name for Blueprints\nThings do not work correctly if a Blueprint is given an empty name (e.g. #4944).\r\nIt would be helpful if a `ValueError` was raised when trying to do that.\n",
+  "interval_seconds": 0.25,
+  "metrics_url": "http://127.0.0.1:8000/metrics"
+}

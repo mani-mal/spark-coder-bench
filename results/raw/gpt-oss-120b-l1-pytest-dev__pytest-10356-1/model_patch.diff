@@ -1,0 +1,33 @@
+diff --git a/src/_pytest/mark/structures.py b/src/_pytest/mark/structures.py
+index 800a25c..d807b7b 100644
+--- a/src/_pytest/mark/structures.py
++++ b/src/_pytest/mark/structures.py
+@@ -356,7 +356,27 @@ class MarkDecorator:
+ 
+ 
+ def get_unpacked_marks(obj: object) -> Iterable[Mark]:
+-    """Obtain the unpacked marks that are stored on an object."""
++    """Obtain the unpacked marks that are stored on an object.
++
++    For classes, combine markers from the entire MRO, respecting the order
++    defined by Python's method resolution order. This merges markers from
++    base classes rather than allowing a subclass attribute to override them.
++    """
++    # If obj is a class, collect pytest marks from its MRO.
++    if inspect.isclass(obj):
++        collected: List[object] = []
++        for cls in obj.__mro__:
++            if cls is object:
++                continue
++            # Prefer the internal _pytestmark attribute if present, otherwise
++            # fall back to the public pytestmark attribute.
++            mark_list = getattr(cls, "_pytestmark", getattr(cls, "pytestmark", []))
++            if mark_list:
++                if not isinstance(mark_list, list):
++                    mark_list = [mark_list]
++                collected.extend(mark_list)
++        return normalize_mark_list(collected)
++    # Fallback for functions and other objects.
+     mark_list = getattr(obj, "pytestmark", [])
+     if not isinstance(mark_list, list):
+         mark_list = [mark_list]

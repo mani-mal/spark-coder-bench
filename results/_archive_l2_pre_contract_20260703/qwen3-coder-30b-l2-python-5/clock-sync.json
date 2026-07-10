@@ -1,0 +1,9 @@
+{
+  "host": "spark-ae6d",
+  "reference_wall_epoch_ms": 1782493215354,
+  "reference_monotonic_s": 446045.498525381,
+  "wall_minus_monotonic_s": 1782047169.855706,
+  "offset_spread_ms": 0.0019,
+  "clock_id": "CLOCK_REALTIME(epoch_ms) joined; CLOCK_MONOTONIC reference recorded",
+  "note": "All collectors use epoch_ms (date +%s%3N / time.time()*1000). offset_spread_ms is the max wall-vs-monotonic drift across 20 reads; values >> a few ms suggest NTP stepping during the run."
+}

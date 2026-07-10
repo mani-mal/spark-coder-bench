@@ -1,0 +1,14 @@
+# nemotron no-code by difficulty
+difficulty,n,no_code,no_code_pct
+easy,182,26,14.3
+medium,207,71,34.3
+hard,123,88,71.5
+# no-code decomposition
+empty_output,143
+output_no_extractable_code,42
+answered_with_code,327
+
+model,full_512_pass,full_512_pct,on_nemotron_answered_n,on_nemotron_answered_pass,on_nemotron_answered_pct
+nemotron-super,314,61.3,327,314,96.0
+gpt-oss-120b,457,89.3,327,312,95.4
+qwen3-coder-30b,349,68.2,327,269,82.3

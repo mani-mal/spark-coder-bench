@@ -1,0 +1,4 @@
+model,prefill_tok_s,decode_tok_s
+gpt-oss-120b,38718.7,28.79
+nemotron-super,,
+qwen3-coder-30b,49372.36,21.4

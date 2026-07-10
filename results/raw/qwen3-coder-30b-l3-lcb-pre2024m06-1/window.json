@@ -1,0 +1,10 @@
+{
+  "run_id": "qwen3-coder-30b-l3-lcb-pre2024m06-1",
+  "window_start_epoch_ms": 1782772433239,
+  "window_end_epoch_ms": 1782811015749,
+  "duration_ms": 38582510,
+  "exit_code": 0,
+  "command": "/home/mani/projects/dgx-spark-coding-model-benchmark/.lcb/venv/bin/python -m lcb_runner.runner.main --model qwen3-coder-30b --scenario codegeneration --release_version release_v6 --end_date 2024-05-31 --n 1 --temperature 0.2 --max_tokens 8192 --top_p 0.95 --multiprocess 1 --openai_timeout 1800 --continue_existing",
+  "interval_seconds": 0.25,
+  "metrics_url": "http://127.0.0.1:8000/metrics"
+}

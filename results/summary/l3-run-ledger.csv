@@ -1,0 +1,4 @@
+model,runtime,lcb_pass_at_1,ci_lo,ci_hi,lcb_n,energy_j,energy_valid,duration_s
+gpt-oss-120b,vllm,0.892578,0.862773,0.916536,512,,0,
+nemotron-super,tensorrt-llm,0.613281,0.570402,0.654473,512,1478689.83,1,32813.998
+qwen3-coder-30b,vllm,0.681641,0.640064,0.720511,512,1007353.24,1,38582.51

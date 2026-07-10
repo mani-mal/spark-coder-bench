@@ -1,0 +1,34 @@
+diff --git a/pylint/pyreverse/writer.py b/pylint/pyreverse/writer.py
+index 0d80bb9..2df6f5d 100644
+--- a/pylint/pyreverse/writer.py
++++ b/pylint/pyreverse/writer.py
+@@ -135,7 +135,18 @@ class DotWriter(DiagramWriter):
+             label = r"{}|{}\l|".format(label, r"\l".join(obj.attrs))
+             for func in obj.methods:
+                 if func.args.args:
+-                    args = [arg.name for arg in func.args.args if arg.name != "self"]
++                    args = []
++                    for arg in func.args.args:
++                        if arg.name != "self":
++                            # Include type hints if available
++                            if hasattr(arg, 'annotation') and arg.annotation:
++                                try:
++                                    annotation_text = str(arg.annotation)
++                                    args.append("{} : {}".format(arg.name, annotation_text))
++                                except Exception:
++                                    args.append(arg.name)
++                            else:
++                                args.append(arg.name)
+                 else:
+                     args = []
+                 label = r"{}{}({})\l".format(label, func.name, ", ".join(args))
+diff --git a/test_issue.py b/test_issue.py
+new file mode 100644
+index 0000000..4dc9ae9
+--- /dev/null
++++ b/test_issue.py
+@@ -0,0 +1,3 @@
++class C(object):
++    def __init__(self, a: str = None):
++        self.a = a
+\ No newline at end of file

@@ -1,0 +1,20 @@
+diff --git a/sympy/geometry/point.py b/sympy/geometry/point.py
+index 5930484..339a907 100644
+--- a/sympy/geometry/point.py
++++ b/sympy/geometry/point.py
+@@ -266,8 +266,13 @@ def distance(self, p):
+         sqrt(x**2 + y**2)
+ 
+         """
+-        return sqrt(sum([(a - b)**2 for a, b in zip(
+-            self.args, p.args if isinstance(p, Point) else p)]))
++                # Pad coordinates with zeros to handle points of differing dimensions
++        args1 = list(self.args)
++        args2 = list(p.args if isinstance(p, Point) else p)
++        max_len = max(len(args1), len(args2))
++        args1.extend([S.Zero] * (max_len - len(args1)))
++        args2.extend([S.Zero] * (max_len - len(args2)))
++        return sqrt(sum((a - b) ** 2 for a, b in zip(args1, args2)))
+ 
+     def taxicab_distance(self, p):
+         """The Taxicab Distance from self to point p.

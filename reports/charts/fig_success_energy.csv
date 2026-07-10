@@ -1,0 +1,10 @@
+model,layer,group,energy_j_mean,quality_mean,n_quality
+gpt-oss-120b,l1,all,4843.95,0.3793,29
+gpt-oss-120b,l2,node,17668.28,0.7241,20
+gpt-oss-120b,l2,python,24391.12,0.069,8
+nemotron-super,l1,all,40864.84,0.2069,29
+nemotron-super,l2,node,57228.22,0.0086,4
+nemotron-super,l2,python,29619.22,0.0,4
+qwen3-coder-30b,l1,all,3726.66,0.2414,29
+qwen3-coder-30b,l2,node,23295.53,0.1776,20
+qwen3-coder-30b,l2,python,21026.21,0.0043,8

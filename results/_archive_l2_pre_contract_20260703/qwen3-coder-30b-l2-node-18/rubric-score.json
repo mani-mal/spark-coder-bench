@@ -1,0 +1,196 @@
+{
+  "track": "node",
+  "base_url": "http://127.0.0.1:4000",
+  "backend_booted": false,
+  "pass_rate": 0.0,
+  "passed": 0,
+  "total": 29,
+  "checks": [
+    {
+      "name": "health_ok",
+      "group": "boot",
+      "passed": false,
+      "detail": "HTTPConnectionPool(host='127.0.0.1', port=4000): Max retries exceeded with url: /api/health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0xf8fadc846300>: Failed to establish a new connection: [Errno 111] Connection refused'))"
+    },
+    {
+      "name": "login_admin_ok",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "user_no_password_field",
+      "group": "security",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "login_bad_creds_401",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "me_without_token_401",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "me_with_token_200",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "login_member_ok",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "member_create_project_403",
+      "group": "rbac",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "admin_create_project",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_list_contains",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_get_by_id",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_edit",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_archive",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "validation_project_no_name_400",
+      "group": "validation",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_create",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_list",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_get",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_update_status",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_filter_status",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_search",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "comment_add",
+      "group": "comments",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "comment_list",
+      "group": "comments",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_delete",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "validation_task_no_title_400",
+      "group": "validation",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "validation_task_bad_priority_400",
+      "group": "validation",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "dashboard_summary_keys",
+      "group": "dashboard",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "protected_route_no_token_401",
+      "group": "security",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "frontend_build",
+      "group": "frontend",
+      "passed": false,
+      "detail": "2"
+    },
+    {
+      "name": "lockfile_present",
+      "group": "reproducibility",
+      "passed": false,
+      "detail": "0/2 npm dir(s) committed a package-lock.json (checked pre-install)"
+    }
+  ],
+  "build": {
+    "ok": false,
+    "returncode": 2,
+    "stdout_tail": "\nadded 93 packages, and audited 94 packages in 3s\n\n13 packages are looking for funding\n  run `npm fund` for details\n\n2 vulnerabilities (1 moderate, 1 high)\n\nTo address all issues (including breaking changes), run:\n  npm audit fix --force\n\nRun `npm audit` for details.\n\n> taskflow-local-frontend@0.0.0 build\n> tsc && vite build\n\nsrc/components/ProjectDetail.tsx(81,41): error TS1003: Identifier expected.\nsrc/components/ProjectDetail.tsx(83,9): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?\nsrc/components/ProjectDetail.tsx(85,11): error TS17002: Expected corresponding JSX closing tag for 'div'.\nsrc/components/ProjectDetail.tsx(88,7): error TS1005: ')' expected.\nsrc/components/ProjectDetail.tsx(151,43): error TS1003: Identifier expected.\nsrc/components/ProjectDetail.tsx(153,11): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?\nsrc/components/ProjectDetail.tsx(155,13): error TS17002: Expected corresponding JSX closing tag for 'div'.\nsrc/components/ProjectDetail.tsx(156,9): error TS1005: ')' expected.\nsrc/components/ProjectDetail.tsx(157,7): error TS1109: Expression expected.\nsrc/components/ProjectDetail.tsx(157,8): error TS1128: Declaration or statement expected.\nsrc/components/ProjectDetail.tsx(158,5): error TS1128: Declaration or statement expected.\nsrc/components/ProjectDetail.tsx(159,3): error TS1109: Expression expected.\nsrc/components/ProjectDetail.tsx(160,1): error TS1128: Declaration or statement expected.\n",
+    "stderr_tail": "npm error code EUSAGE\nnpm error\nnpm error The `npm ci` command can only install with an existing package-lock.json or\nnpm error npm-shrinkwrap.json with lockfileVersion >= 1. Run an install with npm@5 or\nnpm error later to generate a package-lock.json file, then try again.\nnpm error\nnpm error Clean install a project\nnpm error\nnpm error Usage:\nnpm error npm ci\nnpm error\nnpm error Options:\nnpm error [--install-strategy <hoisted|nested|shallow|linked>] [--legacy-bundling]\nnpm error [--global-style] [--omit <dev|optional|peer> [--omit <dev|optional|peer> ...]]\nnpm error [--include <prod|dev|optional|peer> [--include <prod|dev|optional|peer> ...]]\nnpm error [--strict-peer-deps] [--foreground-scripts] [--ignore-scripts] [--no-audit]\nnpm error [--no-bin-links] [--no-fund] [--dry-run]\nnpm error [-w|--workspace <workspace-name> [-w|--workspace <workspace-name> ...]]\nnpm error [-ws|--workspaces] [--include-workspace-root] [--install-links]\nnpm error\nnpm error aliases: clean-install, ic, install-clean, isntall-clean\nnpm error\nnpm error Run \"npm help ci\" for more info\nnpm error A complete log of this run can be found in: /home/mani/.npm/_logs/2026-06-26T14_10_59_394Z-debug-0.log\n"
+  },
+  "tests": {
+    "ok": false,
+    "returncode": 1,
+    "stdout_tail": "\n> taskflow-local-backend@1.0.0 test\n> jest\n\n",
+    "stderr_tail": "FAIL tests/auth.test.js\n  \u25cf Test suite failed to run\n\n    Cannot find module '../backend/server' from 'tests/auth.test.js'\n\n      1 | // tests/auth.test.js\n      2 | const request = require('supertest');\n    > 3 | const app = require('../backend/server');\n        |             ^\n      4 |\n      5 | describe('Authentication', () => {\n      6 |   describe('POST /api/auth/login', () => {\n\n      at Resolver._throwModNotFoundError (node_modules/jest-resolve/build/resolver.js:427:11)\n      at Object.require (tests/auth.test.js:3:13)\n\nTest Suites: 1 failed, 1 total\nTests:       0 total\nSnapshots:   0 total\nTime:        0.194 s, estimated 1 s\nRan all test suites.\n"
+  }
+}

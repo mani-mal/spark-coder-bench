@@ -1,0 +1,200 @@
+{
+  "track": "python",
+  "base_url": "http://127.0.0.1:4000",
+  "backend_booted": false,
+  "pass_rate": 0.0,
+  "passed": 0,
+  "total": 29,
+  "checks": [
+    {
+      "name": "health_ok",
+      "group": "boot",
+      "passed": false,
+      "detail": "HTTPConnectionPool(host='127.0.0.1', port=4000): Max retries exceeded with url: /api/health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0xef34639ebbf0>: Failed to establish a new connection: [Errno 111] Connection refused'))"
+    },
+    {
+      "name": "login_admin_ok",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "user_no_password_field",
+      "group": "security",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "login_bad_creds_401",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "me_without_token_401",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "me_with_token_200",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "login_member_ok",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "member_create_project_403",
+      "group": "rbac",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "admin_create_project",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_list_contains",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_get_by_id",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_edit",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_archive",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "validation_project_no_name_400",
+      "group": "validation",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_create",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_list",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_get",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_update_status",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_filter_status",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_search",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "comment_add",
+      "group": "comments",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "comment_list",
+      "group": "comments",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_delete",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "validation_task_no_title_400",
+      "group": "validation",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "validation_task_bad_priority_400",
+      "group": "validation",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "dashboard_summary_keys",
+      "group": "dashboard",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "protected_route_no_token_401",
+      "group": "security",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "frontend_build",
+      "group": "frontend",
+      "passed": false,
+      "detail": "1"
+    },
+    {
+      "name": "lockfile_present",
+      "group": "reproducibility",
+      "passed": false,
+      "detail": "0/1 npm dir(s) committed a package-lock.json (checked pre-install)"
+    }
+  ],
+  "build": {
+    "ok": false,
+    "returncode": 1,
+    "stdout_tail": "\nadded 66 packages, and audited 67 packages in 7s\n\n7 packages are looking for funding\n  run `npm fund` for details\n\n2 vulnerabilities (1 moderate, 1 high)\n\nTo address all issues (including breaking changes), run:\n  npm audit fix --force\n\nRun `npm audit` for details.\n\n> taskflow-frontend@0.1.0 build\n> vite build\n\nvite v5.4.21 building for production...\ntransforming...\n\u2713 3 modules transformed.\n",
+    "stderr_tail": "m failed with 1 error:\n/home/mani/projects/taskflow-local-app-benchmark/apps/python-track/frontend/src/auth.ts:18:26: ERROR: Expected \">\" but found \"value\"\nfile: /home/mani/projects/taskflow-local-app-benchmark/apps/python-track/frontend/src/auth.ts:18:26\n\nExpected \">\" but found \"value\"\n16 |    };\n17 |    return (\n18 |      <AuthContext.Provider value={{ token, setToken: setTokenAndStore }}>\n   |                            ^\n19 |        {children}\n20 |      </AuthContext.Provider>\n\n    at failureErrorWithLog (/home/mani/projects/taskflow-local-app-benchmark/apps/python-track/frontend/node_modules/esbuild/lib/main.js:1472:15)\n    at /home/mani/projects/taskflow-local-app-benchmark/apps/python-track/frontend/node_modules/esbuild/lib/main.js:755:50\n    at responseCallbacks.<computed> (/home/mani/projects/taskflow-local-app-benchmark/apps/python-track/frontend/node_modules/esbuild/lib/main.js:622:9)\n    at handleIncomingPacket (/home/mani/projects/taskflow-local-app-benchmark/apps/python-track/frontend/node_modules/esbuild/lib/main.js:677:12)\n    at Socket.readFromStdout (/home/mani/projects/taskflow-local-app-benchmark/apps/python-track/frontend/node_modules/esbuild/lib/main.js:600:7)\n    at Socket.emit (node:events:524:28)\n    at addChunk (node:internal/streams/readable:561:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)\n    at Readable.push (node:internal/streams/readable:392:5)\n    at Pipe.onStreamRead (node:internal/stream_base_commons:191:23)\n"
+  },
+  "tests": {
+    "ok": false,
+    "returncode": 1,
+    "stdout_tail": " more details. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/\n    @validator('body')\n\napp/main.py:42\n  /home/mani/projects/taskflow-local-app-benchmark/apps/python-track/backend/app/main.py:42: DeprecationWarning: \n          on_event is deprecated, use lifespan event handlers instead.\n  \n          Read more about it in the\n          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).\n          \n    @app.on_event('startup')\n\n../../../../../.local/lib/python3.12/site-packages/fastapi/applications.py:4675\n  /home/mani/.local/lib/python3.12/site-packages/fastapi/applications.py:4675: DeprecationWarning: \n          on_event is deprecated, use lifespan event handlers instead.\n  \n          Read more about it in the\n          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).\n          \n    return self.router.on_event(event_type)  # ty: ignore[deprecated]\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_api.py::test_login_success - assert 401 == 200\nFAILED tests/test_api.py::test_create_project_admin - KeyError: 'token'\nFAILED tests/test_api.py::test_create_task_and_update_status - KeyError: 'token'\nFAILED tests/test_api.py::test_validation_failure_missing_title - KeyError: '...\n4 failed, 2 passed, 17 warnings in 0.16s\n",
+    "stderr_tail": "/home/mani/projects/taskflow-local-app-benchmark/apps/python-track/backend/.venv/bin/python: No module named pytest\n"
+  },
+  "passed_reachable": 0,
+  "total_reachable": 25,
+  "pass_rate_25": 0.0,
+  "contract_present": true
+}

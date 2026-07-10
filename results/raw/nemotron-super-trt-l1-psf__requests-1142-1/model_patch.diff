@@ -1,0 +1,26 @@
+diff --git a/requests/models.py b/requests/models.py
+index 9926045..a7b2243 100644
+--- a/requests/models.py
++++ b/requests/models.py
+@@ -386,13 +386,18 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+         self.body = body
+ 
+     def prepare_content_length(self, body):
+-        self.headers['Content-Length'] = '0'
++        if body is None:
++            return
+         if hasattr(body, 'seek') and hasattr(body, 'tell'):
+             body.seek(0, 2)
+-            self.headers['Content-Length'] = str(body.tell())
++            length = body.tell()
+             body.seek(0, 0)
++            if length > 0:
++                self.headers['Content-Length'] = str(length)
+         elif body is not None:
+-            self.headers['Content-Length'] = str(len(body))
++            length = len(body)
++            if length > 0:
++                self.headers['Content-Length'] = str(length)
+ 
+     def prepare_auth(self, auth):
+         """Prepares the given HTTP auth data."""

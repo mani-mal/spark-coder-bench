@@ -1,0 +1,200 @@
+{
+  "track": "node",
+  "base_url": "http://127.0.0.1:4000",
+  "backend_booted": true,
+  "pass_rate": 0.9655,
+  "passed": 28,
+  "total": 29,
+  "checks": [
+    {
+      "name": "health_ok",
+      "group": "boot",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "login_admin_ok",
+      "group": "auth",
+      "passed": true,
+      "detail": "{'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwibmFtZSI6IkFkbWluIiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc4MzEwMTIwMiwiZXhwIjoxNzgzMTMwMDAyfQ.PLXrs2bZw84SI3pWVpxt7lozVwk2gKDILGyPAl9q_24', 'user': {'id': 1, 'name': 'Admin', 'email': 'admin@example.com', 'role'"
+    },
+    {
+      "name": "user_no_password_field",
+      "group": "security",
+      "passed": true,
+      "detail": "['id', 'name', 'email', 'role', 'createdAt', 'updatedAt']"
+    },
+    {
+      "name": "login_bad_creds_401",
+      "group": "auth",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "me_without_token_401",
+      "group": "auth",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "me_with_token_200",
+      "group": "auth",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "login_member_ok",
+      "group": "auth",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "member_create_project_403",
+      "group": "rbac",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "admin_create_project",
+      "group": "projects",
+      "passed": true,
+      "detail": "201"
+    },
+    {
+      "name": "project_list_contains",
+      "group": "projects",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "project_get_by_id",
+      "group": "projects",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "project_edit",
+      "group": "projects",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "project_archive",
+      "group": "projects",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "validation_project_no_name_400",
+      "group": "validation",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "task_create",
+      "group": "tasks",
+      "passed": true,
+      "detail": "201"
+    },
+    {
+      "name": "task_list",
+      "group": "tasks",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "task_get",
+      "group": "tasks",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "task_update_status",
+      "group": "tasks",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "task_filter_status",
+      "group": "tasks",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "task_search",
+      "group": "tasks",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "comment_add",
+      "group": "comments",
+      "passed": true,
+      "detail": "201"
+    },
+    {
+      "name": "comment_list",
+      "group": "comments",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "task_delete",
+      "group": "tasks",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "validation_task_no_title_400",
+      "group": "validation",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "validation_task_bad_priority_400",
+      "group": "validation",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "dashboard_summary_keys",
+      "group": "dashboard",
+      "passed": true,
+      "detail": "ok"
+    },
+    {
+      "name": "protected_route_no_token_401",
+      "group": "security",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "frontend_build",
+      "group": "frontend",
+      "passed": true,
+      "detail": "0"
+    },
+    {
+      "name": "lockfile_present",
+      "group": "reproducibility",
+      "passed": false,
+      "detail": "0/2 npm dir(s) committed a package-lock.json (checked pre-install)"
+    }
+  ],
+  "build": {
+    "ok": true,
+    "returncode": 0,
+    "stdout_tail": "\nadded 66 packages, and audited 67 packages in 4s\n\n7 packages are looking for funding\n  run `npm fund` for details\n\n2 vulnerabilities (1 moderate, 1 high)\n\nTo address all issues (including breaking changes), run:\n  npm audit fix --force\n\nRun `npm audit` for details.\n\n> taskflow-local-frontend@1.0.0 build\n> vite build\n\nvite v5.4.21 building for production...\ntransforming...\n\u2713 39 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                  0.33 kB \u2502 gzip:  0.24 kB\ndist/assets/index-BvaQ_Bk6.js  169.91 kB \u2502 gzip: 54.88 kB\n\u2713 built in 446ms\n",
+    "stderr_tail": "npm error code EUSAGE\nnpm error\nnpm error The `npm ci` command can only install with an existing package-lock.json or\nnpm error npm-shrinkwrap.json with lockfileVersion >= 1. Run an install with npm@5 or\nnpm error later to generate a package-lock.json file, then try again.\nnpm error\nnpm error Clean install a project\nnpm error\nnpm error Usage:\nnpm error npm ci\nnpm error\nnpm error Options:\nnpm error [--install-strategy <hoisted|nested|shallow|linked>] [--legacy-bundling]\nnpm error [--global-style] [--omit <dev|optional|peer> [--omit <dev|optional|peer> ...]]\nnpm error [--include <prod|dev|optional|peer> [--include <prod|dev|optional|peer> ...]]\nnpm error [--strict-peer-deps] [--foreground-scripts] [--ignore-scripts] [--no-audit]\nnpm error [--no-bin-links] [--no-fund] [--dry-run]\nnpm error [-w|--workspace <workspace-name> [-w|--workspace <workspace-name> ...]]\nnpm error [-ws|--workspaces] [--include-workspace-root] [--install-links]\nnpm error\nnpm error aliases: clean-install, ic, install-clean, isntall-clean\nnpm error\nnpm error Run \"npm help ci\" for more info\nnpm error A complete log of this run can be found in: /home/mani/.npm/_logs/2026-07-03T17_53_22_638Z-debug-0.log\n\u001b[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.\u001b[39m\n"
+  },
+  "tests": {
+    "ok": false,
+    "returncode": 1,
+    "stdout_tail": "\n> taskflow-local-backend@1.0.0 test\n> jest\n\n",
+    "stderr_tail": "FAIL tests/projects.test.js\n\n\n  \u25cf Test suite failed to run\n\n    listen EADDRINUSE: address already in use :::4000\n\n      239 | async function startServer() {\n      240 |   await db.init();\n    > 241 |   app.listen(PORT, () => {\n          |       ^\n      242 |     console.log(`Server listening on http://127.0.0.1:${PORT}`);\n      243 |   });\n      244 | }\n\n      at Function.listen (node_modules/express/lib/application.js:635:24)\n      at listen (src/index.js:241:7)\n      at Object.<anonymous> (tests/projects.test.js:7:3)\n\nFAIL tests/auth.test.js\n  \u25cf Login success returns token and user\n\n    listen EADDRINUSE: address already in use :::4000\n\n      239 | async function startServer() {\n      240 |   await db.init();\n    > 241 |   app.listen(PORT, () => {\n          |       ^\n      242 |     console.log(`Server listening on http://127.0.0.1:${PORT}`);\n      243 |   });\n      244 | }\n\n      at Function.listen (node_modules/express/lib/application.js:635:24)\n      at listen (src/index.js:241:7)\n      at Object.<anonymous> (tests/auth.test.js:6:3)\n\nTest Suites: 2 failed, 2 total\nTests:       1 failed, 4 passed, 5 total\nSnapshots:   0 total\nTime:        0.623 s, estimated 1 s\nRan all test suites.\n"
+  },
+  "passed_reachable": 24,
+  "total_reachable": 25,
+  "pass_rate_25": 0.96,
+  "contract_present": false
+}

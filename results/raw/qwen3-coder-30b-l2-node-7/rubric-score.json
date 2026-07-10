@@ -1,0 +1,200 @@
+{
+  "track": "node",
+  "base_url": "http://127.0.0.1:4000",
+  "backend_booted": false,
+  "pass_rate": 0.0345,
+  "passed": 1,
+  "total": 29,
+  "checks": [
+    {
+      "name": "health_ok",
+      "group": "boot",
+      "passed": false,
+      "detail": "HTTPConnectionPool(host='127.0.0.1', port=4000): Max retries exceeded with url: /api/health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0xf9e56780bb30>: Failed to establish a new connection: [Errno 111] Connection refused'))"
+    },
+    {
+      "name": "login_admin_ok",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "user_no_password_field",
+      "group": "security",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "login_bad_creds_401",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "me_without_token_401",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "me_with_token_200",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "login_member_ok",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "member_create_project_403",
+      "group": "rbac",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "admin_create_project",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_list_contains",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_get_by_id",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_edit",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_archive",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "validation_project_no_name_400",
+      "group": "validation",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_create",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_list",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_get",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_update_status",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_filter_status",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_search",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "comment_add",
+      "group": "comments",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "comment_list",
+      "group": "comments",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_delete",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "validation_task_no_title_400",
+      "group": "validation",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "validation_task_bad_priority_400",
+      "group": "validation",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "dashboard_summary_keys",
+      "group": "dashboard",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "protected_route_no_token_401",
+      "group": "security",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "frontend_build",
+      "group": "frontend",
+      "passed": false,
+      "detail": "2"
+    },
+    {
+      "name": "lockfile_present",
+      "group": "reproducibility",
+      "passed": true,
+      "detail": "2/2 npm dir(s) committed a package-lock.json (checked pre-install)"
+    }
+  ],
+  "build": {
+    "ok": false,
+    "returncode": 2,
+    "stdout_tail": "ontend@0.0.0 build\n> tsc -b && vite build\n\nsrc/App.tsx(1,66): error TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.\nsrc/components/Layout.tsx(2,24): error TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.\nsrc/components/Navigation.tsx(1,35): error TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.\nsrc/components/RequireAuth.tsx(1,26): error TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.\nsrc/components/RequireAuth.tsx(4,55): error TS2503: Cannot find namespace 'JSX'.\nsrc/context/AuthContext.tsx(1,58): error TS1484: 'ReactNode' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.\nsrc/pages/LoginPage.tsx(2,23): error TS6133: 'Link' is declared but its value is never read.\nsrc/pages/LoginPage.tsx(2,35): error TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.\nsrc/pages/ProjectDetailPage.tsx(2,40): error TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.\nsrc/pages/ProjectsPage.tsx(2,22): error TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.\nsrc/pages/TaskDetailPage.tsx(2,40): error TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.\nsrc/pages/TasksPage.tsx(2,22): error TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.\n",
+    "stderr_tail": ""
+  },
+  "tests": {
+    "ok": false,
+    "returncode": 1,
+    "stdout_tail": "\n> backend@1.0.0 test\n> echo \"Error: no test specified\" && exit 1\n\nError: no test specified\n",
+    "stderr_tail": ""
+  },
+  "passed_reachable": 1,
+  "total_reachable": 25,
+  "pass_rate_25": 0.04,
+  "contract_present": true
+}

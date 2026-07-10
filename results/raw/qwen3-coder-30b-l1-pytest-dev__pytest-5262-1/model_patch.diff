@@ -1,0 +1,17 @@
+diff --git a/src/_pytest/capture.py b/src/_pytest/capture.py
+index 25eab7f..9ce38db 100644
+--- a/src/_pytest/capture.py
++++ b/src/_pytest/capture.py
+@@ -447,6 +447,12 @@ class EncodedFile(object):
+         """Ensure that file.name is a string."""
+         return repr(self.buffer)
+ 
++    @property
++    def mode(self):
++        """Return text mode to prevent youtube-dl from thinking this is binary."""
++        # Return a text mode (e.g., 'w' or 'wt') instead of inheriting binary mode
++        return getattr(self.buffer, 'mode', 'w').replace('b', '')
++
+     def __getattr__(self, name):
+         return getattr(object.__getattribute__(self, "buffer"), name)
+ 

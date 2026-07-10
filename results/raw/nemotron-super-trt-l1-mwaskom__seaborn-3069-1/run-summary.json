@@ -1,0 +1,88 @@
+{
+  "run_id": "nemotron-super-trt-l1-mwaskom__seaborn-3069-1",
+  "model": null,
+  "duration_seconds": 559.834,
+  "exit_code": 0,
+  "clock_offset_spread_ms": 0.0017,
+  "hardware": {
+    "gpu_util_pct": {
+      "mean": 91.796,
+      "min": 6.0,
+      "max": 95.0,
+      "n": 1744
+    },
+    "gpu_power_w": {
+      "mean": 39.774,
+      "min": 13.33,
+      "max": 68.98,
+      "n": 1744
+    },
+    "gpu_temp_c": {
+      "mean": 66.108,
+      "min": 57.0,
+      "max": 79.0,
+      "n": 1744
+    },
+    "sm_clock_mhz": {
+      "mean": 2408.928,
+      "min": 2385.0,
+      "max": 2483.0,
+      "n": 1744
+    },
+    "mem_controller_util_pct": {
+      "mean": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "n": 1744
+    },
+    "bandwidth_source": "nvidia-smi utilization.memory (proxy; DCGM not installed)",
+    "unified_mem_used_mib": {
+      "mean": 107699.909,
+      "min": 107297.473,
+      "max": 107800.566,
+      "n": 1744
+    },
+    "unified_mem_peak_mib": 107800.6,
+    "samples": 1744
+  },
+  "inference": {
+    "prompt_tokens": null,
+    "generation_tokens": null,
+    "total_tokens": null,
+    "prefill_throughput_tok_s": null,
+    "decode_throughput_tok_s": null,
+    "prefill_time_s": null,
+    "decode_time_s": null,
+    "ttft_seconds": null,
+    "e2e_latency_seconds": null,
+    "inter_token_latency_seconds": null,
+    "kv_cache_usage_perc": null,
+    "num_requests_running": null,
+    "num_requests_waiting": null,
+    "prefix_cache_hit_rate": null,
+    "requests_succeeded": null
+  },
+  "energy": {
+    "power_level": "GPU-only (nvidia-smi power.draw); declare DCGM/tegrastats in manifest if used",
+    "energy_j": 22269.74,
+    "energy_wh": 6.186
+  },
+  "accounting": {
+    "tokens": {
+      "input": 323353,
+      "output": 7944,
+      "reasoning": 0,
+      "cache_read": 0
+    },
+    "total_tokens": 331297,
+    "agent_turns": null,
+    "tool_calls": 29,
+    "failed_tool_calls": 1,
+    "matched_usage_fields": true,
+    "wall_clock_ms": 559834,
+    "session_files_scanned": [],
+    "command_log_parsed": true,
+    "confidence": "high",
+    "note": "No OpenCode usage fields matched. Confirm session storage path/schema for this OpenCode version and tighten collect-opencode.py, or pass --session-file. Token totals from vLLM Prometheus remain authoritative for inference accounting."
+  }
+}

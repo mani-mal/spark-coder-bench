@@ -1,0 +1,6 @@
+
+=== Layer 2 (app-case) rubric pass-rate ===
+  gpt-oss-120b/node: mean=0.241 std=0.317 n=3
+  gpt-oss-120b/python: mean=0.046 std=0.016 n=3
+  qwen3-coder-30b/node: mean=0.218 std=0.309 n=3
+  qwen3-coder-30b/python: mean=0.000 std=0.000 n=3

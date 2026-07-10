@@ -1,0 +1,74 @@
+{
+  "_comment": "Model registry — single source of truth for model identity/metadata. Adding a 4th model = one entry here + a matching infra/vllm/model-profiles/<profile>.env. Serving args (gpu_mem_util, max_model_len, ...) live in the .env profiles; this file holds WHAT each model is. Expert counts are verified from each model's config.json at serve time and written into the run manifest.",
+  "shared": {
+    "seed": 0,
+    "decode_temperature": 0.2,
+    "kv_cache_dtype": "auto",
+    "max_num_seqs": 1,
+    "note": "These values are held identical for the vLLM-served models (gpt-oss-120b, qwen3-coder-30b). max_model_len and gpu_memory_utilization necessarily differ per model under the 128GB unified-memory limit and are disclosed as confounds (see methodology fairness controls). L3 generation is served identically but sends no seed to the endpoint (see layer3_livecodebench/coverage.md, M10).",
+    "trtllm_deviation_note": "M17: nemotron-super runs ONLY on TensorRT-LLM (it does not serve on vLLM), where these knobs do not map 1:1. Its serving used max_batch_size 8 (L1/L2) / 4 (L3) and fp8 KV cache, NOT max_num_seqs=1 / kv=auto. Quality metrics are model-driven and comparable; throughput/energy/latency are runtime-dependent and must not be read as a controlled cross-runtime comparison. Actual TRT knobs are in each serve-trtllm-* manifest's config_yaml. See HELP.md §7."
+  },
+  "models": [
+    {
+      "profile": "qwen3-coder-30b",
+      "served_model_name": "qwen3-coder-30b",
+      "hf_id": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+      "opencode_model": "vllm-local/qwen3-coder-30b",
+      "arch": "moe",
+      "total_params_b": 30.5,
+      "active_params_b": 3.3,
+      "num_experts": 128,
+      "experts_per_token": 8,
+      "quant": "bf16",
+      "license": "Apache-2.0",
+      "role": "strong generalist coder"
+    },
+    {
+      "profile": "nemotron-super",
+      "served_model_name": "nemotron-super",
+      "hf_id": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-NVFP4",
+      "opencode_model": "vllm-local/nemotron-super",
+      "arch": "moe-hybrid",
+      "total_params_b": 120.0,
+      "active_params_b": 12.0,
+      "num_experts": null,
+      "experts_per_token": null,
+      "quant": "modelopt-mixed-precision (fp8 mamba mixer projections + nvfp4 moe experts, per-layer)",
+      "license": "NVIDIA Nemotron Open Model License",
+      "role": "NVIDIA hardware co-optimized (hybrid Mamba/Transformer MoE)",
+      "vllm_servable": false,
+      "trtllm_servable": true,
+      "runtime": "tensorrt-llm",
+      "opencode_model_trtllm": "trt-local/nemotron-super",
+      "serve_status": "NOT servable on vLLM 0.15.1 / NGC vllm:26.02-py3. The checkpoint declares quant_algo=MIXED_PRECISION (modelopt 0.43.0.dev63); vLLM's ModelOpt loader only accepts a single uniform algo from {FP8, FP8_PER_CHANNEL_PER_TOKEN, FP8_PB_WO, NVFP4} and rejects it at config validation, before any weights load. Upstream: vllm-project/vllm#37854, NVIDIA/dgx-spark-playbooks#77. SERVABLE on TensorRT-LLM: validated 2026-06-27 on container nvcr.io/nvidia/tensorrt-llm/release:1.3.0rc9 using NVIDIA's official single-Spark recipe (FP8 KV cache, chunked prefill, max_num_tokens=8192, MTP spec decoding); loads stable at ~92GB/128GB and passes both the text-coherence sanity gate and the autonomous tool-use gate (tool_choice=auto returns valid tool_calls; OpenCode writes files on disk). A naive bring-up on TRT-LLM 1.2.1 OOM-crashed the host first — see docs/findings/2026-06-27-nemotron-trtllm-memory.md. vLLM-rejection details: docs/findings/2026-06-25-nemotron-super-vllm-mixed-precision.md."
+    },
+    {
+      "profile": "deepseek-coder-v2-lite",
+      "served_model_name": "deepseek-coder-v2-lite",
+      "hf_id": "deepseek-ai/DeepSeek-Coder-V2-Lite-Instruct",
+      "opencode_model": "vllm-local/deepseek-coder-v2-lite",
+      "arch": "moe",
+      "total_params_b": 15.7,
+      "active_params_b": 2.4,
+      "num_experts": 64,
+      "experts_per_token": 6,
+      "quant": "bf16",
+      "license": "MIT (DeepSeek License Agreement)",
+      "role": "external sparse-activation anchor (highest sparsity) — RETIRED from the active comparison: reliable code generator but a weak autonomous tool-user, so it cannot drive the OpenCode agent loop (see docs/findings/2026-06-24-deepseek-v2-lite-agentic-tool-use.md). Kept here so its captured run still resolves and as a documented agentic-failure case."
+    },
+    {
+      "profile": "gpt-oss-120b",
+      "served_model_name": "gpt-oss-120b",
+      "hf_id": "openai/gpt-oss-120b",
+      "opencode_model": "vllm-local/gpt-oss-120b",
+      "arch": "moe",
+      "total_params_b": 116.8,
+      "active_params_b": 5.1,
+      "num_experts": 128,
+      "experts_per_token": 4,
+      "quant": "mxfp4",
+      "license": "Apache-2.0",
+      "role": "external agentic anchor + second 4-bit MoE (OpenAI open model, MXFP4, Blackwell-tuned) — replaces DeepSeek as model #3; lets us separate model effects from FP4-on-Blackwell effects alongside Nemotron NVFP4"
+    }
+  ]
+}

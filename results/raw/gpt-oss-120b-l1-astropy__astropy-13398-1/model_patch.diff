@@ -1,0 +1,100 @@
+diff --git a/astropy/coordinates/builtin_frames/__init__.py b/astropy/coordinates/builtin_frames/__init__.py
+index 6fd688c..1d6e1a9 100644
+--- a/astropy/coordinates/builtin_frames/__init__.py
++++ b/astropy/coordinates/builtin_frames/__init__.py
+@@ -47,6 +47,7 @@ from . import galactic_transforms
+ from . import supergalactic_transforms
+ from . import icrs_cirs_transforms
+ from . import cirs_observed_transforms
++from . import itrs_observed_transforms
+ from . import icrs_observed_transforms
+ from . import intermediate_rotation_transforms
+ from . import ecliptic_transforms
+diff --git a/astropy/coordinates/builtin_frames/itrs_observed_transforms.py b/astropy/coordinates/builtin_frames/itrs_observed_transforms.py
+new file mode 100644
+index 0000000..e2a94dd
+--- /dev/null
++++ b/astropy/coordinates/builtin_frames/itrs_observed_transforms.py
+@@ -0,0 +1,82 @@
++# Licensed under a 3-clause BSD style license - see LICENSE.rst
++"""
++Direct ITRS ↔ AltAz/HADec transformations that stay within the ITRS.
++This avoids the ITRS‑to‑ITRS (time‑varying) transform that references the SSB.
++"""
++
++import numpy as np
++
++from astropy import units as u
++from astropy.coordinates.matrix_utilities import rotation_matrix, matrix_transpose
++from astropy.coordinates.baseframe import frame_transform_graph
++from astropy.coordinates.transformations import FunctionTransformWithFiniteDifference
++
++from .itrs import ITRS
++from .altaz import AltAz
++from .hadec import HADec
++from .utils import PIOVER2
++
++
++def itrs_to_observed_mat(observed_frame):
++    """Matrix to rotate from topocentric ITRS to the observed frame.
++
++    Parameters
++    ----------
++    observed_frame : AltAz or HADec
++        The frame to which the ITRS coordinates are being transformed.
++    """
++    lon, lat, height = observed_frame.location.to_geodetic('WGS84')
++    elong = lon.to_value(u.radian)
++
++    if isinstance(observed_frame, AltAz):
++        # Form ITRS → AltAz rotation matrix (AltAz is left‑handed)
++        elat = lat.to_value(u.radian)
++        minus_x = np.eye(3)
++        minus_x[0, 0] = -1.0
++        mat = (
++            minus_x
++            @ rotation_matrix(PIOVER2 - elat, 'y', unit=u.radian)
++            @ rotation_matrix(elong, 'z', unit=u.radian)
++        )
++    else:
++        # Form ITRS → HADec rotation matrix (HADec is left‑handed)
++        minus_y = np.eye(3)
++        minus_y[1, 1] = -1.0
++        mat = minus_y @ rotation_matrix(elong, 'z', unit=u.radian)
++    return mat
++
++
++@frame_transform_graph.transform(FunctionTransformWithFiniteDifference, ITRS, AltAz)
++@frame_transform_graph.transform(FunctionTransformWithFiniteDifference, ITRS, HADec)
++def itrs_to_observed(itrs_coo, observed_frame):
++    """Transform ITRS coordinates to an AltAz or HADec frame.
++
++    The ITRS position is treated as time‑invariant; the output frame's obstime
++    (if any) is adopted.
++    """
++    # Topocentric ITRS position relative to the observer
++    topocentric_itrs_repr = (
++        itrs_coo.cartesian - observed_frame.location.get_itrs().cartesian
++    )
++    rep = topocentric_itrs_repr.transform(itrs_to_observed_mat(observed_frame))
++    return observed_frame.realize_frame(rep)
++
++
++@frame_transform_graph.transform(FunctionTransformWithFiniteDifference, AltAz, ITRS)
++@frame_transform_graph.transform(FunctionTransformWithFiniteDifference, HADec, ITRS)
++def observed_to_itrs(observed_coo, itrs_frame):
++    """Transform AltAz or HADec coordinates back to ITRS.
++
++    The output ITRS frame inherits the obstime (or ``None``) from ``itrs_frame``.
++    """
++    # Transform to topocentric ITRS representation using the transpose matrix
++    topocentric_itrs_repr = observed_coo.cartesian.transform(
++        matrix_transpose(itrs_to_observed_mat(observed_coo))
++    )
++    # Add observer's ITRS position to obtain geocentric ITRS coordinates
++    rep = topocentric_itrs_repr + observed_coo.location.get_itrs().cartesian
++    return itrs_frame.realize_frame(rep)
++
++# Register loop‑back merged transforms
++frame_transform_graph._add_merged_transform(AltAz, ITRS, AltAz)
++frame_transform_graph._add_merged_transform(HADec, ITRS, HADec)

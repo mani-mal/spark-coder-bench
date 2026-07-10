@@ -1,0 +1,10 @@
+model,layer,active_params_b,sparsity,decode_tok_s
+gpt-oss-120b,l1,5.1,0.0437,26.9076
+gpt-oss-120b,l2,5.1,0.0437,30.8019
+gpt-oss-120b,l3,,,
+nemotron-super,l1,,,
+nemotron-super,l2,,,
+nemotron-super,l3,,,
+qwen3-coder-30b,l1,3.3,0.1082,19.749
+qwen3-coder-30b,l2,3.3,0.1082,23.0021
+qwen3-coder-30b,l3,,,24.2

@@ -1,0 +1,20 @@
+diff --git a/sympy/core/function.py b/sympy/core/function.py
+index 1b8005e..65f85f2 100644
+--- a/sympy/core/function.py
++++ b/sympy/core/function.py
+@@ -507,7 +507,14 @@ def _eval_evalf(self, prec):
+             func = getattr(mpmath, fname)
+         except (AttributeError, KeyError):
+             try:
+-                return Float(self._imp_(*self.args), prec)
++                # Compute the implementation result
++                result = self._imp_(*self.args)
++                # If the result can be evaluated numerically, recurse with evalf
++                # This handles nested implemented_functions.
++                if hasattr(result, 'evalf'):
++                    return result.evalf(prec)
++                # Fallback to Float conversion for plain numeric results
++                return Float(result, prec)
+             except (AttributeError, TypeError, ValueError):
+                 return
+ 

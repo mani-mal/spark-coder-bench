@@ -1,0 +1,36 @@
+{
+  "timestamp_utc": "20260629T130447Z",
+  "host": "spark-ae6d",
+  "runtime": "tensorrt-llm",
+  "profile": "gpt-oss-120b",
+  "model_id": "/root/.cache/huggingface/hub/models--openai--gpt-oss-120b/snapshots/b5c939de8f754692c1647ca79fbf85e8c1e70f8a",
+  "served_model_name": "gpt-oss-120b",
+  "serving": {
+    "image": "nvcr.io/nvidia/tensorrt-llm/release:1.3.0rc9",
+    "trtllm_version": "unknown",
+    "port": 8355,
+    "max_batch_size": 4,
+    "tp_size": 1,
+    "ep_size": 1,
+    "max_num_tokens": 8192,
+    "max_seq_len": 65536,
+    "seed": 0,
+    "decode_temperature": 0.2,
+    "extra_args": "--trust_remote_code",
+    "config_yaml": "# extra_llm_api_options \u2014 gpt-oss-120b (MXFP4 MoE) on DGX Spark (playbook standard shape). # free_gpu_memory_fraction is a kv_cache_config key, enable_padding a cuda_graph_config key # (TRT-LLM 1.2.1 rejects them as top-level LLM args). disable_overlap_scheduler: true kv_cache_config: free_gpu_memory_fraction: 0.8 # CUDA graphs DISABLED on GB10 (sm_121a). The MXFP4 MoE autotunes fine (FP4 Blackwell path, # unlike qwen's bf16 MoE), but CUDA-graph warmup for batch_size=4 SEGFAULTS # (\"Run generation-only CUDA graph warmup for batch size=4 ... !!! Segfault encountered !!!\"). # Running eager avoids the graph-capture crash; throughput is lower but inference is correct, # which is what the runtime bridge cell needs. cuda_graph_config: null "
+  },
+  "platform": {
+    "gpu_name": "NVIDIA GB10",
+    "driver_version": "580.159.03",
+    "arch": "aarch64"
+  },
+  "model_metadata": {"arch": "moe", "total_params_b": 116.8, "active_params_b": 5.1, "num_experts": 128, "experts_per_token": 4, "quant": "mxfp4", "license": "Apache-2.0", "role": "external agentic anchor + second 4-bit MoE (OpenAI open model, MXFP4, Blackwell-tuned) \u2014 replaces DeepSeek as model #3; lets us separate model effects from FP4-on-Blackwell effects alongside Nemotron NVFP4", "params_source": "config.json (verified) + registry", "n_shared_experts": null, "model_type": "gpt_oss", "config_torch_dtype": null, "config_quantization": {"quant_method": "mxfp4", "present": true}, "sparsity_active_fraction": 0.0437},
+  "sanity_check": {
+  "model": "gpt-oss-120b",
+  "prompt": "Write a Python function `nth_prime(n)` that returns the n-th prime number (1-indexed), with a short docstring and three example assertions. Then explain in two sentences how it works.",
+  "ok": false,
+  "error": "generation failed: timed out"
+},
+  "unified_mem_used_mib_after_load": 84998,
+  "fairness_note": "Runtime is TensorRT-LLM (vs vLLM for gpt-oss/qwen baselines). Quality metrics are model-driven and comparable across runtimes; throughput/energy/latency are runtime-dependent and must be read with the qwen/gpt-oss dual-runtime bridge. seed, temperature, and the OpenCode version are held identical to the vLLM runs."
+}

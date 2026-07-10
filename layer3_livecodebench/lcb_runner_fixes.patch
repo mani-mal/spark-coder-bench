@@ -1,0 +1,82 @@
+diff --git a/lcb_runner/runner/main.py b/lcb_runner/runner/main.py
+index 07902b3..deecd20 100644
+--- a/lcb_runner/runner/main.py
++++ b/lcb_runner/runner/main.py
+@@ -41,10 +41,18 @@ def main():
+             )
+             old_save_results = []
+ 
++        # Keep every ATTEMPTED problem, even if its output is empty/None. Reasoning
++        # models (gpt-oss) can legitimately return no final-channel content on hard
++        # problems (finish_reason=length) -> output_list == [None]. The upstream filter
++        # (commented below) treats those as "not done" and re-generates them on every
++        # resume, which (a) is futile (temp 0.2 truncates again) and (b) crashes the
++        # eval pass, whose regeneration has no long --openai_timeout. A no-answer problem
++        # must score as a FAILED submission, not loop forever. See docs/findings 2026-06-30.
++        #   original: if instance["output_list"] and [x for x in instance["output_list"] if x]
+         old_save_results = [
+             instance
+             for instance in old_save_results
+-            if instance["output_list"] and [x for x in instance["output_list"] if x]
++            if instance["output_list"]
+         ]
+         old_save_results_question_ids = [
+             instance["question_id"] for instance in old_save_results
+diff --git a/lcb_runner/runner/oai_runner.py b/lcb_runner/runner/oai_runner.py
+index 59e2074..fd2b33b 100644
+--- a/lcb_runner/runner/oai_runner.py
++++ b/lcb_runner/runner/oai_runner.py
+@@ -53,10 +53,25 @@ class OpenAIRunner(BaseRunner):
+             return []
+ 
+         try:
+-            response = OpenAIRunner.client.chat.completions.create(
++            # STREAM and reassemble instead of a single blocking response.
++            # TensorRT-LLM 1.3.0rc9 on DGX Spark GB10 wedges its executor mid-generation
++            # (~350-400 tokens; KV cache-manager "Can not find sequence for request N", GPU
++            # idle, zero further iters) on NON-streaming chat completions for nemotron-super.
++            # The streaming path is stable — it is exactly what OpenCode uses to drive the
++            # (working) L1/L2 nemotron-TRT runs. Streaming is also fine on vLLM, so this is a
++            # safe shared change. See docs/findings/2026-07-01-nemotron-trt-mtp-wedge.md.
++            stream = OpenAIRunner.client.chat.completions.create(
+                 messages=prompt,
++                stream=True,
+                 **self.client_kwargs,
+             )
++            num_choices = self.client_kwargs.get("n", 1) or 1
++            contents = [""] * num_choices
++            for chunk in stream:
++                for choice in chunk.choices:
++                    piece = getattr(choice.delta, "content", None)
++                    if piece:
++                        contents[choice.index] += piece
+         except (
+             openai.APIError,
+             openai.RateLimitError,
+@@ -76,4 +91,6 @@ class OpenAIRunner(BaseRunner):
+             print(f"Failed to run the model for {prompt}!")
+             print("Exception: ", repr(e))
+             raise e
+-        return [c.message.content for c in response.choices]
++        # An empty channel (reasoning truncated at max_tokens, finish_reason=length) yields
++        # "" here; extract_code() treats that as a failed submission (guard added 2026-06-30).
++        return contents
+diff --git a/lcb_runner/utils/extraction_utils.py b/lcb_runner/utils/extraction_utils.py
+index 3491583..91c4ad6 100644
+--- a/lcb_runner/utils/extraction_utils.py
++++ b/lcb_runner/utils/extraction_utils.py
+@@ -2,6 +2,14 @@ from lcb_runner.lm_styles import LMStyle
+ 
+ 
+ def extract_code(model_output: str, lmstyle: LMStyle):
++    # Reasoning models (e.g. gpt-oss) can return content=None when a response is
++    # truncated mid-reasoning (finish_reason=length) and never emits a final
++    # channel. With --multiprocess 1 lcb_runner does not sanitize such outputs, so
++    # a single None here crashes the whole run in combine_results *after* 12h of
++    # generation but *before* save_results. Treat a missing output as an empty
++    # submission (scores as a failed problem). See docs/findings 2026-06-30.
++    if model_output is None:
++        return ""
+     outputlines = model_output.split("\n")
+     if lmstyle == LMStyle.CodeLLaMaInstruct:
+         indexlines = [i for i, line in enumerate(outputlines) if "PYTHON]" in line]

@@ -1,0 +1,18 @@
+{
+  "tokens": {
+    "input": 1297631,
+    "output": 19663,
+    "reasoning": 0,
+    "cache_read": 0
+  },
+  "total_tokens": 1317294,
+  "agent_turns": null,
+  "tool_calls": 96,
+  "failed_tool_calls": null,
+  "matched_usage_fields": true,
+  "wall_clock_ms": 903095,
+  "session_files_scanned": [],
+  "command_log_parsed": true,
+  "confidence": "high",
+  "note": "No OpenCode usage fields matched. Confirm session storage path/schema for this OpenCode version and tighten collect-opencode.py, or pass --session-file. Token totals from vLLM Prometheus remain authoritative for inference accounting."
+}

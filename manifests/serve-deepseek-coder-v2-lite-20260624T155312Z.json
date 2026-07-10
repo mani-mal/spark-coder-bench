@@ -1,0 +1,11 @@
+{
+  "timestamp_utc": "20260624T155312Z",
+  "profile": "deepseek-coder-v2-lite",
+  "served_model_name": "deepseek-coder-v2-lite",
+  "serving": {"image":"nvcr.io/nvidia/vllm:26.02-py3","vllm_version":"0.15.1+befbc472","port":8000,"gpu_memory_utilization":0.80,"max_model_len":65536,"max_num_seqs":1,"seed":0,"kv_cache_dtype":"auto"},
+  "platform": {"gpu_name":"NVIDIA GB10","driver_version":"580.159.03","arch":"aarch64"},
+  "bandwidth_source": "nvidia-smi utilization.memory (proxy; DCGM not installed)",
+  "model_metadata": {"arch": "moe", "total_params_b": 15.7, "active_params_b": 2.4, "num_experts": 64, "experts_per_token": 6, "quant": "bf16", "license": "MIT (DeepSeek License Agreement)", "role": "external sparse-activation anchor (highest sparsity)", "params_source": "config.json (verified) + registry", "n_shared_experts": 2, "model_type": "deepseek_v2", "config_torch_dtype": "bfloat16", "config_quantization": null, "sparsity_active_fraction": 0.1529},
+  "sanity_check": {"status":"PASS","distinct_ratio":0.5086,"max_consecutive_5gram_repeat":0,"top_5gram_share":0.007,"note":"regenerated manifest; sanity from serve log"},
+  "moe_residency": {"all_experts_resident": true, "offload_detected": false, "unified_mem_used_mib_after_load": 110265}
+}

@@ -1,0 +1,26 @@
+# DGX Spark coding-model benchmark — Python dependencies.
+#
+# The metrics-collection layer (infra/metrics/) uses ONLY the Python standard
+# library, so steps 1–2 run with a bare Python 3.12. The packages below are for
+# the analysis/stats layer and Layer 1 (SWE-bench) and are installed when those
+# layers are built.
+#
+# Versions are loose minimums here; the AUTHORITATIVE, exactly-pinned set is
+# produced with `pip freeze > requirements.lock.txt` inside the project venv and
+# committed alongside this file for arXiv reproducibility.
+
+# --- analysis & statistics (analysis/) ---
+numpy>=1.26
+scipy>=1.11          # Wilson / beta-binomial intervals, significance tests
+pandas>=2.1          # tidy long-format CSV handling
+matplotlib>=3.8      # published figures
+statsmodels>=0.14    # power analysis, McNemar
+
+# --- Layer 1: SWE-bench Verified (layer1_swebench/) ---
+swebench>=3.0        # official evaluation harness
+datasets>=2.19       # princeton-nlp/SWE-bench_Verified loader
+huggingface_hub>=0.23
+
+# --- smoke / client utilities ---
+openai>=1.40         # OpenAI-compatible client for vLLM smoke tests
+requests>=2.31

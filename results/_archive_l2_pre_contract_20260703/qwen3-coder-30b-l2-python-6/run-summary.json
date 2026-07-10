@@ -1,0 +1,134 @@
+{
+  "run_id": "qwen3-coder-30b-l2-python-6",
+  "model": {
+    "profile": "qwen3-coder-30b",
+    "arch": "moe",
+    "total_params_b": 30.5,
+    "active_params_b": 3.3,
+    "num_experts": 128,
+    "experts_per_token": 8,
+    "quant": "bf16",
+    "license": "Apache-2.0",
+    "sparsity_active_fraction": 0.1082
+  },
+  "duration_seconds": 705.302,
+  "exit_code": 0,
+  "clock_offset_spread_ms": 0.0014,
+  "hardware": {
+    "gpu_util_pct": {
+      "mean": 92.761,
+      "min": 6.0,
+      "max": 95.0,
+      "n": 2269
+    },
+    "gpu_power_w": {
+      "mean": 28.746,
+      "min": 10.91,
+      "max": 58.79,
+      "n": 2269
+    },
+    "gpu_temp_c": {
+      "mean": 59.983,
+      "min": 42.0,
+      "max": 67.0,
+      "n": 2269
+    },
+    "sm_clock_mhz": {
+      "mean": 2436.561,
+      "min": 2392.0,
+      "max": 2489.0,
+      "n": 2269
+    },
+    "mem_controller_util_pct": {
+      "mean": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "n": 2269
+    },
+    "bandwidth_source": "nvidia-smi utilization.memory (proxy; DCGM not installed)",
+    "unified_mem_used_mib": {
+      "mean": 107916.18,
+      "min": 107562.078,
+      "max": 108104.793,
+      "n": 2269
+    },
+    "unified_mem_peak_mib": 108104.8,
+    "samples": 2269
+  },
+  "inference": {
+    "prompt_tokens": 876999.0,
+    "generation_tokens": 13233.0,
+    "total_tokens": 890232.0,
+    "prefill_throughput_tok_s": 68904.59,
+    "decode_throughput_tok_s": 19.29,
+    "prefill_time_s": 12.728,
+    "decode_time_s": 686.126,
+    "ttft_seconds": {
+      "p50": 0.25,
+      "p90": 0.4944,
+      "p99": 1.84,
+      "count": 44
+    },
+    "e2e_latency_seconds": {
+      "p50": 11.4286,
+      "p90": 35.3333,
+      "p99": 93.6,
+      "count": 44
+    },
+    "inter_token_latency_seconds": {
+      "p50": 0.0558,
+      "p90": 0.0712,
+      "p99": 0.0746,
+      "count": 13189
+    },
+    "kv_cache_usage_perc": {
+      "mean": 0.052,
+      "min": 0.0,
+      "max": 0.073,
+      "n": 2819
+    },
+    "num_requests_running": {
+      "mean": 0.972,
+      "min": 0.0,
+      "max": 1.0,
+      "n": 2819
+    },
+    "num_requests_waiting": {
+      "mean": 0.001,
+      "min": 0.0,
+      "max": 1.0,
+      "n": 2819
+    },
+    "prefix_cache_hit_rate": 0.99,
+    "requests_succeeded": 44.0
+  },
+  "energy": {
+    "power_level": "GPU-only (nvidia-smi power.draw); declare DCGM/tegrastats in manifest if used",
+    "energy_j": 20266.45,
+    "energy_wh": 5.6296,
+    "j_per_token": 0.0228,
+    "mj_per_mtok": 0.0228,
+    "tokens_per_joule": 43.926,
+    "energy_prefill_j": 369.1,
+    "energy_decode_j": 19897.35,
+    "phase_split_note": "energy attributed by prefill/decode time fraction; approximate when requests overlap"
+  },
+  "accounting": {
+    "tokens": {
+      "input": 875913,
+      "output": 13226,
+      "reasoning": 0,
+      "cache_read": 0
+    },
+    "total_tokens": 889139,
+    "agent_turns": null,
+    "tool_calls": 84,
+    "failed_tool_calls": null,
+    "matched_usage_fields": true,
+    "wall_clock_ms": 705302,
+    "session_files_scanned": [],
+    "command_log_parsed": true,
+    "confidence": "high",
+    "note": "No OpenCode usage fields matched. Confirm session storage path/schema for this OpenCode version and tighten collect-opencode.py, or pass --session-file. Token totals from vLLM Prometheus remain authoritative for inference accounting."
+  }
+}

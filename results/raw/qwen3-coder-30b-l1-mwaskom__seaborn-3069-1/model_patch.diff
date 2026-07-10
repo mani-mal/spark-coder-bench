@@ -1,0 +1,28 @@
+diff --git a/seaborn/_core/plot.py b/seaborn/_core/plot.py
+index 4f0290a..91d2209 100644
+--- a/seaborn/_core/plot.py
++++ b/seaborn/_core/plot.py
+@@ -1644,6 +1644,23 @@ class Plotter:
+                         hi = cast(float, hi) + 0.5
+                     ax.set(**{f"{axis}lim": (lo, hi)})
+ 
++                # Handle Nominal scales (including inferred ones) to match categorical behavior
++                # Check if this axis has a nominal scale
++                scale = self._scales.get(axis_key)
++                from seaborn._core.scales import Nominal
++                if isinstance(scale, Nominal):
++                    # 1. Set margins to 0.5 from first and last tick (as mentioned in issue)
++                    # This mimics categorical behavior by setting margins to 0.5
++                    axis_obj = getattr(ax, f"{axis}axis")
++                    # For y-axis, also invert the axis
++                    if axis == "y":
++                        ax.invert_yaxis()
++                    # Set margins to 0.5 to match categorical behavior
++                    axis_obj.margins(0.5)
++                    
++                    # 2. Hide grid for nominal scales (even when theme would enable it)
++                    ax.grid(False)
++            
+         engine_default = None if p._target is not None else "tight"
+         layout_engine = p._layout_spec.get("engine", engine_default)
+         set_layout_engine(self._figure, layout_engine)

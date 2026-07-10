@@ -1,0 +1,22 @@
+diff --git a/src/flask/blueprints.py b/src/flask/blueprints.py
+index eb50585..6e33b40 100644
+--- a/src/flask/blueprints.py
++++ b/src/flask/blueprints.py
+@@ -192,6 +192,8 @@ class Blueprint(Scaffold):
+ 
+         if "." in name:
+             raise ValueError("'name' may not contain a dot '.' character.")
++        if not name:
++            raise ValueError("'name' must not be empty.")
+ 
+         self.name = name
+         self.url_prefix = url_prefix
+@@ -296,6 +298,8 @@ class Blueprint(Scaffold):
+         """
+         name_prefix = options.get("name_prefix", "")
+         self_name = options.get("name", self.name)
++        if not self_name:
++            raise ValueError("'name' must not be empty.")
+         name = f"{name_prefix}.{self_name}".lstrip(".")
+ 
+         if name in app.blueprints:

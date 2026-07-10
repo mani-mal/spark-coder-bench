@@ -1,0 +1,279 @@
+<mxfile host="app.diagrams.net" agent="diagrams.net" version="24.0.0">
+  <diagram id="benchmark-arch" name="Benchmark Architecture">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1650" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ===================== TITLE ===================== -->
+        <mxCell id="title" value="DGX Spark Local Coding-Model Benchmark — Architecture (3 models × 3 layers, one model served at a time on GB10 / 128 GB unified memory)" style="text;html=1;align=center;verticalAlign=middle;fontSize=17;fontStyle=1;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="40" y="8" width="1570" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== BAND 1: ORCHESTRATION & CONFIG ===================== -->
+        <mxCell id="band1" value="1 · Orchestration &amp; Config" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBFBFB;strokeColor=#9AA0A6;dashed=1;verticalAlign=top;fontStyle=1;fontSize=14;fontColor=#444444;arcSize=3;" vertex="1" parent="1">
+          <mxGeometry x="40" y="48" width="1570" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="drvL23" value="run-benchmark.sh&#10;(L2 / L3 sweep driver)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontColor=#000000;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="70" y="92" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="drvL1" value="run-benchmark-l1.sh&#10;(L1 sweep driver)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontColor=#000000;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="300" y="92" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="registry" value="infra/models.json&#10;model registry&#10;(single source of truth)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8DFF5;strokeColor=#9673A6;fontColor=#000000;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="560" y="92" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="profiles" value="model-profiles/*.env&#10;(vllm + trtllm serving args)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8DFF5;strokeColor=#9673A6;fontColor=#000000;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="810" y="92" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="envsh" value="env.sh · preflight.sh&#10;(shared config, gates)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#999999;fontColor=#000000;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="92" width="200" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== BAND 2: SERVING LAYER ===================== -->
+        <mxCell id="band2" value="2 · Serving Layer  —  OpenAI-compatible API  ·  one large model at a time" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBFBFB;strokeColor=#9AA0A6;dashed=1;verticalAlign=top;fontStyle=1;fontSize=14;fontColor=#444444;arcSize=3;" vertex="1" parent="1">
+          <mxGeometry x="40" y="200" width="1570" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="vllm" value="vLLM   ·   infra/vllm/serve-model.sh&#10;endpoint :8000&#10;sanity gate → run manifest" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;fontColor=#000000;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="330" y="242" width="300" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="trt" value="TensorRT-LLM   ·   infra/trtllm/serve-model-trtllm.sh&#10;endpoint :8355&#10;sanity gate → run manifest" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;fontColor=#000000;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="690" y="242" width="320" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="manifests" value="manifests/&#10;(per-serve provenance)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#999999;fontColor=#000000;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="242" width="180" height="76" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== BAND 3: MODELS ===================== -->
+        <mxCell id="band3" value="3 · Models  (sparse MoE coding models)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBFBFB;strokeColor=#9AA0A6;dashed=1;verticalAlign=top;fontStyle=1;fontSize=14;fontColor=#444444;arcSize=3;" vertex="1" parent="1">
+          <mxGeometry x="40" y="352" width="1570" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="mGptoss" value="gpt-oss-120b&#10;116.8B / 5.1B active&#10;MXFP4 MoE · Apache-2.0&#10;serves on vLLM only" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#000000;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="90" y="396" width="250" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="mQwen" value="qwen3-coder-30b&#10;30.5B / 3.3B active&#10;bf16 MoE · Apache-2.0&#10;serves on vLLM only" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#000000;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="370" y="396" width="250" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="mNemo" value="nemotron-3-super-120b-a12b&#10;~120B / ~12B active&#10;NVFP4 (mixed-precision)&#10;hybrid Mamba/attn + MoE, reasoning&#10;serves on TensorRT-LLM only" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#000000;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="650" y="396" width="290" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="mDeepseek" value="deepseek-coder-v2-lite&#10;15.7B / 2.4B · bf16 MoE&#10;RETIRED — failed agentic&#10;tool-use gate (kept as finding)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F0F0;strokeColor=#B0B0B0;fontColor=#666666;fontSize=11;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="990" y="396" width="250" height="96" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== BAND 4: BENCHMARK LAYERS ===================== -->
+        <mxCell id="band4" value="4 · Benchmark Layers  —  three orthogonal axes of &quot;coding ability&quot;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBFBFB;strokeColor=#9AA0A6;dashed=1;verticalAlign=top;fontStyle=1;fontSize=14;fontColor=#444444;arcSize=3;" vertex="1" parent="1">
+          <mxGeometry x="40" y="536" width="1570" height="356" as="geometry" />
+        </mxCell>
+
+        <!-- L1 sub-box (blue) -->
+        <mxCell id="l1box" value="L1 · SWE-bench Verified  —  agentic repo bug-fix" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;verticalAlign=top;fontStyle=1;fontSize=13;fontColor=#1A3E6E;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="70" y="580" width="490" height="292" as="geometry" />
+        </mxCell>
+        <mxCell id="l1driver" value="layer1_swebench/run-suite.sh · run-task.py&#10;(arm64 subset: 29 tasks)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6C8EBF;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="90" y="618" width="450" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="l1agent" value="OpenCode agent  (multi-turn tool use)&#10;clone repo → edit → produce patch" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6C8EBF;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="90" y="676" width="450" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="l1eval" value="official SWE-bench eval  (Docker, built locally / arm64)&#10;_swebench_arm64_run.py shim" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6C8EBF;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="90" y="734" width="450" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="l1metric" value="metric:  resolved pass@1  +  Wilson CI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6C8EBF;strokeColor=#41668F;fontColor=#FFFFFF;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="794" width="450" height="42" as="geometry" />
+        </mxCell>
+
+        <!-- L2 sub-box (green) -->
+        <mxCell id="l2box" value="L2 · TaskFlow App-Build  —  agentic build from a spec" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;verticalAlign=top;fontStyle=1;fontSize=13;fontColor=#2D5B2D;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="580" y="580" width="490" height="292" as="geometry" />
+        </mxCell>
+        <mxCell id="l2driver" value="layer2_appcase/run-appcase.sh&#10;(node + python tracks)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#82B366;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="600" y="616" width="450" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="l2spec" value="api-contract.md + prompt.md  (frozen spec, baseline-v7)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#82B366;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="600" y="664" width="450" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="l2agent" value="OpenCode agent → builds the TaskFlow app" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#82B366;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="600" y="712" width="450" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="l2rubric" value="rubric_tests/run_rubric.py  (29 acceptance checks, k/29)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#82B366;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="600" y="760" width="450" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="l2metric" value="metric:  acceptance-check fraction  (working app = ≥0.5)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#82B366;strokeColor=#5E8E43;fontColor=#FFFFFF;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="600" y="808" width="450" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- L3 sub-box (orange) -->
+        <mxCell id="l3box" value="L3 · LiveCodeBench  —  single-shot code generation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;verticalAlign=top;fontStyle=1;fontSize=13;fontColor=#8A5A00;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="1090" y="580" width="490" height="292" as="geometry" />
+        </mxCell>
+        <mxCell id="l3driver" value="layer3_livecodebench/run-suite.sh&#10;(window pre2024m06, n=512)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D79B00;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="618" width="450" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="l3runner" value="lcb_runner  (arm64-native, single-shot, streaming)&#10;calls the served endpoint directly" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D79B00;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="676" width="450" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="l3eval" value="eval/score.py  (sandboxed execution, bwrap)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D79B00;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="734" width="450" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="l3metric" value="metric:  pass@1  +  Wilson 95% CI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D79B00;strokeColor=#A97400;fontColor=#FFFFFF;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="794" width="450" height="42" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== BAND 5: METRICS CAPTURE ===================== -->
+        <mxCell id="band5" value="5 · Metrics Capture  (clean-window, per run)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBFBFB;strokeColor=#9AA0A6;dashed=1;verticalAlign=top;fontStyle=1;fontSize=14;fontColor=#444444;arcSize=3;" vertex="1" parent="1">
+          <mxGeometry x="40" y="916" width="1570" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="runctx" value="run-context.sh&#10;(wraps generation in a clean HW window)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontColor=#000000;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="70" y="958" width="250" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="colhw" value="collect-hw.sh&#10;nvidia-smi + /proc/meminfo&#10;(energy, memory)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="350" y="958" width="250" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="colprom" value="collect-vllm-prom.py&#10;Prometheus scrape&#10;(decode tok/s, TTFT — vLLM only)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="630" y="958" width="270" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="colopencode" value="collect-opencode.py&#10;(agent turns / tokens)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="930" y="958" width="230" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="aggpr" value="infra/metrics/aggregate.py&#10;(per-run summary)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1190" y="958" width="230" height="72" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== BAND 6: RESULTS & ANALYSIS ===================== -->
+        <mxCell id="band6" value="6 · Results &amp; Analysis" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBFBFB;strokeColor=#9AA0A6;dashed=1;verticalAlign=top;fontStyle=1;fontSize=14;fontColor=#444444;arcSize=3;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1080" width="1570" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="rawresults" value="results/raw/&lt;run-id&gt;/&#10;(per-run: outputs, scores, metrics, manifest)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;fontColor=#000000;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="70" y="1128" width="250" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="aggruns" value="analysis/aggregate-runs.py&#10;(fold L1/L2/L3 rows)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="380" y="1128" width="240" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="summarycsv" value="results/summary/&#10;benchmark-{long,summary}.csv" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;fontColor=#000000;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="680" y="1128" width="280" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="figures" value="analysis/figures.py&#10;→ reports/charts/*.png" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="1128" width="240" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="stats" value="analysis/stats.py&#10;(Wilson CI · McNemar)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4E2;strokeColor=#B85450;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="380" y="1230" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="robust" value="robust-summary.py · l2-rescore.py · l3-conditional.py&#10;(sensitivity + bias corrections)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4E2;strokeColor=#B85450;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="680" y="1230" width="340" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== EDGES ===================== -->
+        <!-- config → serving -->
+        <mxCell id="e_reg_vllm" value="profile + metadata" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;fontSize=10;fontColor=#333333;strokeColor=#9673A6;strokeWidth=1.5;" edge="1" parent="1" source="registry" target="vllm">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_reg_trt" value="profile + metadata" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;fontSize=10;fontColor=#333333;strokeColor=#9673A6;strokeWidth=1.5;" edge="1" parent="1" source="registry" target="trt">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_prof_serve" value="serving args" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;fontSize=10;fontColor=#333333;strokeColor=#9673A6;strokeWidth=1.5;dashed=1;" edge="1" parent="1" source="profiles" target="trt">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- serving → models (hosts) -->
+        <mxCell id="e_vllm_gpt" value="loads &amp; serves" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;fontSize=10;fontColor=#333333;strokeColor=#D79B00;strokeWidth=1.5;" edge="1" parent="1" source="vllm" target="mGptoss">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_vllm_qwen" value="loads &amp; serves" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;fontSize=10;fontColor=#333333;strokeColor=#D79B00;strokeWidth=1.5;" edge="1" parent="1" source="vllm" target="mQwen">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_trt_nemo" value="loads &amp; serves" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;fontSize=10;fontColor=#333333;strokeColor=#D79B00;strokeWidth=1.5;" edge="1" parent="1" source="trt" target="mNemo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- drivers → layers -->
+        <mxCell id="e_drvl1" value="L1 sweep" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;fontSize=10;fontColor=#333333;strokeColor=#6C8EBF;strokeWidth=1.5;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="drvL1" target="l1box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_drvl2" value="L2 sweep" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;fontSize=10;fontColor=#333333;strokeColor=#82B366;strokeWidth=1.5;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="drvL23" target="l2box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_drvl3" value="L3 sweep" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;fontSize=10;fontColor=#333333;strokeColor=#D79B00;strokeWidth=1.5;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="drvL23" target="l3box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- layers → served endpoint (inference) -->
+        <mxCell id="e_l1_serve" value="agentic calls&#10;OpenAI API :8000 / :8355" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;startArrow=block;endArrow=block;fontSize=10;fontColor=#1A3E6E;strokeColor=#6C8EBF;strokeWidth=2;dashed=1;exitX=0.1;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="l1agent" target="vllm">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_l2_serve" value="agentic calls&#10;:8000" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;startArrow=block;endArrow=block;fontSize=10;fontColor=#2D5B2D;strokeColor=#82B366;strokeWidth=2;dashed=1;" edge="1" parent="1" source="l2agent" target="vllm">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_l3_serve" value="single-shot calls&#10;:8000 (vLLM)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;startArrow=block;endArrow=block;fontSize=10;fontColor=#8A5A00;strokeColor=#D79B00;strokeWidth=2;dashed=1;" edge="1" parent="1" source="l3runner" target="vllm">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_l3_trt" value="L3_BASE_URL :8355&#10;(nemotron / TRT)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;startArrow=block;endArrow=block;fontSize=10;fontColor=#8A5A00;strokeColor=#D79B00;strokeWidth=2;dashed=1;exitX=0.9;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="l3runner" target="trt">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- layers → metrics wrap -->
+        <mxCell id="e_l1_ctx" value="wrapped generation" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;fontSize=10;fontColor=#333333;strokeColor=#D6B656;strokeWidth=1.5;exitX=0.25;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="l1box" target="runctx">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_l2_ctx" value="wrapped generation" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;fontSize=10;fontColor=#333333;strokeColor=#D6B656;strokeWidth=1.5;" edge="1" parent="1" source="l2box" target="runctx">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_l3_ctx" value="wrapped generation" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;fontSize=10;fontColor=#333333;strokeColor=#D6B656;strokeWidth=1.5;" edge="1" parent="1" source="l3box" target="runctx">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- run-context spawns collectors -->
+        <mxCell id="e_ctx_hw" value="spawns" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;fontSize=10;fontColor=#333333;strokeColor=#D6B656;strokeWidth=1.5;" edge="1" parent="1" source="runctx" target="colhw">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_ctx_prom" value="spawns" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;fontSize=10;fontColor=#333333;strokeColor=#D6B656;strokeWidth=1.5;" edge="1" parent="1" source="runctx" target="colprom">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_ctx_oc" value="spawns" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;fontSize=10;fontColor=#333333;strokeColor=#D6B656;strokeWidth=1.5;" edge="1" parent="1" source="runctx" target="colopencode">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- collectors → per-run aggregate → raw results -->
+        <mxCell id="e_hw_agg" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;fontSize=10;fontColor=#333333;strokeColor=#D6B656;strokeWidth=1.5;" edge="1" parent="1" source="colhw" target="aggpr">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_prom_agg" value="metrics" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;fontSize=10;fontColor=#333333;strokeColor=#D6B656;strokeWidth=1.5;" edge="1" parent="1" source="colprom" target="aggpr">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_oc_agg" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;fontSize=10;fontColor=#333333;strokeColor=#D6B656;strokeWidth=1.5;" edge="1" parent="1" source="colopencode" target="aggpr">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_agg_raw" value="write run dir" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;fontSize=10;fontColor=#333333;strokeColor=#B85450;strokeWidth=1.5;" edge="1" parent="1" source="aggpr" target="rawresults">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- layer scores also land in raw -->
+        <mxCell id="e_l1_raw" value="resolved.json / scores" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;fontSize=10;fontColor=#333333;strokeColor=#B85450;strokeWidth=1.5;dashed=1;exitX=0.1;exitY=1;exitDx=0;exitDy=0;entryX=0.15;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="l1metric" target="rawresults">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- analysis chain -->
+        <mxCell id="e_raw_aggruns" value="per-run json" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;fontSize=10;fontColor=#333333;strokeColor=#B85450;strokeWidth=1.5;" edge="1" parent="1" source="rawresults" target="aggruns">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_aggruns_csv" value="aggregate rows" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;fontSize=10;fontColor=#333333;strokeColor=#B85450;strokeWidth=1.5;" edge="1" parent="1" source="aggruns" target="summarycsv">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_csv_fig" value="charts" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;fontSize=10;fontColor=#333333;strokeColor=#B85450;strokeWidth=1.5;" edge="1" parent="1" source="summarycsv" target="figures">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_csv_stats" value="significance" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;fontSize=10;fontColor=#333333;strokeColor=#B85450;strokeWidth=1.5;" edge="1" parent="1" source="summarycsv" target="stats">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_csv_robust" value="corrections" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;fontSize=10;fontColor=#333333;strokeColor=#B85450;strokeWidth=1.5;" edge="1" parent="1" source="summarycsv" target="robust">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- legend -->
+        <mxCell id="legend" value="Legend&#10;━━  solid = build / data flow      ┄┄  dashed = inference API (bidirectional)&#10;Bands: 1 Orchestration · 2 Serving · 3 Models · 4 Layers (L1 blue / L2 green / L3 orange) · 5 Metrics · 6 Results" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontColor=#555555;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="1236" width="500" height="54" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

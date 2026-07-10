@@ -1,0 +1,61 @@
+# Python tooling
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Local env & secrets
+.env
+.env.local
+sec.txt
+
+# Logs & OS cruft
+*.log
+.DS_Store
+
+# Note: results/ and reports/ ARE tracked — but only the SUMMARIES, not the bulky
+# raw per-task time series (multi-MB each × hundreds of runs). Summaries
+# (run-summary.json, window.json, *-accounting.json, clock-sync.json) + manifests
+# + results/summary/ are committed for reproducibility; raw dumps are regenerable.
+# Bulky per-run metric artifacts — never committed anywhere (raw runs, archives, etc). Global
+# patterns so an archived/moved run dir doesn't smuggle a 60 MB vllm-metrics.csv into a commit.
+**/vllm-metrics.csv
+**/hw.csv
+**/hw-dcgm.txt
+**/hw-tegrastats.txt
+**/gpu-static.txt
+**/*.pid
+.run-benchmark.lock
+
+# Archived old-rubric run data: kept locally for provenance only (639MB of raw
+# time series under the buggy pre-29-check rubric). Regenerable; not committed.
+results/_archive_old_rubric_20260625/
+
+# Layer-1 dataset cache (user-writable; HF model cache stays root-owned)
+.hf-cache/
+
+# SWE-bench probe scratch (regenerable)
+gold.*.json
+layer1_swebench/_gold_preds.jsonl
+logs/build_images/
+logs/run_evaluation/
+.run-benchmark-l1.lock
+
+# launch stdout scratch
+logs/*launch*.out
+logs/l1-sweep-launch.out
+
+# Layer-3 LiveCodeBench: pinned third-party clone + dedicated CPU venv + generated
+# output/cache. Regenerable via layer3_livecodebench/setup-lcb.sh. The reproducible
+# bits (lm_styles.patch, scripts, coverage) ARE tracked under layer3_livecodebench/.
+.lcb/
+
+# Stray SWE-bench per-task eval reports written to CWD by the official CLI (the report
+# filename omits the instance id). The canonical copies live under results/raw/<run-id>/.
+/*.l1-*.json
+
+# AI assistant / agent workflow artifacts (never publish)
+.claude/
+CLAUDE.md
+.cursor/
+.aider*

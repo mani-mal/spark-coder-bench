@@ -1,0 +1,7 @@
+{
+  "instance_id": "pytest-dev__pytest-10081",
+  "model": "qwen3-coder-30b",
+  "repeat": "1",
+  "resolved": 1,
+  "eval_run_id": "l1-qwen3-coder-30b-1"
+}

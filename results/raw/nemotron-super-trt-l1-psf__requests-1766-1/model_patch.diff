@@ -1,0 +1,45 @@
+diff --git a/requests/auth.py b/requests/auth.py
+index a3de123..9cce3f0 100644
+--- a/requests/auth.py
++++ b/requests/auth.py
+@@ -124,13 +124,23 @@ class HTTPDigestAuth(AuthBase):
+         if _algorithm == 'MD5-SESS':
+             HA1 = hash_utf8('%s:%s:%s' % (HA1, nonce, cnonce))
+ 
+-        if qop is None:
+-            respdig = KD(HA1, "%s:%s" % (nonce, HA2))
+-        elif qop == 'auth' or 'auth' in qop.split(','):
+-            respdig = KD(HA1, noncebit)
++        chosen_qop = None
++        if qop is not None:
++            # Parse the qop options from the server (comma-separated list)
++            qop_options = [option.strip() for option in qop.split(',')]
++            # For now, we only support 'auth'
++            if 'auth' in qop_options:
++                chosen_qop = 'auth'
++                respdig = KD(HA1, noncebit)
++            # TODO: Add support for 'auth-int' if needed
++            # elif 'auth-int' in qop_options:
++            #     chosen_qop = 'auth-int'
++            #     respdig = KD(HA1, noncebit)
++            else:
++                # We don't support any of the offered qop options
++                return None
+         else:
+-            # XXX handle auth-int.
+-            return None
++            respdig = KD(HA1, "%s:%s" % (nonce, HA2))
+ 
+         self.last_nonce = nonce
+ 
+@@ -143,8 +153,8 @@ class HTTPDigestAuth(AuthBase):
+             base += ', algorithm="%s"' % algorithm
+         if entdig:
+             base += ', digest="%s"' % entdig
+-        if qop:
+-            base += ', qop=auth, nc=%s, cnonce="%s"' % (ncvalue, cnonce)
++        if chosen_qop:
++            base += ', qop="%s", nc=%s, cnonce="%s"' % (chosen_qop, ncvalue, cnonce)
+ 
+         return 'Digest %s' % (base)
+ 

@@ -1,0 +1,10 @@
+model,runtime,layer,success_or_quality,n,decode_tok_s,tokens_per_joule,j_per_gen_token,peak_mem_mib,active_params_b,sparsity
+gpt-oss-120b,vllm,l1,0.3793,29,26.9076,72.039,1.5059,111975.1966,5.1,0.0437
+gpt-oss-120b,vllm,l2,0.5369,28,30.8019,54.5543,1.2012,110070.7519,5.1,0.0437
+gpt-oss-120b,vllm,l3,0.8926,1,,,,,,
+nemotron-super,tensorrt-llm,l1,0.2069,29,,,,107664.6143,,
+nemotron-super,tensorrt-llm,l2,0.0043,8,,,,107371.7625,,
+nemotron-super,tensorrt-llm,l3,0.6133,1,,,,117476.5,,
+qwen3-coder-30b,vllm,l1,0.2414,29,19.749,69.5692,1.8905,109864.9552,3.3,0.1082
+qwen3-coder-30b,vllm,l2,0.1281,28,23.0021,57.1914,1.2847,109623.975,3.3,0.1082
+qwen3-coder-30b,vllm,l3,0.6816,1,24.2,1.221,1.086,117761.7,,

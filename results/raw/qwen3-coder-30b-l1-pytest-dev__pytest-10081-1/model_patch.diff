@@ -1,0 +1,77 @@
+diff --git a/src/_pytest/unittest.py b/src/_pytest/unittest.py
+index 851e494..c1f3dce 100644
+--- a/src/_pytest/unittest.py
++++ b/src/_pytest/unittest.py
+@@ -316,7 +316,11 @@ class TestCaseFunction(Function):
+             # Arguably we could always postpone tearDown(), but this changes the moment where the
+             # TestCase instance interacts with the results object, so better to only do it
+             # when absolutely needed.
+-            if self.config.getoption("usepdb") and not _is_skipped(self.obj):
++            # Check if either the test method or the class is skipped.
++            class_skipped = False
++            if self.parent is not None:
++                class_skipped = _is_skipped(self.parent.obj)
++            if self.config.getoption("usepdb") and not (_is_skipped(self.obj) or class_skipped):
+                 self._explicit_tearDown = self._testcase.tearDown
+                 setattr(self._testcase, "tearDown", lambda *args: None)
+ 
+diff --git a/test_comprehensive.py b/test_comprehensive.py
+new file mode 100644
+index 0000000..0a0470c
+--- /dev/null
++++ b/test_comprehensive.py
+@@ -0,0 +1,19 @@
++import unittest
++
++# Test case with class-level skip
++@unittest.skip("class skipped")
++class SkippedTestCase(unittest.TestCase):
++    def setUp(self):
++        print("setUp called for skipped test")
++    def test_one(self):
++        pass
++    def tearDown(self):
++        print("tearDown called for skipped test")
++
++# Test case with method-level skip (should still work)
++class RegularTestCase(unittest.TestCase):
++    @unittest.skip("method skipped")
++    def test_two(self):
++        pass
++    def tearDown(self):
++        print("tearDown called for regular test")
+\ No newline at end of file
+diff --git a/test_fix_verification.py b/test_fix_verification.py
+new file mode 100644
+index 0000000..c8f8196
+--- /dev/null
++++ b/test_fix_verification.py
+@@ -0,0 +1,10 @@
++import unittest
++
++@unittest.skip("hello")
++class MyTestCase(unittest.TestCase):
++    def setUp(self):
++        print("setUp called")
++    def test_one(self):
++        pass
++    def tearDown(self):
++        print("tearDown called")
+\ No newline at end of file
+diff --git a/test_repro_skip_class.py b/test_repro_skip_class.py
+new file mode 100644
+index 0000000..632c72c
+--- /dev/null
++++ b/test_repro_skip_class.py
+@@ -0,0 +1,10 @@
++import unittest
++
++@unittest.skip("hello")
++class MyTestCase(unittest.TestCase):
++    def setUp(self):
++        xxx
++    def test_one(self):
++        pass
++    def tearDown(self):
++        xxx
+\ No newline at end of file

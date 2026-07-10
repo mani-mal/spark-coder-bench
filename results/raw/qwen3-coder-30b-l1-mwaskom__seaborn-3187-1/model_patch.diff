@@ -1,0 +1,40 @@
+diff --git a/seaborn/_core/scales.py b/seaborn/_core/scales.py
+index 55874bf..d4ef45e 100644
+--- a/seaborn/_core/scales.py
++++ b/seaborn/_core/scales.py
+@@ -379,6 +379,35 @@ class ContinuousBase(Scale):
+             locs = axis.major.locator()
+             locs = locs[(vmin <= locs) & (locs <= vmax)]
+             labels = axis.major.formatter.format_ticks(locs)
++            # Handle offset in ScalarFormatter for large numbers
++            # When using ScalarFormatter with offset, the labels are shown 
++            # as offset values, but the legend should show actual values
++            if (hasattr(axis.major.formatter, 'get_useOffset') and 
++                axis.major.formatter.get_useOffset()):
++                try:
++                    offset = axis.major.formatter.get_offset()
++                    if offset != 0 and isinstance(offset, (int, float)):
++                        # Adjust labels to show actual values instead of offset values
++                        adjusted_labels = []
++                        for label in labels:
++                            # Only adjust numeric labels
++                            if isinstance(label, str) and label.replace('.', '').replace('-', '').isdigit():
++                                # Convert to float and apply the offset correction
++                                numeric_value = float(label)
++                                corrected_value = numeric_value + offset
++                                # Format the corrected value appropriately
++                                if abs(corrected_value) >= 1e6 or abs(corrected_value) < 1e-3:
++                                    # Scientific notation for large/small values
++                                    adjusted_labels.append(f"{corrected_value:.2e}")
++                                else:
++                                    # Regular float formatting  
++                                    adjusted_labels.append(f"{corrected_value:g}")
++                            else:
++                                adjusted_labels.append(label)
++                        labels = adjusted_labels
++                except Exception:
++                    # If offset adjustment fails, fall back to original labels
++                    pass
+             new._legend = list(locs), list(labels)
+ 
+         return new

@@ -1,0 +1,10 @@
+model,layer,tokens_per_joule,quality
+gpt-oss-120b,l1,72.039,0.3793
+gpt-oss-120b,l2,54.5543,0.5369
+gpt-oss-120b,l3,,0.8926
+nemotron-super,l1,,0.2069
+nemotron-super,l2,,0.0043
+nemotron-super,l3,,0.6133
+qwen3-coder-30b,l1,69.5692,0.2414
+qwen3-coder-30b,l2,57.1914,0.1281
+qwen3-coder-30b,l3,1.221,0.6816

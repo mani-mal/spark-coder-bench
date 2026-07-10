@@ -1,0 +1,196 @@
+{
+  "track": "node",
+  "base_url": "http://127.0.0.1:4000",
+  "backend_booted": false,
+  "pass_rate": 0.0345,
+  "passed": 1,
+  "total": 29,
+  "checks": [
+    {
+      "name": "health_ok",
+      "group": "boot",
+      "passed": false,
+      "detail": "HTTPConnectionPool(host='127.0.0.1', port=4000): Max retries exceeded with url: /api/health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0xff4e0193ed50>: Failed to establish a new connection: [Errno 111] Connection refused'))"
+    },
+    {
+      "name": "login_admin_ok",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "user_no_password_field",
+      "group": "security",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "login_bad_creds_401",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "me_without_token_401",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "me_with_token_200",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "login_member_ok",
+      "group": "auth",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "member_create_project_403",
+      "group": "rbac",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "admin_create_project",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_list_contains",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_get_by_id",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_edit",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "project_archive",
+      "group": "projects",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "validation_project_no_name_400",
+      "group": "validation",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_create",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_list",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_get",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_update_status",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_filter_status",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_search",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "comment_add",
+      "group": "comments",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "comment_list",
+      "group": "comments",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "task_delete",
+      "group": "tasks",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "validation_task_no_title_400",
+      "group": "validation",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "validation_task_bad_priority_400",
+      "group": "validation",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "dashboard_summary_keys",
+      "group": "dashboard",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "protected_route_no_token_401",
+      "group": "security",
+      "passed": false,
+      "detail": "not reached"
+    },
+    {
+      "name": "frontend_build",
+      "group": "frontend",
+      "passed": false,
+      "detail": "1"
+    },
+    {
+      "name": "lockfile_present",
+      "group": "reproducibility",
+      "passed": true,
+      "detail": "2/2 npm dir(s) committed a package-lock.json (checked pre-install)"
+    }
+  ],
+  "build": {
+    "ok": false,
+    "returncode": 1,
+    "stdout_tail": "kages are looking for funding\n  run `npm fund` for details\n\n5 vulnerabilities (2 moderate, 1 high, 2 critical)\n\nTo address all issues (including breaking changes), run:\n  npm audit fix --force\n\nRun `npm audit` for details.\n\n> frontend@0.0.0 build\n> tsc -b && vite build\n\nsrc/App.test.tsx(2,18): error TS6133: 'screen' is declared but its value is never read.\nsrc/App.test.tsx(2,32): error TS2307: Cannot find module '@testing-library/react' or its corresponding type declarations.\nsrc/App.tsx(2,1): error TS6133: 'React' is declared but its value is never read.\nsrc/components/Login.tsx(5,1): error TS6133: 'apiClient' is declared but its value is never read.\nsrc/components/Login.tsx(32,13): error TS6133: 'response' is declared but its value is never read.\nsrc/lib/api/client.ts(2,19): error TS2307: Cannot find module 'axios' or its corresponding type declarations.\nsrc/lib/api/client.ts(14,37): error TS7006: Parameter 'config' implicitly has an 'any' type.\nsrc/lib/api/client.ts(24,4): error TS7006: Parameter 'response' implicitly has an 'any' type.\nsrc/lib/api/client.ts(25,4): error TS7006: Parameter 'error' implicitly has an 'any' type.\nsrc/test-setup.ts(2,8): error TS2882: Cannot find module or type declarations for side-effect import of '@testing-library/jest-dom'.\nvite.config.ts(8,3): error TS2769: No overload matches this call.\n  The last overload gave the following error.\n    Object literal may only specify known properties, and 'test' does not exist in type 'UserConfigExport'.\n",
+    "stderr_tail": "d/linux-ppc64@0.21.5 from lock file\nnpm error Missing: @esbuild/linux-riscv64@0.21.5 from lock file\nnpm error Missing: @esbuild/linux-s390x@0.21.5 from lock file\nnpm error Missing: @esbuild/linux-x64@0.21.5 from lock file\nnpm error Missing: @esbuild/netbsd-x64@0.21.5 from lock file\nnpm error Missing: @esbuild/openbsd-x64@0.21.5 from lock file\nnpm error Missing: @esbuild/sunos-x64@0.21.5 from lock file\nnpm error Missing: @esbuild/win32-arm64@0.21.5 from lock file\nnpm error Missing: @esbuild/win32-ia32@0.21.5 from lock file\nnpm error Missing: @esbuild/win32-x64@0.21.5 from lock file\nnpm error\nnpm error Clean install a project\nnpm error\nnpm error Usage:\nnpm error npm ci\nnpm error\nnpm error Options:\nnpm error [--install-strategy <hoisted|nested|shallow|linked>] [--legacy-bundling]\nnpm error [--global-style] [--omit <dev|optional|peer> [--omit <dev|optional|peer> ...]]\nnpm error [--include <prod|dev|optional|peer> [--include <prod|dev|optional|peer> ...]]\nnpm error [--strict-peer-deps] [--foreground-scripts] [--ignore-scripts] [--no-audit]\nnpm error [--no-bin-links] [--no-fund] [--dry-run]\nnpm error [-w|--workspace <workspace-name> [-w|--workspace <workspace-name> ...]]\nnpm error [-ws|--workspaces] [--include-workspace-root] [--install-links]\nnpm error\nnpm error aliases: clean-install, ic, install-clean, isntall-clean\nnpm error\nnpm error Run \"npm help ci\" for more info\nnpm error A complete log of this run can be found in: /home/mani/.npm/_logs/2026-06-26T11_27_53_146Z-debug-0.log\n"
+  },
+  "tests": {
+    "ok": false,
+    "returncode": 1,
+    "stdout_tail": "\n> taskflow-local-backend@1.0.0 test\n> jest --coverage\n\n-------------|---------|----------|---------|---------|-------------------\nFile         | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s \n-------------|---------|----------|---------|---------|-------------------\nAll files    |       0 |        0 |       0 |       0 |                   \n database.ts |       0 |        0 |       0 |       0 | 7-88              \n-------------|---------|----------|---------|---------|-------------------\n",
+    "stderr_tail": "e/lib/transformation/index.js:22:50)\n    at run.next (<anonymous>)\n    at transform (/home/mani/projects/taskflow-local-app-benchmark/apps/node-track/backend/node_modules/@babel/core/lib/transform.js:22:33)\n    at transform.next (<anonymous>)\n    at step (/home/mani/projects/taskflow-local-app-benchmark/apps/node-track/backend/node_modules/gensync/index.js:261:32)\n    at /home/mani/projects/taskflow-local-app-benchmark/apps/node-track/backend/node_modules/gensync/index.js:273:13\n    at async.call.result.err.err (/home/mani/projects/taskflow-local-app-benchmark/apps/node-track/backend/node_modules/gensync/index.js:223:11)\n    at /home/mani/projects/taskflow-local-app-benchmark/apps/node-track/backend/node_modules/gensync/index.js:189:28\n    at /home/mani/projects/taskflow-local-app-benchmark/apps/node-track/backend/node_modules/@babel/core/lib/gensync-utils/async.js:67:7\n    at /home/mani/projects/taskflow-local-app-benchmark/apps/node-track/backend/node_modules/gensync/index.js:113:33\n    at step (/home/mani/projects/taskflow-local-app-benchmark/apps/node-track/backend/node_modules/gensync/index.js:287:14)\n    at /home/mani/projects/taskflow-local-app-benchmark/apps/node-track/backend/node_modules/gensync/index.js:273:13\n    at async.call.result.err.err (/home/mani/projects/taskflow-local-app-benchmark/apps/node-track/backend/node_modules/gensync/index.js:223:11)\nTest Suites: 2 failed, 2 total\nTests:       0 total\nSnapshots:   0 total\nTime:        0.53 s\nRan all test suites.\n"
+  }
+}

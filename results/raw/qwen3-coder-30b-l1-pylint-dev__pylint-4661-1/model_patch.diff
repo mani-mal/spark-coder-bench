@@ -1,0 +1,91 @@
+diff --git a/doc/faq.rst b/doc/faq.rst
+index c817855..18182c5 100644
+--- a/doc/faq.rst
++++ b/doc/faq.rst
+@@ -93,10 +93,10 @@ localized using the following rules:
+ 
+ * value of the PYLINTHOME environment variable if set
+ 
+-* ".pylint.d" subdirectory of the user's home directory if it is found
++* "$HOME/.local/share/pylint" subdirectory of the user's home directory if it is found (XDG Base Directory Specification compliant)
+ 	(not always findable on Windows platforms)
+ 
+-* ".pylint.d" directory in the current directory
++* "$HOME/.local/share/pylint" directory in the current directory (XDG Base Directory Specification compliant)
+ 
+ 3.3 How do I find the option name (for pylintrc) corresponding to a specific command line option?
+ --------------------------------------------------------------------------------------------------------
+diff --git a/pylint/config/__init__.py b/pylint/config/__init__.py
+index 84774d0..5a3e454 100644
+--- a/pylint/config/__init__.py
++++ b/pylint/config/__init__.py
+@@ -55,15 +55,22 @@ __all__ = [
+     "UnsupportedAction",
+ ]
+ 
+-USER_HOME = os.path.expanduser("~")
+-if "PYLINTHOME" in os.environ:
+-    PYLINT_HOME = os.environ["PYLINTHOME"]
+-    if USER_HOME == "~":
+-        USER_HOME = os.path.dirname(PYLINT_HOME)
+-elif USER_HOME == "~":
+-    PYLINT_HOME = ".pylint.d"
+-else:
+-    PYLINT_HOME = os.path.join(USER_HOME, ".pylint.d")
++# Handle XDG Base Directory Specification compliance
++try:
++    import xdg.BaseDirectory
++    # Use XDG data directory for pylint data
++    PYLINT_HOME = xdg.BaseDirectory.save_data_path("pylint")
++except ImportError:
++    # Fallback to original behavior if xdg module is not available
++    USER_HOME = os.path.expanduser("~")
++    if "PYLINTHOME" in os.environ:
++        PYLINT_HOME = os.environ["PYLINTHOME"]
++        if USER_HOME == "~":
++            USER_HOME = os.path.dirname(PYLINT_HOME)
++    elif USER_HOME == "~":
++        PYLINT_HOME = ".pylint.d"
++    else:
++        PYLINT_HOME = os.path.join(USER_HOME, ".pylint.d")
+ 
+ 
+ def _get_pdata_path(base_name, recurs):
+@@ -110,11 +117,11 @@ ENV_HELP = (
+ The following environment variables are used:
+     * PYLINTHOME
+     Path to the directory where persistent data for the run will be stored. If
+-not found, it defaults to ~/.pylint.d/ or .pylint.d (in the current working
+-directory).
++    not found, it defaults to $HOME/.local/share/pylint/ (XDG Base Directory
++    Specification compliant) or .pylint.d (in the current working directory).
+     * PYLINTRC
+     Path to the configuration file. See the documentation for the method used
+-to search for configuration file.
++    to search for configuration file.
+ """
+     % globals()  # type: ignore
+ )
+diff --git a/tests/lint/unittest_lint.py b/tests/lint/unittest_lint.py
+index 004c292..2aafd5c 100644
+--- a/tests/lint/unittest_lint.py
++++ b/tests/lint/unittest_lint.py
+@@ -628,10 +628,14 @@ def pop_pylintrc():
+ @pytest.mark.usefixtures("pop_pylintrc")
+ def test_pylint_home():
+     uhome = os.path.expanduser("~")
+-    if uhome == "~":
+-        expected = ".pylint.d"
+-    else:
+-        expected = os.path.join(uhome, ".pylint.d")
++    try:
++        import xdg.BaseDirectory
++        expected = xdg.BaseDirectory.save_data_path("pylint")
++    except ImportError:
++        if uhome == "~":
++            expected = ".pylint.d"
++        else:
++            expected = os.path.join(uhome, ".pylint.d")
+     assert config.PYLINT_HOME == expected
+ 
+     try:

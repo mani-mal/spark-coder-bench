@@ -1,0 +1,26 @@
+# extra_llm_api_options — qwen3-coder-30b (bf16 MoE) on DGX Spark (playbook standard shape).
+# free_gpu_memory_fraction is a kv_cache_config key, enable_padding a cuda_graph_config key
+# (TRT-LLM 1.2.1 rejects them as top-level LLM args).
+disable_overlap_scheduler: true
+kv_cache_config:
+  free_gpu_memory_fraction: 0.8
+# CUDA graphs DISABLED for the VANILLA MoE path: the unfused reference MoE
+# (fused_moe_vanilla.py:547) performs a host-syncing op (dynamic expert routing) that is
+# illegal inside a CUDA-graph capture region -> "operation not permitted when stream is
+# capturing" -> cudaErrorStreamCaptureInvalidated at executor init. Running eager avoids it.
+cuda_graph_config: null
+# MoE backend pin for qwen bf16 MoE on GB10 (sm_121a consumer Blackwell), TRT-LLM 1.3.0rc9.
+# Both fused paths are broken on this SM target:
+#   - AUTO/CUTLASS -> selects the SM80 (Ampere) fused_moe kernel -> Blackwell shared-memory
+#     assert ("GPU lacks the shared memory resources to run fused_moe kernel",
+#     fused_moe_gemm_launcher_sm80.inl:79); every autotuner tactic fails -> executor deadlock
+#     (server ready, GPU idle, requests never reach the executor).
+#   - TRITON -> matmul_ogs kernel emits PTX using '.tile::gather4 with .shared::cluster', a
+#     datacenter-Blackwell/Hopper feature NOT supported on sm_121a -> ptxas fatal at autotuner
+#     warmup -> "Executor worker returned error" at startup.
+# VANILLA is the unfused reference PyTorch MoE (no custom kernels) -> compiles on any SM. Slow,
+# but acceptable for the runtime bridge cells (we only need correctness + runtime metrics, not
+# peak throughput). nemotron works on CUTLASS because its MoE is NVFP4 (Blackwell FP4 path), a
+# different kernel from the bf16 fused path that breaks here.
+moe_config:
+  backend: VANILLA

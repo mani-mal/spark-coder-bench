@@ -1,0 +1,30 @@
+# extra_llm_api_options for Nemotron-3-Super-120B-A12B-NVFP4 on a single DGX Spark.
+# Verbatim from NVIDIA's official Spark deployment guide:
+# https://github.com/NVIDIA-NeMo/nemotron/tree/main/usage-cookbook/Nemotron-3-Super/SparkDeploymentGuide
+# Validated against container nvcr.io/nvidia/tensorrt-llm/release:1.3.0rc9 (NOT 1.2.1, whose
+# nemotron_h loader fell back to "regular model init" and double-allocated to ~115GB, OOM-ing
+# the host — see docs/findings/2026-06-27-nemotron-trtllm-memory.md).
+#
+# Memory strategy for the 128GB unified pool: FP8 KV cache + float16 SSM cache with stochastic
+# rounding maximizes context length; chunked prefill + max_num_tokens=8192 (serve flag) cap the
+# prefill activation peak that previously blew past the memory ceiling.
+kv_cache_config:
+  dtype: fp8
+  enable_block_reuse: false
+  free_gpu_memory_fraction: 0.9
+  mamba_ssm_cache_dtype: float16
+  mamba_ssm_stochastic_rounding: true
+  mamba_ssm_philox_rounds: 5
+moe_config:
+  backend: CUTLASS
+cuda_graph_config:
+  enable_padding: true
+  max_batch_size: 8
+enable_attention_dp: false
+enable_chunked_prefill: true
+stream_interval: 1
+print_iter_log: true
+speculative_config:
+  decoding_type: MTP
+  num_nextn_predict_layers: 3
+  allow_advanced_sampling: true
