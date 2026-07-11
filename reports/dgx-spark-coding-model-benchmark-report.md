@@ -129,6 +129,26 @@ for a *model* comparison. Pairwise McNemar on the shared 29 tasks finds no signi
 (p = 0.125 / 0.289 / 1.0) — appropriate for the methodology framing, fatal for a ranking framing.
 *Stats regen:* `python3 analysis/stats.py --long results/summary/benchmark-long.csv`.
 
+**Regression rate — resolved is not the only axis.** Beyond *did it fix the bug* (`FAIL_TO_PASS`),
+SWE-bench records *did it break anything already passing* (`PASS_TO_PASS`). Of the patches that
+applied and were evaluated, gpt-oss regresses ≥1 previously-passing test **33.3%** of the time
+(8/24), qwen 31.8% (7/22), nemotron 21.4% (3/14) — and the severity diverges far more than the rate:
+gpt-oss broke **1078** `PASS_TO_PASS` tests to nemotron's **3**. The pattern (Figure 4) is a genuine
+trade-off: gpt-oss's aggressive edits **resolve the most *and* regress the most** (a few catastrophic
+patches — e.g. breaking an import so a whole module's suite fails), while nemotron's fewer, smaller
+edits rarely regress but rarely resolve. By construction a `resolved` run cannot regress, so this
+characterises *failure quality* among the losers, not the winners; denominators (24/22/14) and the
+29-task subset make it directional.
+
+![Resolve rate vs regression rate for the three models, as a fraction of applied L1 patches. gpt-oss
+has both the highest resolve rate and the highest regression rate; nemotron the lowest
+regression rate.](charts/fig_regression_rate.png)
+
+*Figure 4. L1 collateral damage: of applied patches, gpt-oss resolves most (0.46) and regresses most
+(0.33); nemotron resolves 0.43 but regresses least (0.21). Source:
+`results/summary/regression-rate.csv` · Regen: `python3 analysis/regression-rate.py && python3
+analysis/figures_perf.py`.*
+
 ### 5.2 Layer 2 — App-build acceptance-check fraction (contract-visible; corrected for C1)
 
 The **first L2 sweep was produced under a harness bug (finding C1):** the frozen API contract the
@@ -238,6 +258,39 @@ capability ranking.
   disclosed). Efficiency figures in `reports/charts/` inherit these gaps and should be read with
   the caveats above.
 
+### 6.1 Performance & resource figures
+
+The three figures below make the efficiency reality concrete; each embeds its own caveats (median
+not mean; blanks where a metric is structurally absent). Full per-model × per-layer tables — GPU
+util/power, peak unified memory, KV-cache %, throughput, energy, p95 tail — are in
+`docs/findings/2026-07-11-cross-model-performance-resource-usage.md`.
+
+![Median wall-clock per task for the three models at L1 and L2. nemotron is slowest at both layers;
+L3 is excluded because its duration is a whole-run figure, not per task.](charts/fig_walltime_by_layer.png)
+
+*Figure 5. Wall-clock per task (median), agentic layers. nemotron is ~2× slower than the vLLM models
+at L1 (3.9 vs 1.4–1.9 min) and slowest at L2 (16.1 min); its L1 mean is far worse but skewed by one
+~13 h runaway, so the median is shown. Source: `results/summary/perf-resource-summary.csv` · Regen:
+`python3 analysis/figures_perf.py`.*
+
+![Energy in kilojoules per successful task, model × L1/L2. nemotron dominates L1 cost per solve;
+qwen dominates L2; nemotron L2 is blank (zero successes).](charts/fig_energy_per_success.png)
+
+*Figure 6. Quality-adjusted efficiency — the taxonomy's recommended final metric. Energy per
+**successful** task (self-hosted → energy is the cost proxy). At L1, nemotron costs **143 kJ**/solve
+vs gpt-oss **12.8 kJ** (~11×); at L2, qwen costs **211 kJ**/working-app vs gpt-oss **32.8 kJ**.
+Runtime-confounded (nemotron on TRT). Source: `results/summary/quality-adjusted-efficiency.csv` ·
+Regen: `python3 analysis/quality-adjusted-efficiency.py && python3 analysis/figures_perf.py`.*
+
+![TTFT p50 versus p95 for the vLLM models across layers. p95 is several times p50 at the agentic
+layers but stays under 5 s.](charts/fig_latency_tail.png)
+
+*Figure 7. TTFT tail (p50 vs p95, median across runs). First-token latency stays sub-5 s even at p95;
+the long end-to-end tails (up to ~240 s at L3, in the table) are long generations, not first-token
+stalls. vLLM only — nemotron (TRT) exposes no histograms. Source:
+`results/summary/latency-tail-p95.csv` · Regen: `python3 analysis/latency-tail-p95.py && python3
+analysis/figures_perf.py`.*
+
 ## 7. Operational findings (hard-won)
 
 - **TRT-LLM 1.3.0rc9 on GB10 is fragile for non-NVIDIA MoE** (qwen/gpt-oss deadlock); only the
@@ -311,6 +364,7 @@ byte-reproducible rescoring** far more than it requires another leaderboard numb
 | Inferential statistics | `results/summary/stats-report.txt` | `python3 analysis/stats.py --long results/summary/benchmark-long.csv` |
 | Efficiency figures (supplement) | `reports/charts/fig_{throughput,ttft,energy_per_task,…}.png` | `python3 analysis/figures.py` |
 | Quality/thesis figures (Figs 1–3) | `reports/charts/fig_{quality_by_layer,l2_contract_ablation,l3_truncation}.png` | `python3 analysis/figures_quality.py` |
+| Perf/resource figures (Figs 4–7) | `reports/charts/fig_{regression_rate,walltime_by_layer,energy_per_success,latency_tail}.png` | `python3 analysis/figures_perf.py` |
 | L1/L2/L3 per-run ledgers | `results/summary/l{1,2,3}-run-ledger.csv` | `python3 analysis/robust-summary.py` |
 | L2 C1 rescore (k/29 + k/25) | `results/summary/l2-rescore-25.csv`, `l2-ablation-contract.csv` | `python3 analysis/l2-rescore.py` |
 | L3 conditional / selection-bias | `results/summary/l3-conditional-analysis.csv` | `python3 analysis/l3-conditional.py` |

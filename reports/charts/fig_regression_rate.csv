@@ -1,0 +1,4 @@
+model,applied,resolved,resolve_rate_of_applied,regression_rate_of_applied,pass_to_pass_tests_broken
+gpt-oss-120b,24,11,0.458,0.333,1078
+qwen3-coder-30b,22,7,0.318,0.318,95
+nemotron-super,14,6,0.429,0.214,3

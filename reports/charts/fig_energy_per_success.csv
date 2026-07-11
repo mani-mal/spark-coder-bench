@@ -1,0 +1,7 @@
+layer,model,energy_kJ_per_success,succeeded,attempted
+L1,gpt-oss-120b,12.8,11,29
+L1,qwen3-coder-30b,15.4,7,29
+L1,nemotron-super,143.0,6,29
+L2,gpt-oss-120b,32.8,16,28
+L2,qwen3-coder-30b,211.4,3,28
+L2,nemotron-super,,0,8
