@@ -1,0 +1,365 @@
+LLM evaluation has two separate parts:
+
+Model quality: Does the model produce correct, useful answers?
+System performance: How efficiently does the hardware serve the model?
+
+A model can be accurate but slow and expensive, or fast but unreliable. A complete benchmark should measure both.
+
+1. Core latency metrics
+Metric	What it measures	Why it matters
+Time to First Token, TTFT	Time from request submission until the first output token appears	Main measure of perceived responsiveness
+Queue time	Time waiting before inference starts	Shows whether the server is overloaded
+Prefill latency	Time required to process the input prompt	Important for long prompts and RAG workloads
+Prefill throughput	Input tokens processed per second	Measures prompt-processing performance
+Time per Output Token, TPOT	Average time required to generate each output token after the first	Measures generation speed
+Inter-Token Latency, ITL	Delay between individual output tokens	Indicates whether streaming feels smooth
+Decode throughput	Output tokens generated per second	Usually what people mean by “tokens per second”
+End-to-end latency	Total time from request submission to final response	Best overall user-experience metric
+p50 latency	Median latency	Normal user experience
+p95 latency	Latency experienced by the slowest 5% of requests	Important for production sizing
+p99 latency	Latency experienced by the slowest 1%	Exposes queuing, memory, and scheduling problems
+Important distinction
+
+Prefill and decode behave differently:
+
+Prefill processes many prompt tokens in parallel and is often more compute-intensive.
+Decode generates tokens sequentially and is often limited by memory bandwidth rather than raw GPU compute.
+
+Therefore, a GPU with very high TFLOPS may not automatically provide proportionally faster token generation.
+
+2. Throughput and capacity metrics
+Metric	What it measures
+Output tokens/second per request	Generation speed experienced by one user
+Aggregate output tokens/second	Total generation speed across all users
+Input tokens/second	Total prompt-processing throughput
+Total tokens/second	Input plus output token throughput
+Requests/second	Number of completed requests per second
+Concurrent requests	Number of active requests the server can handle
+Maximum sustainable concurrency	Highest concurrency before latency or error rates exceed acceptable limits
+Batch size	Number of sequences processed together
+Batching efficiency	Throughput improvement obtained by increasing batch size
+Goodput	Requests completed while meeting the latency target
+Tokens per GPU-second	Total useful tokens generated relative to GPU time
+Successful tasks/hour	Number of correctly completed tasks, not merely generated responses
+
+Goodput is especially useful. A server might report high throughput while many users experience unacceptable latency. Goodput counts only requests that satisfy your service-level objective, such as:
+
+TTFT below 2 seconds
+p95 latency below 15 seconds
+Output speed above 20 tokens/second
+3. GPU performance metrics
+
+“GPU speed” is not one number.
+
+Metric	Meaning
+Peak TFLOPS	Theoretical floating-point compute performance
+Sustained TFLOPS	Compute performance actually achieved by the workload
+GPU utilization	Percentage of time the GPU is executing work
+SM utilization	Utilization of streaming multiprocessors
+Tensor Core utilization	How effectively matrix acceleration hardware is used
+GPU memory bandwidth	Rate at which data moves between GPU memory and compute units
+Memory bandwidth utilization	Percentage of theoretical bandwidth being used
+GPU memory utilization	Amount and percentage of memory allocated
+GPU clock frequency	Actual operating speed during inference
+Power consumption	Watts consumed while serving the model
+Temperature	Whether thermal limits are affecting performance
+Thermal throttling	Reduction in clock speed due to heat
+PCIe bandwidth	Data-transfer rate between CPU and GPU
+NVLink/interconnect bandwidth	Communication rate between GPUs
+Kernel execution time	Time spent in individual CUDA or accelerator kernels
+Kernel launch overhead	CPU and runtime overhead associated with launching GPU operations
+How to interpret GPU utilization
+
+High GPU utilization is not always good by itself.
+
+High utilization and high throughput: Usually desirable.
+High utilization and low throughput: Kernels may be inefficient.
+Low utilization and high CPU usage: CPU preprocessing or scheduling may be the bottleneck.
+Low compute utilization and high memory-bandwidth use: Decode is probably memory-bound.
+Large utilization fluctuations: Dynamic batching or request arrival patterns may be inefficient.
+4. Memory metrics
+
+LLM inference memory is mainly composed of:
+
+Total Memory=Model Weights+KV Cache+Activations+Runtime Overhead
+Metric	What it includes
+Model weight memory	Memory required to store the model parameters
+KV-cache memory	Memory used to remember prior tokens during generation
+Activation memory	Intermediate values generated during computation
+Runtime memory	CUDA, graph, kernel, allocator, and inference-engine overhead
+Peak allocated memory	Highest memory directly allocated by the workload
+Peak reserved memory	Memory reserved by the runtime allocator
+Memory fragmentation	Reserved memory that cannot be efficiently reused
+Memory headroom	Free memory remaining under maximum load
+Host RAM usage	CPU-side model, tokenizer, request, and offload memory
+Swap usage	Whether the system is falling back to disk-backed memory
+Memory-transfer volume	Data copied between CPU and GPU or between GPUs
+Out-of-memory rate	Percentage of requests failing because of insufficient memory
+Model weight memory
+
+Approximate calculation:
+
+Weight Memory≈Parameter Count×Bytes per Parameter
+
+Typical theoretical values:
+
+Precision	Approximate bytes per parameter
+FP32	4 bytes
+FP16/BF16	2 bytes
+INT8	1 byte
+INT4	0.5 byte
+
+A 70-billion-parameter model would theoretically require approximately:
+
+FP16: 140 GB
+INT8: 70 GB
+INT4: 35 GB
+
+Actual usage is higher because quantization scales, metadata, buffers, and runtime data also consume memory.
+
+5. KV-cache metrics
+
+The KV cache stores the key and value tensors for previously processed tokens. Without it, the model would have to recompute the entire conversation every time it generates another token.
+
+Approximate KV-cache formula
+KV Cache Bytes=B×S×L×2×H
+KV
+	​
+
+×D×P
+
+Where:
+
+B = batch size or number of active sequences
+S = sequence length
+L = number of transformer layers
+2 = one key tensor and one value tensor
+H
+KV
+	​
+
+ = number of key-value heads
+D = head dimension
+P = bytes per KV-cache value
+Example
+
+Assume:
+
+32 layers
+8 KV heads
+Head dimension of 128
+FP16 KV cache, 2 bytes
+8,192-token context
+
+KV memory per token:
+
+32×2×8×128×2=131,072 bytes
+
+That is approximately 128 KiB per token.
+
+For an 8,192-token sequence:
+
+128 KiB×8,192≈1 GiB
+
+At eight concurrent sequences, the KV cache would consume approximately 8 GiB.
+
+The actual result depends heavily on the architecture. Grouped-query attention and multi-query attention reduce KV memory by using fewer KV heads.
+
+KV-cache metrics to record
+Metric	Why it matters
+KV bytes per token	Allows memory requirements to be predicted
+KV memory per request	Shows the cost of each active conversation
+Total KV-cache usage	Determines maximum server concurrency
+KV-cache utilization	Percentage of allocated cache currently used
+KV-cache fragmentation	Unusable gaps created by variable-length sequences
+KV-cache eviction rate	Frequency at which cached tokens must be removed
+Prefix-cache hit rate	Percentage of prompts that reuse previously processed prefixes
+Prefix-cache savings	Prefill computation avoided through cache reuse
+Paged-KV utilization	Efficiency of page-based cache allocation
+KV offload volume	Cache moved to CPU memory or storage
+KV quantization impact	Memory reduction and quality change from lower-precision KV values
+6. Context-window metrics
+
+The advertised context length does not tell you whether the model remains accurate or performs efficiently at that length.
+
+Metric	Description
+Maximum supported context	Context allowed by the model and inference engine
+Maximum usable context	Context that fits at the required concurrency
+Effective context length	Length at which the model still uses information accurately
+Needle-in-a-haystack accuracy	Ability to retrieve a specific fact from a long prompt
+Position sensitivity	Whether information is handled differently at the beginning, middle, or end
+Long-context quality degradation	Accuracy loss as the prompt becomes longer
+Long-context TTFT	First-token latency at increasing prompt lengths
+Memory per additional 1,000 tokens	Incremental KV-cache cost
+Context truncation rate	Requests where content is removed to fit the context limit
+Maximum context at concurrency N	Realistic context capacity under simultaneous users
+
+Test several prompt lengths, for example:
+
+512 tokens
+2,048 tokens
+8,192 tokens
+16,384 tokens
+32,768 tokens
+Maximum supported length
+7. Model quality metrics
+Metric	Best use
+Accuracy	Classification and questions with one correct answer
+Exact match	Structured or deterministic answers
+Precision	How often returned positives are correct
+Recall	How many relevant results are found
+F1 score	Balance between precision and recall
+Pass@1	Whether the first generated solution passes
+Pass@k	Whether at least one of k generated solutions passes
+Human preference/win rate	Comparative answer quality
+LLM-as-judge score	Automated comparative evaluation
+Factuality score	Whether claims are factually correct
+Hallucination rate	Percentage of unsupported or invented claims
+Groundedness	Whether the response is supported by supplied sources
+Citation correctness	Whether citations support the associated claims
+Instruction-following rate	Whether all requested constraints are followed
+Structured-output validity	Percentage of responses matching the required schema
+Tool-call success rate	Whether the model selects and calls tools correctly
+Safety violation rate	Frequency of policy or security failures
+Refusal accuracy	Whether the model refuses only when appropriate
+Consistency	Whether repeated runs produce equivalent conclusions
+Calibration	Whether expressed confidence matches actual correctness
+
+Do not rely exclusively on LLM-as-judge scores. Combine them with deterministic tests, human review, and task-specific ground truth.
+
+8. Coding-model metrics
+
+For Qwen Coder, Nemotron, or similar coding models, these are particularly important:
+
+Metric	Description
+Unit-test pass rate	Percentage of generated solutions passing the test suite
+Pass@1	First solution passes without retry
+Compilation success rate	Generated code compiles or runs
+Repository task success rate	Model completes changes in a real codebase
+Issue resolution rate	Model correctly fixes a reported bug
+Regression rate	Existing tests broken by the generated change
+Static-analysis violations	Linting, typing, security, and quality problems
+Code-review acceptance rate	Changes accepted without major revision
+Tool-use success rate	Correct use of shell, Git, search, test, and editing tools
+Number of iterations	Attempts required to produce a passing solution
+Time to successful solution	Total elapsed time until tests pass
+Tokens to successful solution	Input and output tokens used before success
+Cost per successful solution	Total inference cost divided by solved tasks
+Human intervention count	Number of corrections supplied by the developer
+Unnecessary code-change rate	Changes outside the requested scope
+Documentation quality	Correct comments, explanations, and usage instructions
+Security defect rate	Vulnerabilities introduced by generated code
+
+For coding agents, successful tasks per hour and cost per successful task are often more meaningful than raw tokens per second.
+
+9. Scalability metrics
+Metric	Description
+Single-user throughput	Baseline model speed
+Throughput at concurrency N	Performance as users increase
+Latency degradation	Increase in latency caused by concurrency
+Scaling efficiency	Additional performance obtained from additional GPUs
+Tensor-parallel efficiency	Efficiency when dividing each layer across GPUs
+Pipeline-parallel efficiency	Efficiency when assigning different layers to different GPUs
+Communication overhead	Time spent exchanging data between GPUs
+Load-balancing efficiency	How evenly requests are distributed
+Scheduler fairness	Whether long requests delay short requests
+Replica utilization	Utilization across multiple model instances
+Autoscaling response time	How quickly capacity is added
+Cold-start time	Time needed to load and initialize another model instance
+
+Multi-GPU scaling efficiency can be approximated as:
+
+Scaling Efficiency=
+N×Throughput with 1 GPU
+Throughput with N GPUs
+	​
+
+
+For example, if one GPU produces 100 tokens/second and four GPUs produce 320 tokens/second:
+
+4×100
+320
+	​
+
+=80%
+10. Cost and energy metrics
+Metric	Description
+Cost per one million input tokens	Prompt-processing cost
+Cost per one million output tokens	Generation cost
+Cost per request	Average infrastructure cost per request
+Cost per successful task	Cost adjusted for correctness
+GPU-hours per workload	GPU time consumed
+Tokens per dollar	Serving efficiency
+Successful tasks per dollar	Quality-adjusted cost efficiency
+Average power draw	Energy consumption during inference
+Peak power draw	Maximum electrical demand
+Joules per token	Energy required per generated token
+Energy per successful task	Energy adjusted for task correctness
+Idle power cost	Energy consumed while waiting for requests
+Utilization-adjusted cost	Cost after accounting for idle capacity
+
+A cheaper model that needs three retries may be more expensive than a larger model that succeeds on its first attempt.
+
+11. Reliability and operational metrics
+Metric	Description
+Request success rate	Percentage of requests completed successfully
+Error rate	Application, inference-engine, and hardware failures
+Timeout rate	Requests exceeding allowed execution time
+OOM rate	Requests failing because of insufficient memory
+Model crash rate	Model-server failures
+Restart frequency	Number of service restarts
+Output truncation rate	Responses stopped before completion
+Malformed-output rate	Invalid JSON, XML, SQL, or tool-call responses
+Retry rate	Requests that require another attempt
+Cold-start frequency	Requests affected by unloaded models
+Model load time	Time required to load weights
+Availability	Percentage of time the service is usable
+Mean time between failures	Average operating time between incidents
+Mean time to recovery	Time required to restore service
+Performance variance	Consistency of latency and throughput across runs
+12. CPU, storage, and network metrics
+
+The GPU is not always the bottleneck.
+
+Component	Metrics
+CPU	Utilization, per-core utilization, tokenizer time, request-processing time
+System RAM	Used memory, cache, swapping, model-offload usage
+Storage	Model-load speed, read throughput, IOPS
+Network	Request bandwidth, inter-node bandwidth, latency, packet loss
+Tokenizer	Tokens processed per second, CPU time per request
+Inference engine	Scheduling overhead, batching delay, cache-management overhead
+Application layer	Authentication time, retrieval time, tool execution time, serialization time
+
+For RAG applications, separately measure:
+
+Total Latency=Authentication+Retrieval+Reranking+Prompt Construction+LLM Inference+Post-processing
+Recommended minimum benchmark for your coding-model comparison
+
+For each model and configuration, record:
+
+Category	Minimum metrics
+Configuration	Model, parameter count, precision, quantization, inference engine
+Workload	Prompt tokens, output tokens, context length, temperature
+Latency	TTFT, TPOT, end-to-end latency, p50, p95
+Throughput	Input tokens/sec, output tokens/sec, aggregate tokens/sec
+Capacity	Batch size, concurrency, maximum usable context
+GPU	Utilization, memory used, memory bandwidth, power
+Memory	Weight memory, KV-cache memory, peak memory, fragmentation
+Quality	Unit-test pass rate, pass@1, compilation rate, regression rate
+Agent performance	Tool calls, iterations, time to solution, tokens to solution
+Reliability	Errors, timeouts, OOMs, malformed outputs
+Cost	GPU-hours, energy, cost per task, cost per successful task
+
+The most useful final comparison should not be “Model A generates 50 tokens/second and Model B generates 40.” It should look more like:
+
+Quality-adjusted efficiency=
+GPU-hours or total cost
+Successfully completed tasks
+	​
+
+	​
+
+
+That metric combines model quality, hardware performance, retries, token usage, and operating cost into one practical result.
+
+

@@ -1,0 +1,7 @@
+layer,model,attempted,succeeded,success_rate,tasks_per_hour,energy_kJ_per_success,gpu_min_per_success
+L1,gpt-oss-120b,29,11,0.379,8.43,12.8,7.1
+L1,qwen3-coder-30b,29,7,0.241,6.74,15.4,8.9
+L1,nemotron-super,29,6,0.207,0.41,143.0,144.6
+L2,gpt-oss-120b,28,16,0.571,3.23,32.8,18.6
+L2,qwen3-coder-30b,28,3,0.107,0.48,211.4,125.0
+L2,nemotron-super,8,0,0.0,,,
