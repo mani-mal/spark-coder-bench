@@ -124,6 +124,12 @@ either statistically weak (L1/L2) or budget-confounded (L3 nemotron) — the pap
   throughput/decode-tok/s from Prometheus** (gpt-oss ~26.9 tok/s, qwen ~19.7 tok/s at L1). **TRT-LLM
   exposes no Prometheus** → nemotron has hardware energy but **no decode-tok/s / TTFT** (blank,
   disclosed). This is why nemotron L3 could be run 8-way parallel with no metric loss (see below).
+  **Consolidated perf/resource table** (wall-clock, GPU util/power, peak unified memory, KV-cache %,
+  throughput, energy — all 3 models × L1/L2/L3) + **quality-adjusted efficiency** (energy per
+  *successful* task: nemotron **143 kJ**/solve vs gpt-oss **12.8 kJ** at L1, ~11×) live in
+  `2026-07-11-cross-model-performance-resource-usage.md`
+  (`results/summary/{perf-resource,quality-adjusted-efficiency}.csv`); coverage vs the full LLM-eval
+  metric taxonomy is mapped in `2026-07-11-llm-eval-metric-coverage.md`.
 
 ## 6. Serving & harness mechanics (how a run happens)
 
@@ -161,12 +167,19 @@ either statistically weak (L1/L2) or budget-confounded (L3 nemotron) — the pap
 - **Config:** `infra/models.json` (registry), `infra/{vllm,trtllm}/model-profiles/*.env`.
 - **Methodology:** `docs/methodology.md`, `README.md`, `layer3_livecodebench/coverage.md`.
 - **L1/L2 capstone:** `docs/findings/2026-06-29-full-matrix-results.md`.
-- **Findings index (docs/findings/):** model swap & tool-use gate (deepseek 06-24), rubric/npm-ci
-  confound (06-25), nemotron-vLLM mixed-precision (06-25), L1 arm64 enablement + results (06-26),
-  L2 N-scaling results (06-25/26), architecture framing (06-26), comparability & benchmark selection
-  (06-28/29), TRT blockers qwen/gpt-oss (06-29), NVIDIA-blog external validation (06-29), LiveCodeBench
-  integration scope (06-29), gpt-oss L3 crash + KV-quant (06-30), nemotron TRT warmup/wedge + final
-  L3 (07-01).
+- **Findings index (docs/findings/):**
+  - *Through banked matrix (06-24 → 07-01):* model swap & tool-use gate (deepseek 06-24), rubric/npm-ci
+    confound (06-25), nemotron-vLLM mixed-precision (06-25), L1 arm64 enablement + results (06-26),
+    L2 N-scaling results (06-25/26), architecture framing (06-26), comparability & benchmark selection
+    (06-28/29), TRT blockers qwen/gpt-oss (06-29), NVIDIA-blog external validation (06-29), LiveCodeBench
+    integration scope (06-29), gpt-oss L3 crash + KV-quant (06-30), nemotron TRT warmup/wedge + final
+    L3 (07-01).
+  - *Post-completion analysis & corrections (07-02 →):* codex audit verification + decision (07-02),
+    environment provenance / pending upgrades pre-OTA (07-02), **L2 C1 contract-invisible bug +
+    rerun-with-contract decision (07-03)**, **L3 conditional selection-bias correction (07-03)**,
+    Qwen3.6 NVFP4-coder roster gap (07-08), **L3 fixed-token-budget rationale + verbosity options
+    (07-11)**, **cross-model performance/resource consolidation + quality-adjusted efficiency
+    (07-11)**, **LLM-eval metric-coverage map (07-11)**.
 
 ## 9. Open / not-done (none blocking)
 

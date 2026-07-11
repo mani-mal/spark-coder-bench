@@ -5,7 +5,7 @@
 > **three-layer systems + methodology case study** (L1 SWE-bench subset, L2 TaskFlow app build,
 > L3 LiveCodeBench), **not** a model-ranking paper — each arm couples a model with a runtime,
 > quant, and scaffold, so results describe deployment *configurations*. See the reframing
-> decision in [`findings/2026-07-02-external-audit-verification-and-decision.md`](findings/2026-07-02-external-audit-verification-and-decision.md).
+> decision in [`findings/2026-07-02-codex-audit-verification-and-decision.md`](findings/2026-07-02-codex-audit-verification-and-decision.md).
 
 ## Goal
 
@@ -80,7 +80,9 @@ full-stack application (**TaskFlow Local**) from an identical frozen specificati
 
 ## Metrics captured per run
 
-Recorded into `results/raw/<model>-<track>/`. Grouped by purpose.
+Recorded into `results/raw/<model>-<track>/`. Grouped by purpose. This catalogue is mapped
+against the full external LLM-eval taxonomy (have / captured-raw / out-of-scope / gap) in
+`docs/findings/2026-07-11-llm-eval-metric-coverage.md`.
 
 ### A. Run identity & configuration (reproducibility — recorded once per run)
 
@@ -152,7 +154,11 @@ Captured by `infra/metrics/collect-hw.sh` (time series) + `infra/metrics/aggrega
 - GPU utilization (mean / peak); GPU memory-controller utilization (mean / peak)
 - GPU power draw (mean / peak) and **integrated energy (Wh)** over the run (trapezoidal)
 - GPU temperature (peak), SM clock (mean), pstate, throttle reasons, PCIe link gen/width
-- Energy per completed requirement / per passing test (efficiency proxy)
+- Energy per completed requirement / per passing test (efficiency proxy) — **realized** as
+  quality-adjusted efficiency (energy / GPU-time / tasks-per-hour **per successful task**) in
+  `analysis/quality-adjusted-efficiency.py` → `results/summary/quality-adjusted-efficiency.csv`;
+  consolidated per-model × per-layer resource table in
+  `docs/findings/2026-07-11-cross-model-performance-resource-usage.md`.
 
 > **DGX Spark (GB10) caveat:** memory is **unified**, so `nvidia-smi` reports all `memory.*`
 > fields as `[N/A]`. There is **no separate GPU-memory peak** on this hardware — the model's
@@ -197,7 +203,7 @@ documents exactly what the L2 checks do and do not establish.
 
 - Same baseline, prompt, hardware, time box, and harness for every run.
 - All manual interventions are logged and counted against agent-efficiency.
-- an AI coding assistant never edits model-generated app code; it only measures and reports.
+- Claude Code never edits model-generated app code; it only measures and reports.
 - Differences in serving settings that could not be equalized are disclosed in the report.
 
 ## Reproducibility

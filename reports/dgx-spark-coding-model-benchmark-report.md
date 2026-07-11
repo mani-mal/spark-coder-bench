@@ -8,8 +8,8 @@ open-weight Mixture-of-Experts coding models on consumer Grace Blackwell (GB10 /
 > describes a *deployment configuration on this one box*, not intrinsic model quality. The
 > primary results are **serving feasibility** and **measurement methodology**; the quality
 > numbers are exploratory and strictly relative/same-box. This framing follows an independent
-> audit (`docs/audits/benchmark-audit-and-arxiv-recommendation.md`) and its verification
-> (`docs/findings/2026-07-02-audit-verification-and-decision.md`).
+> audit (`docs/codex/BENCHMARK_AUDIT_AND_ARXIV_RECOMMENDATION.md`) and its verification
+> (`docs/findings/2026-07-02-codex-audit-verification-and-decision.md`).
 
 Every table below maps to a committed source CSV and a one-command regeneration step. The whole
 `results/summary/` + `reports/charts/` tree rebuilds from the retained raw runs with
@@ -270,7 +270,7 @@ capability ranking.
   dataset snapshot revisions (SWE-bench Verified, LiveCodeBench code_generation_lite), the L1
   subset checksums, and the frozen L3 window (`make provenance`).
 - **Two-repo separation.** Model-generated app code lives only in `taskflow-local-app-benchmark`
-  (driven by OpenCode); this repo never edits it. an AI coding assistant built the tooling and this report
+  (driven by OpenCode); this repo never edits it. Claude Code built the tooling and this report
   but is **not** part of what was measured.
 
 ## 9. Limitations
@@ -322,5 +322,9 @@ byte-reproducible rescoring** far more than it requires another leaderboard numb
 Architecture diagram: `docs/architecture/benchmark-architecture.jpg`. Canonical protocol:
 `docs/HELP.md`. Fairness controls + metric catalogue: `docs/methodology.md`. End-to-end map:
 `docs/BENCHMARK_OVERVIEW.md`. Reframing decision + audit verification:
-`docs/findings/2026-07-02-audit-verification-and-decision.md`. Independent review:
-`docs/audits/independent-code-review.md`. Dated findings: `docs/findings/`.
+`docs/findings/2026-07-02-codex-audit-verification-and-decision.md`. Consolidated
+performance/resource metrics + quality-adjusted efficiency:
+`docs/findings/2026-07-11-cross-model-performance-resource-usage.md`
+(`results/summary/{perf-resource,quality-adjusted-efficiency}.csv`); LLM-eval metric-coverage map:
+`docs/findings/2026-07-11-llm-eval-metric-coverage.md`. Independent review:
+`fable/review.md`. Dated findings: `docs/findings/`.
