@@ -1,6 +1,6 @@
 # DGX Spark Local Coding-Model Benchmark — End-to-End Overview
 
-**Status: COMPLETE (2026-07-02).** Full 3-model × 3-layer matrix banked and aggregated.
+**Status: COMPLETE (matrix banked 2026-07-02; analysis addenda through 2026-07-11).** Full 3-model × 3-layer matrix banked and aggregated.
 This is the single-page map of the whole study. Detailed rationale for every decision is in
 `docs/findings/` (indexed at the bottom); raw per-run data is in `results/raw/`, aggregated in
 `results/summary/benchmark-{long,summary}.csv`.
