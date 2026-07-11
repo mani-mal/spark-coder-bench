@@ -58,6 +58,12 @@ because SWE-bench Verified images are x86-only.
 | qwen3-coder-30b (vLLM) | **24.1%** (7/29) |
 | nemotron-super (TRT) | **20.7%** (6/29) |
 
+**Regression rate (collateral damage):** of *applied* patches, gpt-oss regresses ≥1 previously-passing
+test **33.3%** (8/24), qwen 31.8% (7/22), nemotron 21.4% (3/14). Severity diverges sharply — gpt-oss
+broke **1078** `PASS_TO_PASS` tests vs nemotron **3**: gpt-oss's aggressive edits **resolve the most
+*and* regress the most** (a few catastrophic patches), nemotron's fewer/smaller edits rarely do either.
+Directional (n=29 subset). `analysis/regression-rate.py`, `results/summary/regression-rate.csv`.
+
 ### L2 — App-build acceptance-check fraction (contract-visible; corrected for C1)
 The first L2 sweep was produced under a harness bug — the frozen API contract the prompt requires
 was missing from the workspace (finding C1). After restoring it (app-repo tag `baseline-v7`) and
@@ -125,11 +131,12 @@ either statistically weak (L1/L2) or budget-confounded (L3 nemotron) — the pap
   exposes no Prometheus** → nemotron has hardware energy but **no decode-tok/s / TTFT** (blank,
   disclosed). This is why nemotron L3 could be run 8-way parallel with no metric loss (see below).
   **Consolidated perf/resource table** (wall-clock, GPU util/power, peak unified memory, KV-cache %,
-  throughput, energy — all 3 models × L1/L2/L3) + **quality-adjusted efficiency** (energy per
-  *successful* task: nemotron **143 kJ**/solve vs gpt-oss **12.8 kJ** at L1, ~11×) live in
-  `2026-07-11-cross-model-performance-resource-usage.md`
-  (`results/summary/{perf-resource,quality-adjusted-efficiency}.csv`); coverage vs the full LLM-eval
-  metric taxonomy is mapped in `2026-07-11-llm-eval-metric-coverage.md`.
+  throughput, energy — all 3 models × L1/L2/L3), **quality-adjusted efficiency** (energy per
+  *successful* task: nemotron **143 kJ**/solve vs gpt-oss **12.8 kJ** at L1, ~11×), **p95 tail
+  latency** (TTFT + e2e; e.g. L1 gpt-oss TTFT p95 **4.9 s**, e2e p95 **17.8 s**), and **L1 regression
+  rate** (§4.1) all live in `2026-07-11-cross-model-performance-resource-usage.md`
+  (`results/summary/{perf-resource,quality-adjusted-efficiency,latency-tail-p95,regression-rate}.csv`);
+  coverage vs the full LLM-eval metric taxonomy is mapped in `2026-07-11-llm-eval-metric-coverage.md`.
 
 ## 6. Serving & harness mechanics (how a run happens)
 
@@ -178,8 +185,8 @@ either statistically weak (L1/L2) or budget-confounded (L3 nemotron) — the pap
     environment provenance / pending upgrades pre-OTA (07-02), **L2 C1 contract-invisible bug +
     rerun-with-contract decision (07-03)**, **L3 conditional selection-bias correction (07-03)**,
     Qwen3.6 NVFP4-coder roster gap (07-08), **L3 fixed-token-budget rationale + verbosity options
-    (07-11)**, **cross-model performance/resource consolidation + quality-adjusted efficiency
-    (07-11)**, **LLM-eval metric-coverage map (07-11)**.
+    (07-11)**, **cross-model performance/resource consolidation + quality-adjusted efficiency +
+    p95 tail latency + L1 regression rate (07-11)**, **LLM-eval metric-coverage map (07-11)**.
 
 ## 9. Open / not-done (none blocking)
 
