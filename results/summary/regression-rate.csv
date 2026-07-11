@@ -1,0 +1,4 @@
+model,patches_applied_evaluated,resolved,regressions,regression_rate_of_applied,pass_to_pass_tests_run,pass_to_pass_tests_failed,regressed_instances
+gpt-oss-120b,24,11,8,0.333,1803,1078,astropy__astropy-13033;astropy__astropy-13236;astropy__astropy-13398;django__django-10554;mwaskom__seaborn-3069;mwaskom__seaborn-3187;psf__requests-1724;sphinx-doc__sphinx-10449
+qwen3-coder-30b,22,7,7,0.318,1846,95,astropy__astropy-13398;django__django-10554;mwaskom__seaborn-3069;psf__requests-1724;psf__requests-1766;psf__requests-1921;pytest-dev__pytest-10051
+nemotron-super,14,6,3,0.214,1821,3,astropy__astropy-13033;psf__requests-1921;pytest-dev__pytest-10051

@@ -63,6 +63,32 @@ Raw tok/s is the wrong final comparison — the useful one is **cost per success
 
 **This is the sharpest single result in the study.** nemotron and qwen solve *comparable* raw counts to gpt-oss at L1 (6–7 vs 11), but nemotron burns **~11× the energy per solved task** (143 vs 12.8 kJ) and **~20× the GPU-time** (144.6 vs 7.1 min) — its verbose, TRT-served, memory-bandwidth-bound decode makes each success far more expensive. gpt-oss is the efficiency winner at both layers. Caveats: energy/time are runtime-confounded (nemotron on TRT); "tasks/hour" is throughput at the concurrency each layer actually ran (≈seq=1), not a max-concurrency figure; L2 nemotron is floor-saturated (0 successes → undefined per-success cost).
 
+## Tail latency (p50/p95) — TTFT and end-to-end
+
+Added 2026-07-11 (`analysis/latency-tail-p95.py` → `results/summary/latency-tail-p95.csv`). p95 is the standard tail metric the taxonomy's minimum checklist asks for; we had only p50/p90/p99. **No re-run** — recomputed from the raw vLLM latency histograms already saved in every run's `vllm-metrics.csv`, reusing `aggregate.py`'s canonical `hist_quantiles` (so it's consistent with the published p50/p90/p99). Values below are the **median of per-run percentiles** (seconds). vLLM models only — nemotron (TRT) exposes no histograms; gpt-oss L3 is excluded (metrics-window failure, ⚠ above).
+
+| Layer | Model | TTFT p50 | **TTFT p95** | e2e p50 | **e2e p95** |
+|---|---|---|---|---|---|
+| L1 | gpt-oss-120b | 0.47 | **4.88** | 4.79 | **17.75** |
+| L1 | qwen3-coder-30b | 0.50 | **3.88** | 5.00 | **19.88** |
+| L2 | gpt-oss-120b | 0.36 | **1.60** | 6.50 | **36.33** |
+| L2 | qwen3-coder-30b | 0.21 | **0.65** | 10.11 | **46.69** |
+| L3 | qwen3-coder-30b | 0.38 | **0.49** | 52.63 | **238.56** |
+
+TTFT stays sub-5 s at p95 even under the agentic layers; the long **e2e p95** tails (up to ~240 s at L3) reflect long single-shot generations, not first-token stalls — consistent with the memory-bandwidth-bound decode story.
+
+## Regression rate (L1 — collateral damage on previously-passing tests)
+
+Added 2026-07-11 (`analysis/regression-rate.py` → `results/summary/regression-rate.csv`). A **regression** = a patch that applied and ran but flipped ≥1 SWE-bench `PASS_TO_PASS` test to failing. **No re-run** — parsed from the retained per-instance eval reports (`logs/run_evaluation/<eval_run_id>/<model>/<instance>/report.json`). By SWE-bench's definition, `resolved` runs cannot regress, so this characterizes *failure quality* among **applied** patches, not the winners.
+
+| Model | patches applied/eval | resolved | regressions | **regression rate** | PASS_TO_PASS tests broken |
+|---|---|---|---|---|---|
+| gpt-oss-120b | 24 | 11 | 8 | **0.333** | **1078** |
+| qwen3-coder-30b | 22 | 7 | 7 | **0.318** | 95 |
+| nemotron-super | 14 | 6 | 3 | **0.214** | 3 |
+
+Reading it: **~1 in 3 applied gpt-oss/qwen patches broke something that was passing** (vs ~1 in 5 for nemotron). But the *severity* differs sharply — gpt-oss broke **1078** previously-passing tests vs nemotron's **3**: gpt-oss's aggressive, larger edits both **resolve the most** (11) *and* cause the most collateral damage (a handful of catastrophic patches — e.g. breaking an import so a whole module's suite fails), while nemotron's fewer, smaller edits rarely regress but rarely resolve. Denominators differ (24/22/14 applied) and n is the 29-task subset, so read this as directional. Per-instance detail in `results/summary/regression-rate-per-run.csv`.
+
 ## Provenance & method
 
 - **Wall-clock + energy:** `results/summary/l{1,2,3}-run-ledger.csv` (`duration_s`, `energy_j`, `energy_valid`). Authoritative and complete — includes runs with no `run-summary.json`.

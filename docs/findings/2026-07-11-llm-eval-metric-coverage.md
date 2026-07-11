@@ -35,7 +35,7 @@ Primary sources referenced below: `results/raw/<run>/run-summary.json`, `hw.csv`
 | Decode throughput | ✅ | `decode_throughput_tok_s` (~20–31 tok/s; the headline bandwidth-bound number) |
 | End-to-end latency | ✅ | `e2e_latency_seconds` p50/p90/p99 |
 | p50 / p99 | ✅ | computed for TTFT/e2e/ITL |
-| **p95** | ❌ Gap | we compute **p50/p90/p99**, not p95. The taxonomy's minimum asks p50/**p95**. Derivable from the raw histograms; a small aggregate change. Low effort, worth adding if a reviewer wants the standard tail |
+| **p95** | ➕ Added | now computed (TTFT + e2e) from the raw histograms — `analysis/latency-tail-p95.py` → `results/summary/latency-tail-p95.csv`; also made first-class in `aggregate.py` (`hist_quantiles` default now includes 0.95). e.g. L1 gpt-oss TTFT p95 **4.88 s**, e2e p95 **17.75 s** |
 
 ## 2. Throughput & capacity
 
@@ -111,7 +111,7 @@ Primary sources referenced below: `results/raw/<run>/run-summary.json`, `hw.csv`
 | Pass@1 | ✅ | L3 |
 | Repository task success rate | ✅ | L1 resolved rate (real repos, ARM64 subset) |
 | Issue resolution rate | ✅ | = L1 resolved |
-| **Regression rate** | 🟡 | SWE-bench PASS_TO_PASS (did the change break existing tests) is in `resolved.json` per run but not aggregated into a headline regression-rate. Worth surfacing |
+| **Regression rate** | ➕ Added | SWE-bench PASS_TO_PASS collateral damage now aggregated — `analysis/regression-rate.py` → `results/summary/regression-rate.csv`. Of applied L1 patches: gpt-oss **33.3%** / qwen 31.8% / nemotron 21.4% regress ≥1 passing test (gpt-oss broke 1078 PtP tests vs nemotron 3). Parsed from retained `logs/run_evaluation/*/report.json` — no re-run |
 | Compilation/run success rate | 🟡 | L2 check #28 `frontend_build`; L3 code-extractability. No uniform per-layer compile rate |
 | **Time / tokens / cost to successful solution** | ➕ Added | `quality-adjusted-efficiency.csv` — GPU-min per success + energy per success. Tokens-to-solution derivable from accounting (not yet aggregated) |
 | Iterations / human-intervention count | 🟡 | `agent_turns` is null (collect-opencode field unmatched); `tool_calls` present. Runs were unattended (0 human interventions by design) |
@@ -163,26 +163,26 @@ Single GB10, single replica. Multi-GPU scaling, tensor/pipeline-parallel efficie
 |---|---|---|
 | Configuration | model, params, precision, quant, engine | ✅ `run-summary.model` + `infra/models.json` + `gpu-static.txt` (driver/CUDA/GB10) |
 | Workload | prompt/output tokens, context, temperature | ✅ token counters + serve config (temp 0.2, budget 8192) |
-| Latency | TTFT, TPOT, e2e, p50, **p95** | ✅ except **p95** (have p50/p90/p99) |
+| Latency | TTFT, TPOT, e2e, p50, **p95** | ✅ (p95 added — p50/p90/**p95**/p99) |
 | Throughput | input/output/aggregate tok/s | ✅ (vLLM models) |
 | Capacity | batch size, concurrency, max usable ctx | 🟡 concurrency ~1 recorded; batch raw; ctx from config |
 | GPU | util, mem used, **mem bandwidth**, power | ✅ except **bandwidth %** (no DCGM) |
 | Memory | weight, KV, peak, fragmentation | 🟡 peak+KV ✅; weight analytic; fragmentation ❌ |
-| Quality | unit-test pass, pass@1, compile, **regression** | ✅ pass/pass@1; 🟡 compile; 🟡 **regression not aggregated** |
+| Quality | unit-test pass, pass@1, compile, **regression** | ✅ pass/pass@1; 🟡 compile; **regression ➕ added** |
 | Agent | tool calls, iterations, time/tokens to solution | 🟡 tool_calls ✅; iterations weak; **time/energy-to-solution ➕ added** |
 | Reliability | errors, timeouts, OOMs, malformed | ✅ errors; 🟡 timeouts/OOM narrative; 🟡 malformed (L3) |
 | Cost | GPU-hours, energy, cost/task, **cost/successful task** | ✅ energy proxy; **energy/successful-task ➕ added** |
 
 ## What was added vs. what's a real gap
 
-**➕ Added this pass (had the inputs, weren't surfaced):**
-- **Quality-adjusted efficiency** — energy / GPU-minutes / tasks-per-hour **per successful task** (`analysis/quality-adjusted-efficiency.py` → `results/summary/quality-adjusted-efficiency.csv`; summarized in the perf-resource doc). This *is* the taxonomy's recommended final comparison, and it changes the story: nemotron's per-solve energy is ~11× gpt-oss at L1.
+**➕ Added (had the inputs on disk, weren't surfaced — all no-re-run):**
+- **Quality-adjusted efficiency** — energy / GPU-minutes / tasks-per-hour **per successful task** (`analysis/quality-adjusted-efficiency.py`). The taxonomy's recommended final comparison: nemotron's per-solve energy is ~11× gpt-oss at L1.
+- **p95 tail latency** (TTFT + e2e) — `analysis/latency-tail-p95.py` from the raw histograms; also made first-class in `aggregate.py`.
+- **Regression rate** (SWE-bench PASS_TO_PASS collateral damage) — `analysis/regression-rate.py` from retained eval reports: gpt-oss 33.3% / qwen 31.8% / nemotron 21.4% of applied patches regress ≥1 passing test.
 
-**❌ Genuine gaps worth considering (ranked):**
-1. **Memory-bandwidth utilization** — the one metric that would *directly* prove the decode-bound claim; blocked on DCGM/tegrastats not being installed. Highest scientific value, needs infra.
-2. **Cross-run consistency / variance** — mostly single-run per task; no repeat-based variance for the agentic layers. Matters for how much to trust a single L1/L2 number.
-3. **p95 latency** — trivial to add from existing histograms; standard tail metric we skipped.
-4. **Regression rate (PASS_TO_PASS)** — data exists per L1 run; just not aggregated.
+**❌ Genuine gaps remaining (ranked):**
+1. **Memory-bandwidth utilization** — the one metric that would *directly* prove the decode-bound claim; blocked on DCGM/tegrastats not being installed. Highest scientific value, needs infra (a re-run under DCGM), not just re-aggregation.
+2. **Cross-run consistency / variance** — mostly single-run per task; no repeat-based variance for the agentic layers. Matters for how much to trust a single L1/L2 number. Closing it *does* need re-runs (N≥3 repeats).
 
 **⬜ Correctly ignored (out of scope, not deficiencies):** all of §9 scalability (single GPU), $-denominated cost (self-hosted → energy proxy), goodput/max-concurrency (offline bench), long-context retrieval quality (§6 tail), and the general-LLM quality metrics in §7 (judge/factuality/safety/RAG) that don't apply to a deterministic coding benchmark.
 

@@ -135,7 +135,7 @@ def gauge_stats(scalars, name, start, end):
     return stats([v for (ms, v) in s if start <= ms <= end])
 
 
-def hist_quantiles(buckets, name, start, end, qs=(0.5, 0.9, 0.99)):
+def hist_quantiles(buckets, name, start, end, qs=(0.5, 0.9, 0.95, 0.99)):
     les = buckets.get(name)
     if not les:
         return None
