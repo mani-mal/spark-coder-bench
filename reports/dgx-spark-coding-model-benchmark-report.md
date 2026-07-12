@@ -11,6 +11,8 @@ open-weight Mixture-of-Experts coding models on consumer Grace Blackwell (GB10 /
 > audit (`docs/codex/BENCHMARK_AUDIT_AND_ARXIV_RECOMMENDATION.md`) and its verification
 > (`docs/findings/2026-07-02-codex-audit-verification-and-decision.md`).
 
+![Visual summary of the DGX Spark coding-model benchmark report: the three model configurations, per-layer results, and serving/efficiency findings on a single Grace Blackwell box.](../docs/dgx-spark-coding-model-benchmark-report.png)
+
 Every table below maps to a committed source CSV and a one-command regeneration step. The whole
 `results/summary/` + `reports/charts/` tree rebuilds from the retained raw runs with
 `make rebuild` (`analysis/rebuild-all.sh`).

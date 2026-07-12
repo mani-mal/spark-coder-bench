@@ -5,6 +5,8 @@ This is the single-page map of the whole study. Detailed rationale for every dec
 `docs/findings/` (indexed at the bottom); raw per-run data is in `results/raw/`, aggregated in
 `results/summary/benchmark-{long,summary}.csv`.
 
+![Infographic overview of the DGX Spark local coding-model benchmark: hardware, the three MoE models, the three evaluation layers, and the headline serving-feasibility findings.](dgx_spark_benchmark_overview_infographic.png)
+
 ---
 
 ## 1. What this is (and is NOT)
