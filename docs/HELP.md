@@ -10,6 +10,8 @@ follow the links for the deep detail.
 - **Every decision, dated:** [`docs/findings/`](findings/)
 - **Raw per-run data:** `results/raw/<run-id>/` · **Aggregated:** `results/summary/benchmark-{long,summary}.csv`
 
+![Visual guide to the benchmark: the three MoE models, the three evaluation layers (bug-fixing, app-building, code-generation), and what each layer varies, builds, scores, and measures.](dgx_spark_help_visual_guide.svg)
+
 ---
 
 ## 1. What this benchmark is

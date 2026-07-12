@@ -9,6 +9,8 @@ This doc consolidates the whole study. Quality ranking, fairness review, and the
 reconciliation live in the companion findings (linked at the end); here is the complete table plus
 the **serving-feasibility** result, which is itself a primary finding.
 
+![Full model × runtime matrix: which of the three MoE models serve on vLLM versus TensorRT-LLM on DGX Spark, and the serving-feasibility outcome that is itself a primary finding.](../dgx_spark_full_matrix_results_visual.svg)
+
 ---
 
 ## 1. Serving feasibility — which model serves on which runtime
