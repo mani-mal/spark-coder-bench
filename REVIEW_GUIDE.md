@@ -34,6 +34,10 @@ For fairness controls and the exact metric definitions, see
 
 ## Going deeper (optional)
 
+For a full, ordered walk through **every** document in the repo, see
+**[`docs/READING_ORDER.md`](docs/READING_ORDER.md)** — a tiered map (orientation →
+task spec → scoring → results → audits → lab notebook) for detailed study.
+
 `docs/findings/` is a dated lab notebook documenting every decision, blocker,
 and result along the way. It is supporting evidence, not required reading. Note
 that the early low-N notes (`n3`, `n8`, `n20`) are **deliberately superseded** —
