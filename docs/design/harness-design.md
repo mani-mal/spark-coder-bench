@@ -23,7 +23,8 @@ inference, and agent-accounting metrics are captured per task and joinable.
 Probed on this box (2026-06-23/24):
 
 - **Arch:** `aarch64` (ARM64 / GB10 Grace Blackwell, sm_121), 128 GB unified LPDDR5x, ~273 GB/s.
-- **Unified memory:** `nvidia-smi` reports all `memory.*` fields as `[N/A]`. The model's
+- **Unified memory:** `nvidia-smi` works, but with unified LPDDR5x it has no per-device VRAM to
+  count, so its `memory.*` fields report `Not Supported`/`[N/A]` by design. The model's
   real footprint is read from `/proc/meminfo`. There is **no separate GPU-memory peak**.
 - **DCGM:** `dcgmi` / `dcgm-exporter` NOT installed. **tegrastats:** NOT installed.
 - **Docker:** present (v29.x) but current user hits permission denied; no qemu/binfmt registered.

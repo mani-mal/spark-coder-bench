@@ -160,8 +160,9 @@ Captured by `infra/metrics/collect-hw.sh` (time series) + `infra/metrics/aggrega
   consolidated per-model × per-layer resource table in
   `docs/findings/2026-07-11-cross-model-performance-resource-usage.md`.
 
-> **DGX Spark (GB10) caveat:** memory is **unified**, so `nvidia-smi` reports all `memory.*`
-> fields as `[N/A]`. There is **no separate GPU-memory peak** on this hardware — the model's
+> **DGX Spark (GB10) caveat:** `nvidia-smi` works, but memory is **unified** LPDDR5x with no
+> per-device VRAM to count, so its `memory.*` fields report `Not Supported`/`[N/A]` by design (not
+> a failure). There is **no separate GPU-memory peak** on this hardware — the model's
 > memory footprint appears as host RAM in `/proc/meminfo`, which is what we record. Disclose
 > this in the report so the memory figure is not mistaken for dedicated VRAM. The sampler must
 > be started **before** the build and stopped **after** it; a run started mid-build yields only
