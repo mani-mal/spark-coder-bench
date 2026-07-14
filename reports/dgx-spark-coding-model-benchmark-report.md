@@ -41,9 +41,10 @@ harness-validity error compressed a real ~4× quality gap into a fake statistica
 **Hardware.** DGX Spark **GB10**, aarch64 / Grace Blackwell, **sm_121a** (consumer Blackwell:
 no native FP4 *compute* path in these runtimes → FP4 weights run through weight-only kernels).
 **128 GB unified LPDDR5x, ~273 GB/s** bandwidth (≈6× lower than discrete Blackwell's ~1.7 TB/s),
-so decode is **memory-bandwidth-bound**. Because memory is unified, `nvidia-smi` reports all
-`memory.*` fields as `[N/A]`; the model footprint is read from `/proc/meminfo` as host RAM. **One
-large model is served at a time.**
+so decode is **memory-bandwidth-bound**. `nvidia-smi` itself works (driver 580.159.03, CUDA 13.0,
+device `NVIDIA GB10`), but because memory is unified LPDDR5x it cannot report per-device VRAM: the
+`memory.*` fields come back `Not Supported`/`[N/A]` by design, not from a failure. The model
+footprint is therefore read from `/proc/meminfo` as host RAM. **One large model is served at a time.**
 
 **Serving.** OpenAI-compatible endpoints: **vLLM** on `:8000` and **TensorRT-LLM** on `:8355`.
 Both sanity-gate the model and write a per-serve reproducibility manifest under `manifests/`.
@@ -243,8 +244,10 @@ capability ranking.
 
 ## 6. Measurement pitfalls (the "reality" contribution)
 
-- **Unified memory ≠ VRAM.** `nvidia-smi memory.*` is `[N/A]` on GB10; the memory figure comes
-  from `/proc/meminfo` and is whole-system, not dedicated GPU memory. Do not read it as VRAM.
+- **Unified memory ≠ VRAM.** `nvidia-smi` runs fine on GB10, but its `memory.*` fields report
+  `Not Supported`/`[N/A]` (unified LPDDR5x has no separate VRAM to count) — this is by design, not a
+  broken tool. The memory figure comes from `/proc/meminfo` and is whole-system, not dedicated GPU
+  memory. Do not read it as VRAM.
 - **tok/J is prompt-token-dominated.** The agent loop re-sends context every turn, so prompt
   tokens are a median ~98.7% of total; a naive `total_tokens / energy_j` therefore measures
   re-submitted context, not decode work. Report energy per **generated** token alongside it.

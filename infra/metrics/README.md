@@ -41,8 +41,10 @@ tokens/joule; energy split **prefill vs decode** (by time fraction); peak unifie
 memory; **TTFT p50/p90/p99**; **prefill vs decode throughput, reported
 separately**; KV-cache usage; e2e & inter-token latency distributions.
 
-> **GB10 notes.** (1) Memory is unified → `nvidia-smi memory.*` is `[N/A]`; the
-> model footprint comes from `/proc/meminfo`. (2) Power is **GPU-only** via
+> **GB10 notes.** (1) `nvidia-smi` works (driver 580.159.03, CUDA 13.0, `NVIDIA
+> GB10`), but memory is unified LPDDR5x so it has no per-device VRAM to report →
+> `nvidia-smi memory.*` comes back `Not Supported`/`[N/A]` **by design, not a
+> failure**; the model footprint comes from `/proc/meminfo`. (2) Power is **GPU-only** via
 > `nvidia-smi` unless DCGM/tegrastats are installed (then full-SoC); the level is
 > declared in the serve manifest. (3) vLLM finalizes per-request completion
 > histograms (e2e, prefill/decode time, success) just after the response returns,
