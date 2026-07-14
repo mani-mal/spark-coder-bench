@@ -131,10 +131,32 @@ No model judges another model — it's pure request/response assertion against a
 
 ### L1 — official SWE-bench harness
 
-OpenCode produces a patch; it's applied to the target repo, then the repo's **real gold test
-suite** (FAIL_TO_PASS / PASS_TO_PASS) runs in Docker. "Resolved" = the failing tests now pass and
-previously-passing ones still pass. Ground truth is the project's own tests. arm64 enablement
-detail: [`2026-06-26-layer1-arm64-enablement.md`](findings/2026-06-26-layer1-arm64-enablement.md).
+Each L1 task is a **real GitHub bug** from a real project (Flask, Django, sympy, …) at the exact
+commit *before* the bug was fixed. OpenCode gets the broken repo + the issue text and writes a code
+fix (its "patch"). We grade by running the project's **real gold test suite** in Docker — never by
+subjective or LLM judging. Ground truth is the project's own tests.
+
+**One grade, two questions.** There is a single scoring run: the model's patch is applied, the
+maintainers' hidden test files (the dataset's `test_patch`) are dropped in, and the tests execute
+once. Those tests split into two groups, labelled by how they *should* behave once the bug is truly
+fixed:
+
+| Test group | State on the broken repo | Required state after the model's fix | The question it answers |
+|---|---|---|---|
+| **FAIL_TO_PASS** (bug-fix) | failing | passing | "Did you actually fix the bug?" |
+| **PASS_TO_PASS** (regression) | passing | still passing | "Did you break anything else?" |
+
+- **The main test = FAIL_TO_PASS.** These tests fail on the unpatched repo. A correct fix flips them
+  fail → pass.
+- **The regression test = PASS_TO_PASS.** These tests already pass on the unpatched repo. It is **not
+  a separate run and not a different patch** — the *same* model patch is applied, and we just watch
+  the already-green tests to confirm the fix didn't quietly break unrelated behavior (a "regression").
+  If any flip to failing, the task fails even if the bug itself was fixed.
+
+**"Resolved" = both groups end up green:** every FAIL_TO_PASS test now passes **and** every
+PASS_TO_PASS test still passes (`run-task.py` → `resolved=1`). The reference/gold solution patch is
+**never** applied during scoring — only the model's own patch plus the hidden `test_patch`. arm64
+enablement detail: [`2026-06-26-layer1-arm64-enablement.md`](findings/2026-06-26-layer1-arm64-enablement.md).
 
 ### L3 — LiveCodeBench execution
 
@@ -146,6 +168,37 @@ public LCB leaderboard uses; the deviation is disclosed in `layer3_livecodebench
 ("sandbox deviation, disclosed"). A guard extracts code even when reasoning models return
 `content=None` on truncation. Integration scope:
 [`2026-06-29-livecodebench-integration-scope.md`](findings/2026-06-29-livecodebench-integration-scope.md).
+
+**Worked example — one L3 task.** Problem `1873_A` "Short Sort" (Codeforces, easy,
+contest 2023-08-21 — inside the `pre2024m06` window; the first of the 512). The model is handed
+the statement in a single prompt: *three cards `a b c` in some order; you may swap two cards at
+most once; print `YES` if the row can become `abc`, else `NO` (t ≤ 6 cases).* Qwen3-Coder-30B's
+single-shot generation (`code_list[0]` in `lcb-predictions.json`):
+
+```python
+def can_make_abc(s):
+    if s == "abc":
+        return "YES"
+    s_list = list(s)
+    for i in range(3):
+        for j in range(i + 1, 3):
+            temp = s_list[:]
+            temp[i], temp[j] = temp[j], temp[i]
+            if ''.join(temp) == "abc":
+                return "YES"
+    return "NO"
+
+t = int(input())
+for _ in range(t):
+    print(can_make_abc(input().strip()))
+```
+
+`lcb_runner` runs this against the problem's hidden stdin/stdout cases; it passed, so
+`per_problem: {"question_id": "1873_A", "pass_at_1": 1.0}` in `lcb-score.json`. That single
+task is 1 of 512; the suite folds all of them into the pass@1 + Wilson-CI headline (Qwen here:
+349/512 = 68.2%, CI [64.0, 72.1]), and the parallel metric window records the pass's decode
+tok/s, energy/token, and peak memory. No agent, no tools, no repo — one prompt in, one program
+out, graded by execution.
 
 ---
 
