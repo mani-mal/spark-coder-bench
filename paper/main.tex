@@ -45,7 +45,8 @@
 % gaps), and pin floats to the top of any float-only page instead of centering them.
 \raggedbottom
 \makeatletter
-\setlength{\@fptop}{0pt}
+\setlength{\@fptop}{0pt}     % single-column floats: top of float page
+\setlength{\@dblfptop}{0pt}  % full-width (table*/figure*) floats: top of float page
 \makeatother
 
 \title{\bfseries Local Coding-Model Configurations on a Single DGX Spark:\\
