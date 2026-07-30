@@ -8,8 +8,8 @@ open-weight Mixture-of-Experts coding models on consumer Grace Blackwell (GB10 /
 > describes a *deployment configuration on this one box*, not intrinsic model quality. The
 > primary results are **serving feasibility** and **measurement methodology**; the quality
 > numbers are exploratory and strictly relative/same-box. This framing follows an independent
-> audit (`docs/codex/BENCHMARK_AUDIT_AND_ARXIV_RECOMMENDATION.md`) and its verification
-> (`docs/findings/2026-07-02-codex-audit-verification-and-decision.md`).
+> audit (`docs/audits/benchmark-audit-and-arxiv-recommendation.md`) and its verification
+> (`docs/findings/2026-07-02-audit-verification-and-decision.md`).
 
 ![Visual summary of the DGX Spark coding-model benchmark report: the three model configurations, per-layer results, and serving/efficiency findings on a single Grace Blackwell box.](../docs/dgx-spark-coding-model-benchmark-report.png)
 
@@ -65,7 +65,7 @@ two agentic layers (L1, L2). L3 has no agent (single-shot generation against the
 | Model | Arch | Total / Active | Sparsity | Quant | Serves on | Why locked |
 |---|---|---|---|---|---|---|
 | gpt-oss-120b | MoE (128 exp, top-4) | 116.8B / 5.1B | 4.4% | MXFP4 | **vLLM only** | MXFP4 MoE autotunes on TRT but deadlocks at the executor |
-| nemotron-3-super-120b-a12b | MoE-hybrid Mamba/attn (512 exp, top-22), reasoning | ~120B / ~12B | 10.0% | NVFP4 (MIXED_PRECISION) | **TRT-LLM only** | vLLM rejects its MIXED_PRECISION checkpoint |
+| nemotron-3-super-120b-a12b | MoE-hybrid Mamba/attn (512 exp, top-22), reasoning | ~120B / ~12B | 10.0% | NVFP4 (MIXED_PRECISION) | **TRT-LLM only** | vLLM 0.15.1 (`26.02-py3`) rejects its MIXED_PRECISION checkpoint |
 | qwen3-coder-30b | MoE (128 exp, top-8) | 30.5B / 3.3B | 10.8% | bf16 | **vLLM only** | bf16 MoE has no working sm_121a TRT kernel |
 
 *Source:* `infra/models.json` (registry, single source of truth)
@@ -86,10 +86,12 @@ across arms: seed, temperature, KV-cache dtype policy, `max_num_seqs`, OpenCode/
 ### Headline systems result: the serving-feasibility matrix
 
 The single most practitioner-useful finding is negative and structural: **no model serves on
-both runtimes on GB10/sm_121a.** nemotron is TRT-LLM-only (vLLM rejects the checkpoint); qwen and
-gpt-oss are vLLM-only (no working TRT MoE path on this silicon). A same-model vLLM-vs-TRT bridge
-is therefore *impossible on this box* — which is exactly why the arms are configurations, not
-clean model contrasts. Root causes are documented per model in
+both runtimes on GB10/sm_121a.** nemotron is TRT-LLM-only (**vLLM 0.15.1, NGC `26.02-py3`** rejects
+its MIXED_PRECISION checkpoint at config validation; a newer vLLM build / the current NVIDIA-validated
+DGX Spark recipe was not tested, so the claim is scoped to the pinned stack, not to vLLM in general);
+qwen and gpt-oss are vLLM-only (no working TRT MoE path on this silicon). A same-model vLLM-vs-TRT
+bridge is therefore *impossible on this box with the pinned runtimes* — which is exactly why the arms
+are configurations, not clean model contrasts. Root causes are documented per model in
 `docs/findings/2026-06-25-nemotron-super-vllm-mixed-precision.md`,
 `2026-06-29-qwen-trt-moe-blackwell-blocker.md`, and `2026-06-29-gpt-oss-trt-blocker.md`.
 
@@ -381,9 +383,9 @@ byte-reproducible rescoring** far more than it requires another leaderboard numb
 Architecture diagram: `docs/architecture/benchmark-architecture.jpg`. Canonical protocol:
 `docs/HELP.md`. Fairness controls + metric catalogue: `docs/methodology.md`. End-to-end map:
 `docs/BENCHMARK_OVERVIEW.md`. Reframing decision + audit verification:
-`docs/findings/2026-07-02-codex-audit-verification-and-decision.md`. Consolidated
+`docs/findings/2026-07-02-audit-verification-and-decision.md`. Consolidated
 performance/resource metrics + quality-adjusted efficiency:
 `docs/findings/2026-07-11-cross-model-performance-resource-usage.md`
 (`results/summary/{perf-resource,quality-adjusted-efficiency}.csv`); LLM-eval metric-coverage map:
 `docs/findings/2026-07-11-llm-eval-metric-coverage.md`. Independent review:
-`fable/review.md`. Dated findings: `docs/findings/`.
+`docs/audits/independent-code-review.md`. Dated findings: `docs/findings/`.

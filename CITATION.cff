@@ -11,8 +11,8 @@ abstract: >-
 type: software
 authors:
   - alias: mani-mal
-repository-code: "https://github.com/mani-mal/dgx-spark-coding-model-benchmark"
-url: "https://github.com/mani-mal/dgx-spark-coding-model-benchmark"
+repository-code: "https://github.com/mani-mal/spark-coder-bench"
+url: "https://github.com/mani-mal/spark-coder-bench"
 license: MIT
 keywords:
   - coding-agent evaluation

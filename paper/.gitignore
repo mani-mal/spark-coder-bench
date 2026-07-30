@@ -1,0 +1,11 @@
+# LaTeX build intermediates (regenerable from main.tex)
+*.aux
+*.log
+*.out
+*.xdv
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.bbl
+*.blg
+*.toc

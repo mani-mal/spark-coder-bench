@@ -5,7 +5,7 @@
 > **three-layer systems + methodology case study** (L1 SWE-bench subset, L2 TaskFlow app build,
 > L3 LiveCodeBench), **not** a model-ranking paper — each arm couples a model with a runtime,
 > quant, and scaffold, so results describe deployment *configurations*. See the reframing
-> decision in [`findings/2026-07-02-codex-audit-verification-and-decision.md`](findings/2026-07-02-codex-audit-verification-and-decision.md).
+> decision in [`findings/2026-07-02-audit-verification-and-decision.md`](findings/2026-07-02-audit-verification-and-decision.md).
 
 ## Goal
 
@@ -204,7 +204,7 @@ documents exactly what the L2 checks do and do not establish.
 
 - Same baseline, prompt, hardware, time box, and harness for every run.
 - All manual interventions are logged and counted against agent-efficiency.
-- Claude Code never edits model-generated app code; it only measures and reports.
+- The AI coding assistant never edits model-generated app code; it only measures and reports.
 - Differences in serving settings that could not be equalized are disclosed in the report.
 
 ## Reproducibility

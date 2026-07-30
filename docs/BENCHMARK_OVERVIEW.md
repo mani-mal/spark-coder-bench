@@ -33,7 +33,7 @@ decode is **memory-bandwidth-bound**). Unified memory ⇒ `nvidia-smi` memory is
 
 **Serving-feasibility is itself a headline finding:** no single model serves on *both* runtimes on
 this box, so a same-model vLLM-vs-TRT bridge is impossible here.
-- nemotron: vLLM rejects its MIXED_PRECISION checkpoint → TRT-LLM only.
+- nemotron: vLLM 0.15.1 (NGC `26.02-py3`) rejects its MIXED_PRECISION checkpoint → TRT-LLM only (newer vLLM / current DGX Spark recipe not tested; claim is scoped to the pinned stack).
 - qwen: bf16 MoE has no working sm_121a TRT kernel → vLLM only.
 - gpt-oss: MXFP4 MoE autotunes on TRT but requests deadlock at the executor → vLLM only.
 (Details: `2026-06-25-nemotron-super-vllm-mixed-precision.md`, `2026-06-29-qwen-trt-moe-blackwell-blocker.md`,
@@ -183,7 +183,7 @@ either statistically weak (L1/L2) or budget-confounded (L3 nemotron) — the pap
     (06-28/29), TRT blockers qwen/gpt-oss (06-29), NVIDIA-blog external validation (06-29), LiveCodeBench
     integration scope (06-29), gpt-oss L3 crash + KV-quant (06-30), nemotron TRT warmup/wedge + final
     L3 (07-01).
-  - *Post-completion analysis & corrections (07-02 →):* codex audit verification + decision (07-02),
+  - *Post-completion analysis & corrections (07-02 →):* audit verification + decision (07-02),
     environment provenance / pending upgrades pre-OTA (07-02), **L2 C1 contract-invisible bug +
     rerun-with-contract decision (07-03)**, **L3 conditional selection-bias correction (07-03)**,
     Qwen3.6 NVFP4-coder roster gap (07-08), **L3 fixed-token-budget rationale + verbosity options

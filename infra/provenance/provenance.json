@@ -12,6 +12,27 @@
       "digest": "sha256:6c3c31a599a0fe744aa626abc49a49f6f7b642676e8162404f25bf1fef1f0e6d"
     }
   },
+  "model_checkpoints": {
+    "note": "Immutable HF revisions of the three benchmarked model weights, resolved from refs/main of the local HF snapshot the study served. Pins the exact checkpoint each result was produced on.",
+    "nemotron_super": {
+      "repo": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-NVFP4",
+      "revision": "4f0cf9daaeb7a4d5e23f80a00e7ed15f0e03caf6",
+      "quant": "NVFP4 MIXED_PRECISION (FP8 Mamba mixer + NVFP4 MoE experts)",
+      "runtime": "TensorRT-LLM release:1.3.0rc9"
+    },
+    "qwen3_coder_30b": {
+      "repo": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+      "revision": "b2cff646eb4bb1d68355c01b18ae02e7cf42d120",
+      "quant": "bf16",
+      "runtime": "vLLM 0.15.1 (NGC 26.02-py3)"
+    },
+    "gpt_oss_120b": {
+      "repo": "openai/gpt-oss-120b",
+      "revision": "b5c939de8f754692c1647ca79fbf85e8c1e70f8a",
+      "quant": "MXFP4",
+      "runtime": "vLLM 0.15.1 (NGC 26.02-py3)"
+    }
+  },
   "datasets": {
     "swe_bench_verified": {
       "repo": "princeton-nlp/SWE-bench_Verified",

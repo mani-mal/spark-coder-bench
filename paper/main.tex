@@ -1,0 +1,658 @@
+\documentclass[10pt,twocolumn]{article}
+
+% ---------------------------------------------------------------------------
+% Local Coding-Model Configurations on a Single DGX Spark
+% arXiv preprint source. Primary category: cs.SE; cross-list cs.PF, cs.LG.
+% Build: pdflatex main && pdflatex main   (no bibtex needed; bibliography is inline)
+% ---------------------------------------------------------------------------
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=0.85in]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
+\usepackage{microtype}
+
+\captionsetup{font=small,labelfont=bf}
+\graphicspath{{figures/}}
+
+% Compact typewriter for the many paths/flags this paper references.
+\newcommand{\code}[1]{\texttt{\small #1}}
+
+\title{\bfseries Local Coding-Model Configurations on a Single DGX Spark:\\
+A Systems and Methodology Case Study}
+
+% NOTE (author): fill in your preferred display name / affiliation before posting.
+\author{Mani \\ \texttt{mani-mal} \\ \small\url{https://github.com/mani-mal/spark-coder-bench}}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We report a reproducible case study of serving and evaluating three open-weight
+Mixture-of-Experts (MoE) coding models locally on a single NVIDIA DGX Spark
+(GB10, consumer Grace Blackwell, \code{sm\_121a}, 128\,GB unified memory):
+gpt-oss-120b~\cite{gptoss} (MXFP4, vLLM), Qwen3-Coder-30B-A3B~\cite{qwen3} (bf16, vLLM), and
+NVIDIA Nemotron-3-Super-120B-A12B~\cite{nemotron} (NVFP4, TensorRT-LLM). This is deliberately
+\emph{not} a model-ranking paper. On this hardware each model couples to exactly one
+serving runtime, one quantization, and one agent scaffold, so every score describes
+a \emph{deployment configuration}, not intrinsic model quality. Our contributions are
+three: (1) a serving-feasibility matrix for GB10---the headline result is negative and
+structural, that no model in our set serves on both available runtimes, which makes a
+matched same-model cross-runtime comparison infeasible on this box; (2) a three-layer
+local evaluation harness (SWE-bench Verified agentic repair on a disclosed ARM64-buildable
+subset, a from-scratch full-stack app build scored by an automated API contract, and
+LiveCodeBench single-shot generation) with full raw-artifact retention and byte-identical
+deterministic rescoring; and (3) a set of measurement lessons drawn from concrete failures.
+The sharpest lesson is a single harness-validity error that compressed a real
+${\sim}4\times$ quality gap into a fake statistical tie until it was found and corrected,
+and a fixed token budget that manufactured a last-place finish for a verbose reasoning
+model that is competitive on the problems it actually answers. At local-evaluation scale,
+serving feasibility and harness validity dominate model effects; we argue these deserve
+first-class attention alongside leaderboard numbers.
+\end{abstract}
+
+\section{Motivation}
+
+Running capable coding agents locally and privately, on hardware that sits under a desk
+rather than in a datacenter, is an increasingly common goal. The DGX Spark---GB10 silicon,
+128\,GB of unified LPDDR5x memory---is a plausible box for it, and 120B-class open-weight
+coding models are now available in quantized forms that nominally fit. What is
+under-documented is the gap between ``nominally fits'' and ``actually serves and can be
+measured honestly.'' This study answers a narrow, defensible question rather than a broad
+comparative one:
+
+\begin{quote}
+What serving, measurement, and evaluation constraints arise when three pinned open-weight
+model configurations are run locally on one DGX Spark, and what does that imply for
+reproducible coding-agent benchmark design?
+\end{quote}
+
+We make three contributions. First, a \textbf{serving-feasibility matrix} for
+GB10/\code{sm\_121a}: which model/quantization/runtime combinations actually come up, and
+why the others do not. Second, a \textbf{three-layer local evaluation harness} with
+complete raw-artifact retention and one-command deterministic rescoring, so every number in
+this paper regenerates from committed outputs without re-serving a model. Third, a set of
+\textbf{measurement lessons}---most sharply, a documented case where one missing
+specification file inverted a headline conclusion, and a fixed token budget that penalized a
+reasoning model in a way that looked like a capability gap but was not.
+
+We state the framing plainly because it governs how every result should be read. Model
+identity on this box is fully confounded with serving runtime, quantization, and agent
+scaffold, and that confound is a consequence of hardware, not a design choice we could
+relax. The one comparison that is a clean model-versus-model contrast is the quality axis
+between the two models that share a runtime (gpt-oss and Qwen, both on vLLM); everything
+that ties a model to a distinct runtime is a configuration comparison and is labeled as such
+at the point of every affected number.
+
+\section{Related Work}
+
+\textbf{Coding-agent benchmarks.} SWE-bench~\cite{swebench} and its human-filtered
+SWE-bench Verified subset established repository-level, execution-graded bug repair as the
+dominant agentic-coding measure; a patch is scored by whether the repository's own
+\code{FAIL\_TO\_PASS} and \code{PASS\_TO\_PASS} test suites pass after it is applied. We use
+SWE-bench Verified as our Layer~1 anchor. LiveCodeBench~\cite{livecodebench} provides
+time-windowed, single-shot competitive-programming problems with hidden tests, designed to
+control contamination by selecting problems released after a model's training cutoff; we use
+it as our Layer~3 contamination-aware, code-generation axis. Contamination-hardened and
+capability-broadened successors such as SWE-bench Pro and cloud-sandboxed agentic suites
+exist, but they are x86- or cloud-bound and thus off-thesis for a local, on-box study; we
+treat them as related and future work rather than running them. Our Layer~2---building a
+full-stack application from a frozen specification and scoring it against an automated HTTP
+contract---occupies a long-horizon ``construct from nothing'' axis that few coding-agent
+benchmarks test.
+
+\textbf{Local serving of MoE models.} vLLM~\cite{vllm} and TensorRT-LLM are the two
+OpenAI-compatible serving stacks we use. Sparse MoE architectures~\cite{switch} decouple
+total parameters from per-token active parameters, which is what makes 120B-class models
+tractable on a 128\,GB box; the three models here span an active/total sparsity range of
+4.4\% to 10.8\%. Low-bit microscaling weight formats (MXFP4, NVFP4)~\cite{microscaling} shrink
+the memory footprint further.
+A recurring and under-reported subtlety, which our results make concrete, is that on
+consumer Blackwell (\code{sm\_121a}) there is no native FP4 \emph{compute} path in these
+runtimes: FP4 weights are served through weight-only kernels, so any FP4 benefit is
+storage and bandwidth, not tensor-core arithmetic.
+
+\textbf{Evaluation methodology.} Our statistical treatment uses Wilson score
+intervals~\cite{wilson} for binomial rates and McNemar's test~\cite{mcnemar} for paired
+comparisons on shared task sets. The broader point we contribute to---that measured scores
+are highly sensitive to harness details, sample size, and token budgets---is consistent with
+the wider reproducibility literature, but we ground it in specific, reproducible failures on
+this hardware rather than in the abstract.
+
+\section{Experimental Setup}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.92\textwidth]{architecture.jpg}
+\caption{End-to-end architecture of one benchmark run on a single DGX Spark. Sweep drivers read
+a single model registry and hand each arm its model plus serving profile; the selected model
+comes up behind an OpenAI-compatible endpoint (vLLM on \code{:8000} or TensorRT-LLM on
+\code{:8355}) after a sanity gate and a per-serve reproducibility manifest; OpenCode drives the
+two agentic layers (L1, L2) while L3 calls the endpoint directly; synchronized collectors capture
+hardware energy/memory, vLLM Prometheus throughput, and agent accounting into per-run summaries
+that aggregate into the committed CSVs behind every table here.}
+\label{fig:arch}
+\end{figure*}
+
+\subsection{Hardware}
+
+The box is a single DGX Spark: GB10, aarch64, consumer Grace Blackwell,
+compute capability \code{sm\_121a}, with 128\,GB of unified LPDDR5x shared between CPU and
+GPU at roughly 273\,GB/s---about $6\times$ lower than discrete Blackwell's
+${\sim}1.7$\,TB/s. Decode is therefore memory-bandwidth-bound, and this shapes several
+results. Software: driver 580.159.03, CUDA 13.0, device reported as \code{NVIDIA GB10}. One
+large model is served at a time.
+
+A hardware detail that matters for measurement: because memory is unified, \code{nvidia-smi}
+runs correctly but its \code{memory.*} fields return \code{Not Supported}/\code{[N/A]} by
+design---there is no separate VRAM pool to count. The model's memory footprint is therefore
+read from \code{/proc/meminfo} as host RAM and must not be interpreted as dedicated GPU
+memory. This is a property of the platform, not a broken tool, and we disclose it wherever a
+memory figure appears.
+
+\subsection{Serving and agent}
+
+Models are served behind OpenAI-compatible endpoints: vLLM on port \code{8000} and
+TensorRT-LLM on port \code{8355}. Each serve passes a correctness gate (a fixed prompt must
+produce coherent, non-repeating output; a failed gate aborts the run rather than recording
+garbage metrics) and writes a per-serve reproducibility manifest. Container image digests
+are pinned: vLLM \code{nvcr.io/nvidia/vllm:26.02-py3} (vLLM 0.15.1) and TensorRT-LLM
+\code{nvcr.io/nvidia/tensorrt-llm/release:1.3.0rc9}. The agentic layers are driven by
+OpenCode at an identical version and configuration for every model; Layer~3 uses no agent
+and calls the endpoint directly.
+
+\subsection{The three configurations}
+
+\begin{table*}[t]
+\centering
+\caption{The three deployment configurations. Model identity is coupled to quantization,
+runtime, and scaffold by hardware necessity, and each coupling is disclosed. No model in the
+set serves on both runtimes on this box.}
+\label{tab:configs}
+\small
+\begin{tabular}{@{}L{0.13\textwidth}L{0.16\textwidth}L{0.11\textwidth}L{0.10\textwidth}L{0.09\textwidth}L{0.30\textwidth}@{}}
+\toprule
+Model & Architecture & Total / Active & Quant & Serves on & Why locked to one runtime \\
+\midrule
+gpt-oss-120b & MoE (128 exp, top-4) & 116.8B / 5.1B & MXFP4 & vLLM only &
+  MXFP4 MoE autotunes on TRT-LLM but deadlocks at the executor handoff \\
+nemotron-3-super & MoE-hybrid Mamba/attn & ${\sim}$120B / ${\sim}$12B & NVFP4 (mixed) & TRT-LLM only &
+  vLLM 0.15.1 (\code{26.02-py3}) rejects its \code{MIXED\_PRECISION} checkpoint \\
+qwen3-coder-30b & MoE (128 exp, top-8) & 30.5B / 3.3B & bf16 & vLLM only &
+  bf16 MoE has no working \code{sm\_121a} TRT-LLM kernel \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+Table~\ref{tab:configs} lists the three arms. All are sparse MoE models spanning an
+active/total sparsity range of 4.4\% (gpt-oss), 10.0\% (nemotron), and 10.8\% (qwen). We
+hold identical across arms: random seed, temperature, KV-cache dtype policy,
+\code{max\_num\_seqs}, and the OpenCode and vLLM versions. What we cannot equalize is
+disclosed: quantization, serving runtime, and \code{max\_model\_len}/memory-utilization
+settings under the 128\,GB ceiling.
+
+A candidate fourth model, DeepSeek-Coder-V2-Lite, was evaluated and retired before any timed
+run. It generates correct code but will not \emph{autonomously} call tools---in an OpenCode
+smoke test it claimed success while writing nothing to disk---so it cannot drive the agent
+loop. We introduced an explicit autonomous-tool-use gate as a precondition for the agentic
+layers: a model must return a well-formed \code{tool\_calls} response under
+\code{tool\_choice:"auto"} (not prose, not hallucinated tool-output tokens) \emph{and}
+actually create a file on disk. gpt-oss-120b passed this gate and replaced DeepSeek. The case
+is itself a finding: agentic competence is not the same property as code-generation
+competence, and a benchmark that conflates them will mis-rank models.
+
+\subsection{The headline systems result: serving feasibility}
+
+The single most practitioner-useful finding is negative and structural. \textbf{No model in
+our set serves on both runtimes on GB10/\code{sm\_121a}.} Nemotron is TensorRT-LLM-only:
+vLLM 0.15.1 as shipped in NGC \code{26.02-py3} rejects its checkpoint at configuration
+validation, before any weights load. The checkpoint declares
+\code{quant\_algo=MIXED\_PRECISION} (FP8 on the Mamba mixer projections, NVFP4 on the MoE
+experts, per layer, produced by ModelOpt 0.43.0.dev63), and this vLLM build's ModelOpt loader
+accepts only a single uniform algorithm from a fixed whitelist. The failure is a
+\code{pydantic} validation error raised in ${\sim}6$\,s during engine-config
+construction, not an out-of-memory condition or a runtime crash. We scope this claim
+precisely: it is a property of \emph{vLLM 0.15.1 as shipped in NGC 26.02-py3}, the stack we
+pinned for driver compatibility; we did not test a newer vLLM build or the current
+NVIDIA-validated DGX Spark recipe, so the claim is scoped to the pinned stack, not to vLLM in
+general. A circulating workaround forces the top-level algorithm to NVFP4; we deliberately did
+not use it, because the Mamba mixer projections are genuinely FP8 in the weights and forcing
+NVFP4 risks silently miscasting them---a model-under-test that might load but generate subtly
+wrong output is worse than one that cleanly refuses.
+
+Conversely, the two vLLM models do not serve on TensorRT-LLM 1.3.0rc9 on this silicon: bf16
+MoE has no working \code{sm\_121a} kernel, and MXFP4 MoE autotunes but then deadlocks at the
+server-to-executor handoff. The consequence is that a same-model, cross-runtime ``bridge''
+run---the clean way to isolate a runtime effect from a model effect---is impossible on this
+box with the pinned runtimes. This is exactly why we treat the arms as configurations and
+make no controlled cross-runtime speed or energy claim.
+
+\section{Evaluation Design}
+
+\begin{table}[t]
+\centering
+\caption{The three measurement layers. L1/L2 are agentic (multi-turn tool use); L3 is
+single-shot. Scoring is fully automated and mechanical at every layer---no human scorers and
+no LLM judge.}
+\label{tab:layers}
+\small
+\begin{tabular}{@{}p{0.06\linewidth}p{0.42\linewidth}p{0.40\linewidth}@{}}
+\toprule
+Layer & What & Metric \\
+\midrule
+L1 & SWE-bench Verified repo bug-fix, agentic & resolved pass@1 on a disclosed 29-task
+ARM64-buildable subset \\
+L2 & Full-stack app build from a frozen spec, agentic & automated API acceptance-check
+fraction ($k/29$) \\
+L3 & LiveCodeBench single-shot generation & pass@1 with Wilson 95\% CI ($n{=}512$) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The three layers (Table~\ref{tab:layers}) probe orthogonal axes of ``coding ability.'' L1 and
+L2 are agentic multi-turn tool use driven through OpenCode; L3 is single-shot generation
+against the endpoint. Keeping them separate is deliberate: it lets ``code generation is not
+the same as agentic tool use'' be an empirical observation rather than an assumption.
+
+\textbf{Layer 1} runs on an ARM64-buildable 29-task subset of SWE-bench Verified, and we are
+explicit that this is \emph{not} SWE-bench Verified performance and \emph{not} a random
+sample. The official task images are x86-only; we build each task's environment natively for
+aarch64 and keep only tasks whose environment builds and whose gold patch resolves on ARM64.
+This is an empirical buildability probe, not a curated difficulty sample. It biases the subset
+toward pure-Python repositories (flask, requests, pylint, pytest, sympy, sphinx, xarray, and
+similar) and excludes anything needing x86-only wheels or heavy C/Fortran toolchains---a
+coverage limitation we disclose. Because both models run the identical arm64-built tasks, any
+ARM-versus-x86 environment difference cancels in the relative comparison. The subset and its
+checksums are pinned in the provenance record.
+
+\textbf{Layer 2} has each model build the same realistic full-stack application (``TaskFlow
+Local'') from an identical frozen specification, across a Node.js and a Python/FastAPI backend
+track. Scoring fires 29 equally weighted, fully automated HTTP assertions against a frozen API
+contract after booting the built app, reported as an acceptance-check fraction $k/29$. This is
+an API-acceptance signal, not a holistic app-quality score: it measures whether the app boots
+and satisfies the communicated contract, not user experience, design, or maintainability. We
+report a Bernoulli working-app rate (a per-run boot-plus-threshold pass) with a Wilson interval
+as the headline, never a single-$N$ mean rubric score.
+
+\textbf{Layer 3} runs LiveCodeBench single-shot on a fixed pre-2024-06 window of 512 problems,
+scored as pass@1 with a Wilson 95\% interval. A shared maximum generation budget of 8192
+tokens is held identical across all three models as a fairness control---a decision that turns
+out to be consequential (Section~\ref{sec:l3}).
+
+\textbf{Scoring and fairness.} Scoring is deterministic given the retained artifacts, so runs
+can be rescored from committed outputs without re-serving. Same spec, prompt, hardware, time
+box, and harness for every run; all serving-setting differences that could not be equalized
+are disclosed; the maintainer's tooling never edits model-generated application code, which
+lives in a separate repository.
+
+\section{Results}
+
+Figure~\ref{fig:quality} shows success by layer with Wilson intervals. On raw scores the
+ordering is gpt-oss $\ge$ qwen $\ge$ nemotron, but the L1 and L2 gaps are statistically weak
+and the L3 nemotron gap is budget-confounded. We report the numbers and then explain, layer by
+layer, why the durable finding is about how one measures rather than which model wins.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{quality-by-layer.png}
+\caption{Success by layer for the three configurations, each with a Wilson 95\% interval:
+L1 resolved pass@1, L2 node working-app rate, L3 pass@1. The raw ordering is
+gpt-oss $\ge$ qwen $\ge$ nemotron, but the L1/L2 separations are weak and the L3 nemotron
+result is a token-budget artifact (Figure~\ref{fig:trunc}).}
+\label{fig:quality}
+\end{figure}
+
+\subsection{Layer 1: SWE-bench Verified ARM64 subset}
+
+\begin{table*}[t]
+\centering
+\caption{Layer 1, 29-task ARM64 subset, single-attempt pass@1. The ``model-valid'' rate
+excludes operational failures (a watchdog kill and eight clone/DNS/guard-drops that were never
+a measured attempt) from the denominator.}
+\label{tab:l1}
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Model & Resolved (raw) & Model-valid rate & Notes \\
+\midrule
+gpt-oss-120b & 37.9\% (11/29) & 37.9\% (11/29) & no infra failures \\
+qwen3-coder-30b & 24.1\% (7/29) & 24.1\% (7/29) & no infra failures \\
+nemotron-super & 20.7\% (6/29) & 30.0\% (6/20) & 1 watchdog kill; 8 excluded \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+Table~\ref{tab:l1} gives the Layer~1 rates. Two points about honest denominators. First, the
+raw rate charges operational failures---a watchdog kill and eight environment failures
+(clone/DNS/guard drops) that were never a measured model attempt---against the model. Separating
+them, which we track explicitly per run, raises nemotron's rate from 20.7\% to 30.0\% and is the
+correct denominator for a \emph{model} comparison. Second, pairwise McNemar tests on the shared
+29 tasks find no significant separation among the three (\(p = 0.125,\ 0.289,\ 1.0\)). That is
+the appropriate result for a methodology framing and a fatal one for a ranking framing: at this
+sample size the layer cannot rank these models.
+
+A second axis matters beyond ``did it fix the bug.'' SWE-bench also records whether a patch
+broke something that previously passed (\code{PASS\_TO\_PASS}). Among patches that applied and
+were evaluated, gpt-oss regresses at least one previously-passing test 33.3\% of the time
+(8/24), qwen 31.8\% (7/22), and nemotron 21.4\% (3/14). The severity diverges far more than the
+rate: gpt-oss broke 1078 \code{PASS\_TO\_PASS} tests to nemotron's 3, because a few catastrophic
+patches (for instance, breaking an import so a whole module's suite fails) dominate the count.
+Figure~\ref{fig:regression} shows the trade-off: gpt-oss's aggressive edits resolve the most and
+regress the most, while nemotron's fewer, smaller edits rarely regress but rarely resolve. This
+characterizes failure quality among the non-resolving runs, not the winners, and the small
+denominators keep it directional.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{regression-rate.png}
+\caption{Layer 1 collateral damage, as a fraction of applied patches. gpt-oss both resolves the
+most and regresses the most; nemotron regresses least but resolves little. Aggressive editing
+buys resolutions at the cost of regressions.}
+\label{fig:regression}
+\end{figure}
+
+\subsection{Layer 2: app-build acceptance, and a harness bug that inverted the conclusion}
+
+The first Layer~2 sweep was produced under a harness-validity error we label C1. The frozen API
+contract that the prompt requires the model to satisfy had been dropped from the workspace by an
+app-repository tag-lineage break: four of the 29 checks were structurally unreachable, and every
+model was graded against a contract it could not see. After restoring the contract (app-repo tag
+\code{baseline-v7}) and re-running the vLLM models, the picture changed decisively.
+
+\begin{table*}[t]
+\centering
+\caption{Layer 2 after the C1 contract fix (contract-visible \code{baseline-v7}).
+Working-app rate is a per-run boot-plus-threshold pass; brackets are Wilson 95\% intervals.}
+\label{tab:l2}
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Model & node $k/29$ & node working & python $k/29$ \\
+\midrule
+gpt-oss-120b & 0.724 & 16/20 = 80\% & 0.069 (0/8) \\
+qwen3-coder-30b & 0.178 & 3/20 = 15\% & 0.004 (0/8) \\
+nemotron-super$^\ast$ & 0.009 (N=4) & 0/4 & 0.000 (N=4) \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+Table~\ref{tab:l2} reports the corrected sweep. Under the bug, gpt-oss (node acceptance 0.252)
+and qwen (0.155) looked statistically indistinguishable---the working-app Wilson intervals
+overlapped, and the honest read was ``too close to call.'' Corrected, gpt-oss (0.724, 80\%
+working apps) clearly and significantly beats qwen (0.178, 15\%) on the node track, and the
+intervals separate. Crucially, the contract helped \emph{only where a model could already build
+a booting app}: gpt-oss's node score jumped $2.9\times$ (the four contract-only checks went from
+0 to 48 passes), while qwen and both python tracks, which are floored for other reasons, barely
+moved. A single missing specification file had compressed a real ${\sim}4\times$ capability gap
+into a fake statistical tie. Figure~\ref{fig:ablation} shows the before/after.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{l2-contract-ablation.png}
+\caption{The C1 ablation. Under the harness bug (contract invisible), gpt-oss (6/20) and qwen
+(4/20) working-app rates overlap. With the contract restored, gpt-oss jumps to 16/20 while qwen
+stays flat and the intervals separate. One missing spec file inverted the conclusion.}
+\label{fig:ablation}
+\end{figure}
+
+The asterisk on nemotron marks an asymmetry we disclose rather than paper over. Nemotron was not
+rerun with the visible contract. Those four contract-only checks require a booted backend to be
+reachable, and nemotron almost never produced a working backend at Layer~2 (node acceptance mean
+0.009, zero working apps). A visible contract is therefore mechanically a no-op for it, and a
+rerun would spend fragile TensorRT-LLM compute for no measurable effect. Its rows are retained
+and marked, and results are dual-reported as $k/29$ and a C1-rescored $k/25$ over the 25
+reachable checks (gpt-oss node 0.744, qwen 0.204). Two caveats survive the correction: the
+python track floors for both vLLM models, a genuine node-versus-python asymmetry rather than a
+contract artifact; and the layer remains an API-acceptance signal, not a full app-quality score.
+
+\subsection{Layer 3: LiveCodeBench, and a token budget that manufactured a last place}
+\label{sec:l3}
+
+\begin{table*}[t]
+\centering
+\caption{Layer 3 LiveCodeBench pass@1 (pre-2024-06 window, $n{=}512$). Nemotron's raw rate is
+depressed by truncation, not capability (see text).}
+\label{tab:l3}
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Model & pass@1 & Wilson 95\% CI & no-code / truncated \\
+\midrule
+gpt-oss-120b & 89.3\% & [86.3, 91.7] & ${\sim}$1--2\% \\
+qwen3-coder-30b & 68.2\% & [64.0, 72.1] & ${\sim}$0\% \\
+nemotron-super & 61.3\% & [57.0, 65.4] & 185/512 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+Table~\ref{tab:l3} gives raw Layer~3 pass@1, where nemotron finishes last. That last place is
+largely an artifact of the shared 8192-token budget, not of capability. Nemotron's verbose
+reasoning exhausted the budget on 185 of 512 problems (143 empty outputs plus 42 with output but
+no extractable code), all scored as fails. The truncation is difficulty-correlated---no-code rate
+14.3\% on easy, 34.3\% on medium, 71.5\% on hard problems---so a conditional rate on only the
+answered subset must not be compared against the other models' full-512 rates, a selection-bias
+trap we flag (finding C2). The defensible comparison is paired, on the 327 problems nemotron
+answered with code: there nemotron scores 96.0\%, gpt-oss 95.4\%, and qwen 82.3\%.
+Figure~\ref{fig:trunc} shows both halves.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{l3-truncation.png}
+\caption{Left: nemotron's no-code (truncation) rate rises with difficulty (easy 14\%, medium
+34\%, hard 72\%). Right: on the 327 problems it answers with code, nemotron (96.0\%) matches
+gpt-oss (95.4\%) and beats qwen (82.3\%). The last place in Table~\ref{tab:l3} is a fixed-budget
+artifact.}
+\label{fig:trunc}
+\end{figure}
+
+The methodology finding is general: a single-shot, fixed-budget benchmark systematically
+penalizes verbose reasoning models, and the penalty concentrates on hard problems. We keep 8192
+tokens as the primary, controlled number---holding the budget constant is the fairness
+control---and treat the truncation itself as a reportable result rather than tuning it away.
+
+\section{Measurement Pitfalls}
+
+Several pitfalls surfaced only because we retained raw artifacts and re-derived every table.
+They generalize beyond this box.
+
+\textbf{Unified memory is not VRAM.} As noted, \code{nvidia-smi} reports \code{[N/A]} for
+device memory on GB10 by design; the footprint comes from \code{/proc/meminfo} and is
+whole-system, not dedicated GPU memory.
+
+\textbf{Tokens-per-joule is prompt-token-dominated.} The agent loop re-sends context every
+turn, so prompt tokens are a median 98.7\% of the total. A naive \code{total\_tokens / energy}
+therefore measures re-submitted context, not decode work; we report energy per \emph{generated}
+token alongside it.
+
+\textbf{Restart-truncated energy windows.} Watchdog restarts reuse a run identifier and
+overwrite the metric window, so a crash-prone run's energy can cover only its final segment.
+The gpt-oss Layer~3 energy cell is a known-broken capture (roughly three orders of magnitude
+low) and is marked invalid in the ledger rather than published---the pass@1 result is
+unaffected because scoring is independent of the metrics window.
+
+\textbf{Robust energy statistics.} Arithmetic-mean Layer~1 energy is dominated by a single
+${\sim}13$\,h nemotron operational runaway (${\sim}655$\,kJ). We report median and IQR
+with an operational-failure sensitivity, never a bare mean.
+
+\textbf{Telemetry asymmetry.} vLLM exposes Prometheus histograms (gpt-oss ${\sim}26.9$\,tok/s,
+qwen ${\sim}19.7$\,tok/s at Layer~1); TensorRT-LLM exposes none, so nemotron has hardware
+energy but no decode-throughput or TTFT figures. Those cells are blank by design, not missing
+data, and we do not impute them.
+
+\section{Operational Findings}
+
+A few hard-won operational notes for anyone reproducing this. TensorRT-LLM 1.3.0rc9 on GB10 is
+fragile for non-NVIDIA MoE models---the FP4-native NVIDIA reasoning model serves, the others
+deadlock. A degraded-box state is real: after a 26-hour vLLM run the GPU was left in a state
+where TensorRT-LLM nemotron wedged after one generation (warmup 656\,s); a reboot cleared it
+fully (warmup back to 8\,s), so the box should be reset between heavy long-lived serves. A
+non-streaming request path wedged nemotron mid-generation, and switching the LiveCodeBench runner
+to stream (the path OpenCode already used) fixed it. Throughput is bandwidth-bound: nemotron's
+single-stream Layer~3 would take ${\sim}130$\,h; running it 8-way parallel brings it to
+${\sim}9.5$\,h with no change to per-problem pass@1 and no efficiency metrics lost, since
+TensorRT-LLM exposes none anyway. Finally, several silent-failure traps were guarded: reasoning
+models return \code{content=None} on truncation; a resume filter re-generated empty outputs
+indefinitely; and a watchdog nearly false-stalled on a frozen log mtime and now uses the
+TensorRT-LLM iteration counter as ground truth. Figures~\ref{fig:walltime} and
+\ref{fig:energy} summarize the efficiency reality, with the caveats above embedded.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{walltime-by-layer.png}
+\caption{Median wall-clock per task, agentic layers. Nemotron is roughly $2\times$ slower than
+the vLLM models at L1 (3.9 vs 1.4--1.9\,min) and slowest at L2 (16.1\,min); the median is shown
+because the L1 mean is skewed by one ${\sim}13$\,h runaway.}
+\label{fig:walltime}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{energy-per-success.png}
+\caption{Energy per \emph{successful} task (self-hosted, so energy is the cost proxy). At L1,
+nemotron costs 143\,kJ per solve to gpt-oss's 12.8\,kJ (${\sim}11\times$); at L2, qwen costs
+211\,kJ per working app to gpt-oss's 32.8\,kJ. Runtime-confounded (nemotron on TensorRT-LLM).}
+\label{fig:energy}
+\end{figure}
+
+\section{Reproducibility}
+
+Every run keeps its summaries, manifests, and clock records under
+\code{results/raw/<run-id>/}; bulky per-run time series are regenerable and excluded from
+version control, while summaries and manifests are committed. Scoring is fully automated and
+mechanical---no human scorers, no LLM judge, at any layer---so the aggregation and robust-summary
+scripts regenerate their tables byte-identically from retained outputs. A single command
+(\code{make rebuild}) re-derives every summary table, per-run ledger, figure, and statistic from
+the raw runs without re-serving any model, and the statistics and robust-summary self-tests pass.
+Container image digests, upstream dataset snapshot revisions (SWE-bench Verified, LiveCodeBench),
+the exact HuggingFace revisions of all three model checkpoints, the Layer~1 subset checksums, and
+the frozen Layer~3 window are pinned in an immutable provenance record. Model-generated
+application code lives only in the companion app repository and is never edited by the
+maintainer's tooling; the coding assistant used to build the harness and write this report is not
+part of what was measured.
+
+\section{Threats to Validity and Limitations}
+
+\textbf{Single box, three configurations.} Model identity is fully coupled to serving runtime,
+precision, and scaffold. Conclusions are restricted to these configurations on this machine, and
+serving incompatibility is a systems finding, not proof of intrinsic quality.
+
+\textbf{Small and unequal samples.} L1 and L3 are single-attempt per cell; L2 is $N=20/8$
+(node/python) for the vLLM models against $N=4$ for nemotron. All quality claims are descriptive,
+and the McNemar results show L1 cannot rank these models at this size.
+
+\textbf{Protocol changed mid-collection.} The C1 contract fix and rubric-denominator changes mean
+some early runs are exploratory; confirmatory claims draw on the post-fix \code{baseline-v7}
+sweep.
+
+\textbf{L1 is a disclosed subset,} not SWE-bench Verified and not a random sample; absolute
+SWE-bench numbers should not be extrapolated from it.
+
+\textbf{L3 is a fixed historical window} where contamination is possible: equal chronological
+eligibility is not equal contamination, the set is not exposure-balanced, and it is not
+leaderboard-comparable.
+
+\textbf{Untested newer stacks.} The nemotron/vLLM incompatibility is scoped to the pinned vLLM
+0.15.1 (NGC \code{26.02-py3}); a newer vLLM or the current NVIDIA-validated DGX Spark recipe was
+not tested and could change that specific result.
+
+\textbf{Isolation.} Generated code is executed without OS-level sandboxing on this kernel
+(bubblewrap unavailable); publication-grade runs should use a no-network container or VM.
+
+\section{Conclusion}
+
+On a single DGX Spark the story that survives scrutiny is not ``model X wins.'' It is that at
+local-evaluation scale, serving feasibility and harness validity dominate model effects. No model
+in our set serves on both runtimes on this box; a single missing specification file inverted the
+Layer~2 conclusion until it was found; and a fixed token budget manufactured a last-place finish
+at Layer~3 for a verbose reasoning model that matches the field on the problems it actually
+answers. The practitioner takeaways are concrete. Of the configurations measured here,
+gpt-oss-120b on vLLM is the strongest local agentic setup (L1 37.9\%, L2 node 80\% working apps,
+L3 89.3\%); nemotron serves only on TensorRT-LLM and needs a larger token budget to be judged
+fairly; and honest local benchmarking depends far more on a failure taxonomy, robust energy
+statistics, and byte-reproducible rescoring than on producing one more leaderboard number.
+
+\section*{Data and Code Availability}
+
+The harness, frozen specification, raw run summaries, aggregation and statistics code, figures,
+and provenance pins are in the public repository at
+\url{https://github.com/mani-mal/spark-coder-bench}. Every table and figure in
+this paper maps to a committed source CSV and regenerates via \code{make rebuild}.
+
+% ---------------------------------------------------------------------------
+% NOTE (author): The references below are curated for a preprint. Verify every
+% arXiv ID, year, and venue by hand before posting -- an earlier automated draft
+% pass flagged that some precise identifiers may be inaccurate. Placeholders are
+% marked with % VERIFY.
+% ---------------------------------------------------------------------------
+\begin{thebibliography}{9}
+
+\bibitem{swebench}
+C. E. Jimenez, J. Yang, A. Wettig, S. Yao, K. Pei, O. Press, and K. Narasimhan.
+\newblock SWE-bench: Can Language Models Resolve Real-World GitHub Issues?
+\newblock \emph{ICLR}, 2024. arXiv:2310.06770. % VERIFY id/year
+
+\bibitem{livecodebench}
+N. Jain, K. Han, A. Gu, W.-D. Li, F. Yan, T. Zhang, S. Wang, A. Solar-Lezama,
+K. Sen, and I. Stoica.
+\newblock LiveCodeBench: Holistic and Contamination-Free Evaluation of Large Language Models for Code.
+\newblock arXiv:2403.07974, 2024. % VERIFY id/year
+
+\bibitem{vllm}
+W. Kwon, Z. Li, S. Zhuang, Y. Sheng, L. Zheng, C. H. Yu, J. E. Gonzalez, H. Zhang, and I. Stoica.
+\newblock Efficient Memory Management for Large Language Model Serving with PagedAttention.
+\newblock \emph{SOSP}, 2023. arXiv:2309.06180. % VERIFY id/year
+
+\bibitem{switch}
+W. Fedus, B. Zoph, and N. Shazeer.
+\newblock Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity.
+\newblock \emph{JMLR}, 2022. arXiv:2101.03961. % VERIFY id/year
+
+\bibitem{wilson}
+E. B. Wilson.
+\newblock Probable Inference, the Law of Succession, and Statistical Inference.
+\newblock \emph{Journal of the American Statistical Association}, 22(158):209--212, 1927.
+
+\bibitem{mcnemar}
+Q. McNemar.
+\newblock Note on the Sampling Error of the Difference Between Correlated Proportions or Percentages.
+\newblock \emph{Psychometrika}, 12(2):153--157, 1947.
+
+\bibitem{opencode}
+OpenCode.
+\newblock OpenCode: an open-source terminal-based coding agent.
+\newblock \url{https://opencode.ai}. % VERIFY / cite version used
+
+\bibitem{gptoss}
+OpenAI.
+\newblock gpt-oss-120b model card.
+\newblock \url{https://huggingface.co/openai/gpt-oss-120b}, 2025. % VERIFY name/year/URL
+
+\bibitem{qwen3}
+Qwen Team.
+\newblock Qwen3-Coder-30B-A3B-Instruct model card.
+\newblock \url{https://huggingface.co/Qwen/Qwen3-Coder-30B-A3B-Instruct}, 2025. % VERIFY name/year/URL
+
+\bibitem{nemotron}
+NVIDIA.
+\newblock NVIDIA-Nemotron-3-Super-120B-A12B model card.
+\newblock \url{https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-NVFP4}, 2025. % VERIFY name/year/URL
+
+\bibitem{microscaling}
+Open Compute Project.
+\newblock OCP Microscaling Formats (MX) Specification (MXFP4; NVIDIA NVFP4).
+\newblock \url{https://www.opencompute.org/}, 2023. % VERIFY spec title/version/year
+
+\end{thebibliography}
+
+\end{document}

@@ -4,7 +4,7 @@ A plain-language guide to the DGX Spark coding-model benchmark: what it varies, 
 builds, how it scores, and what it measures. Read this first if you want the mental model;
 follow the links for the deep detail.
 
-- **Repo:** <https://github.com/mani-mal/dgx-spark-coding-model-benchmark>
+- **Repo:** <https://github.com/mani-mal/spark-coder-bench>
 - **One-page technical map:** [`docs/BENCHMARK_OVERVIEW.md`](BENCHMARK_OVERVIEW.md)
 - **Methodology & fairness controls:** [`docs/methodology.md`](methodology.md)
 - **Every decision, dated:** [`docs/findings/`](findings/)
@@ -51,7 +51,7 @@ is deliberate and is itself part of the findings.
 |---|---|---|---|---|
 | **gpt-oss-120b** (116.8B / 5.1B) | [openai/gpt-oss-120b](https://huggingface.co/openai/gpt-oss-120b) | MXFP4 | **vLLM only** | MXFP4 MoE autotunes on TRT but requests deadlock at the executor |
 | **qwen3-coder-30b** (30.5B / 3.3B) | [Qwen/Qwen3-Coder-30B-A3B-Instruct](https://huggingface.co/Qwen/Qwen3-Coder-30B-A3B-Instruct) | bf16 | **vLLM only** | bf16 MoE has no working sm_121a TRT kernel |
-| **nemotron-super** (~120B / ~12B, hybrid Mamba/attn + MoE, reasoning) | [nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-NVFP4](https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-NVFP4) | NVFP4 (MIXED_PRECISION) | **TRT-LLM only** | vLLM rejects its MIXED_PRECISION checkpoint |
+| **nemotron-super** (~120B / ~12B, hybrid Mamba/attn + MoE, reasoning) | [nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-NVFP4](https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-NVFP4) | NVFP4 (MIXED_PRECISION) | **TRT-LLM only** | vLLM 0.15.1 (`26.02-py3`) rejects its MIXED_PRECISION checkpoint (newer vLLM not tested) |
 
 > **Serving feasibility is a result, not just setup.** No single model serves on both runtimes,
 > so a same-model vLLM-vs-TRT comparison can't be done on this box. Details:
@@ -342,7 +342,7 @@ either statistically weak (L1/L2) or budget-confounded (L3 nemotron). The paper'
 ## 9. Reference links
 
 **This project**
-- Repo: <https://github.com/mani-mal/dgx-spark-coding-model-benchmark>
+- Repo: <https://github.com/mani-mal/spark-coder-bench>
 - Technical overview: [`docs/BENCHMARK_OVERVIEW.md`](BENCHMARK_OVERVIEW.md) · Methodology: [`docs/methodology.md`](methodology.md)
 - Findings index: [`docs/findings/`](findings/) · Full L1/L2 capstone: [`2026-06-29-full-matrix-results.md`](findings/2026-06-29-full-matrix-results.md)
 

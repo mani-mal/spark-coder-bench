@@ -1,5 +1,16 @@
 # Is nemotron-super losing a real result, or a methodology error? (And: vLLM-vs-TRT fairness / Ollama)
 
+> **⚠️ SUPERSEDED IN PART (2026-06-29).** This note (written 2026-06-28) describes the qwen-TRT
+> and gpt-oss-TRT **bridge runs as an in-progress control that "already" isolates the runtime
+> effect.** That did not survive: both bridge cells are **documented BLOCKERS** — bf16 MoE has no
+> working sm_121a kernel (`2026-06-29-qwen-trt-moe-blackwell-blocker.md`) and MXFP4 MoE deadlocks at
+> the executor RPC handoff (`2026-06-29-gpt-oss-trt-blocker.md`). **No same-model cross-runtime bridge
+> exists on this box** (`2026-06-29-full-matrix-results.md`); model and runtime are fully confounded
+> by hardware necessity and disclosed as such (`infra/models.json` M17). The rows below that treat the
+> bridge as an available runtime control are stale; the *conclusion* (nemotron's last-place agentic
+> result is real, model-driven, and not a runtime artifact — because runtime does not change which
+> tokens are emitted) is unchanged and independent of the bridge.
+
 **Date:** 2026-06-28
 **Trigger:** Expectation that nemotron (NVIDIA model on NVIDIA DGX Spark) should win, but it
 ranks last for agentic coding. Question: did we err, is vLLM-vs-TensorRT-LLM an unfair
@@ -15,7 +26,7 @@ comparison *worse*, not fairer. Three caveats on rigor are noted at the end.
 
 | Suspected error | Verdict | Evidence |
 |---|---|---|
-| **Context-length handicap** (AI_USAGE.md shows nemotron at 32768 vs 65536 for others) | **RULED OUT** | The 32768 was the dead *vLLM* entry nemotron never used (vLLM can't serve its MIXED_PRECISION checkpoint). The actual TRT serve gives `MAX_SEQ_LEN=1048576` (1M, FP8 KV cache); the OpenCode TRT entry is **65536 — identical to qwen/gpt-oss**. No asymmetry. |
+| **Context-length handicap** (CLAUDE.md shows nemotron at 32768 vs 65536 for others) | **RULED OUT** | The 32768 was the dead *vLLM* entry nemotron never used (vLLM can't serve its MIXED_PRECISION checkpoint). The actual TRT serve gives `MAX_SEQ_LEN=1048576` (1M, FP8 KV cache); the OpenCode TRT entry is **65536 — identical to qwen/gpt-oss**. No asymmetry. |
 | **Tool-call / reasoning-parser broken in the agent loop** | **RULED OUT** | Across all 8 L2 runs nemotron made 27–165 tool calls with ~0 failures (`failed_tool_calls` 0–1). It is *actively executing tools*, not stuck "thinking". `reasoning` token count is 0 in accounting — no CoT leakage into the loop. |
 | **NVFP4 4-bit quant degrades quality** | **RULED OUT (small)** | NVIDIA data: NVFP4 recovers ~97–99% of accuracy on 30B+ models; <1% drop on LiveCodeBench for a comparable reasoning model. nemotron was *trained natively in NVFP4*, so TRT-LLM is its intended-precision runtime. |
 | **vLLM vs TRT-LLM is apples-to-oranges** | **NOT the cause** | Runtime affects throughput/energy/latency, not which tokens the model emits → not resolved-rate. And we explicitly control for it with qwen-trt + gpt-oss-trt **bridge runs** (same model, both runtimes). |

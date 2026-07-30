@@ -23,7 +23,8 @@ efficiency (tokens/joule, decode throughput, bandwidth pressure).
 
 > **Model identity is confounded with runtime, quant, and scaffold (disclosed).** No model
 > serves on both runtimes on this box: **gpt-oss (MXFP4) and Qwen (bf16) run on vLLM;
-> Nemotron (NVFP4 MIXED_PRECISION) runs on TRT-LLM only** (vLLM rejects its checkpoint). Where
+> Nemotron (NVFP4 MIXED_PRECISION) runs on TRT-LLM only** (vLLM 0.15.1 / NGC `26.02-py3` rejects
+> its checkpoint; a newer vLLM was not tested). Where
 > a model runs on vLLM, FP4 uses the **Marlin weight-only** kernel — GB10/SM121 has no native
 > FP4 *compute* — so any storage/bandwidth "FP4 advantage" is not tensor-core math (disclosed in
 > each manifest). Seed, temperature, KV-cache dtype, `max_num_seqs`, and OpenCode versions are
@@ -74,7 +75,7 @@ The diagram traces one run end-to-end through six bands, all on a single DGX Spa
 
 | Repo | Driven by | Role |
 | --- | --- | --- |
-| **dgx-spark-coding-model-benchmark** (this repo) | an AI coding assistant | Spec master copy, metrics, scoring, charts, report |
+| **spark-coder-bench** (this repo) | an AI coding assistant | Spec master copy, metrics, scoring, charts, report |
 | **taskflow-local-app-benchmark** | OpenCode | Workspace where each model builds the app (one branch per run) |
 
 The model-generated app code lives only in the app repo. **This repo never edits that
