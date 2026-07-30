@@ -41,6 +41,13 @@
 % Compact typewriter for the many paths/flags this paper references.
 \newcommand{\code}[1]{\texttt{\small #1}}
 
+% Two-column layout tuning: let columns end naturally (no stretched inter-section
+% gaps), and pin floats to the top of any float-only page instead of centering them.
+\raggedbottom
+\makeatletter
+\setlength{\@fptop}{0pt}
+\makeatother
+
 \title{\bfseries Local Coding-Model Configurations on a Single DGX Spark:\\
 A Systems and Methodology Case Study}
 
