@@ -196,7 +196,8 @@ produce coherent, non-repeating output; a failed gate aborts the run rather than
 garbage metrics) and writes a per-serve reproducibility manifest. Container image digests
 are pinned: vLLM \code{nvcr.io/nvidia/vllm:26.02-py3} (vLLM 0.15.1) and TensorRT-LLM
 \code{nvcr.io/nvidia/tensorrt-llm/release:1.3.0rc9}. The agentic layers are driven by
-OpenCode at an identical version and configuration for every model; Layer~3 uses no agent
+OpenCode~\cite{opencode} 1.17.9 at an identical version and configuration for every model;
+Layer~3 uses no agent
 and calls the endpoint directly.
 
 \subsection{The three configurations}
@@ -671,7 +672,10 @@ energy statistics, and deterministic rescoring than on producing one more leader
 The harness, frozen specification, raw run summaries, aggregation and statistics code, figures,
 and provenance pins are in the public repository at
 \url{https://github.com/mani-mal/spark-coder-bench}. Every table and figure in
-this paper maps to a committed source CSV and regenerates via \code{make rebuild}.
+this paper maps to a committed source CSV and regenerates via \code{make rebuild}. The
+model-generated application code lives in the separate public companion repository
+\url{https://github.com/mani-mal/taskflow-local-app-benchmark}; all reported Layer~2 runs start
+from its frozen tag \code{baseline-v7} (commit \code{5b0b85b}).
 
 \begin{thebibliography}{99}
 
@@ -718,7 +722,7 @@ Q. McNemar.
 
 \bibitem{opencode}
 OpenCode.
-\newblock OpenCode: an open-source terminal-based coding agent.
+\newblock OpenCode: an open-source terminal-based coding agent. Version 1.17.9.
 \newblock \url{https://opencode.ai}.
 
 \bibitem{gptoss}

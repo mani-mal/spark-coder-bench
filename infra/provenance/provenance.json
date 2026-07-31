@@ -12,6 +12,16 @@
       "digest": "sha256:6c3c31a599a0fe744aa626abc49a49f6f7b642676e8162404f25bf1fef1f0e6d"
     }
   },
+  "agent": {
+    "opencode_version": "1.17.9",
+    "note": "OpenCode drives Layers 1-2 (agentic); identical version/config across all models. Layer 3 uses no agent."
+  },
+  "app_repo": {
+    "repo": "https://github.com/mani-mal/taskflow-local-app-benchmark",
+    "tag": "baseline-v7",
+    "commit": "5b0b85bd68ea2adc112fd6f8318125e676a2c176",
+    "note": "Companion TaskFlow app repo. All reported Layer 2 runs start from tag baseline-v7 (post-C1, contract-visible). Model-generated app code lives here and is never edited by the harness."
+  },
   "model_checkpoints": {
     "note": "Immutable HF revisions of the three benchmarked model weights, resolved from refs/main of the local HF snapshot the study served. Pins the exact checkpoint each result was produced on.",
     "nemotron_super": {
