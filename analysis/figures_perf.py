@@ -128,8 +128,9 @@ def main():
         out, "fig_energy_per_success", qlayers,
         {SHORT[m]: [fnum(qf.get((L, m), {}).get("energy_kJ_per_success")) for L in qlayers] for m in MODELS},
         "kJ per successful task", "Quality-adjusted efficiency: energy per SUCCESSFUL task",
-        note="Lower is better. Blank = 0 successes (nemotron L2). Energy is the self-hosted "
-             "cost proxy; runtime-confounded (nemotron on TRT).")
+        note="Lower is better. Blank = 0 successes (nemotron L2). GPU-reported energy "
+             "(nvidia-smi power.draw, GPU package only). L1 excludes operational-failure energy; "
+             "L2 is Node-track only. Runtime-confounded (nemotron on TRT-LLM).")
 
     # ---- 3) resolve vs regression rate (of applied L1 patches) ----
     reg = {r["model"]: r for r in load(S / "regression-rate.csv")}

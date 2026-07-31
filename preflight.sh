@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # preflight.sh — green/red readiness checklist for the benchmark harness.
-# Run it (after sourcing ~/.bashrc and <vllm-serving-lab>/.env) to see exactly
+# Run it (after sourcing ~/.bashrc and ~/dgx-coding-lab/.env) to see exactly
 # what is ready and what each layer still needs. Read-only; changes nothing.
 #
 # Usage: ./preflight.sh
@@ -33,8 +33,8 @@ else no "vLLM not responding on :$PORT — run: infra/vllm/serve-model.sh <profi
 if curl -sf "http://127.0.0.1:$PORT/metrics" >/dev/null 2>&1; then ok "vLLM /metrics reachable (inference collector)"
   else wn "vLLM /metrics not reachable yet"; fi
 [[ -d "$TASKFLOW_DIR/.git" ]] && ok "app repo present ($TASKFLOW_DIR)" || no "app repo missing: $TASKFLOW_DIR"
-if git -C "$TASKFLOW_DIR" rev-parse baseline-v6 >/dev/null 2>&1; then ok "app baseline-v6 tag present"
-  else wn "app baseline-v6 tag missing (run-appcase BASELINE default) — set BASELINE to an existing tag"; fi
+if git -C "$TASKFLOW_DIR" rev-parse baseline-v7 >/dev/null 2>&1; then ok "app baseline-v7 tag present"
+  else wn "app baseline-v7 tag missing (run-appcase BASELINE default) — set BASELINE to an existing tag"; fi
 nvidia-smi >/dev/null 2>&1 && ok "nvidia-smi works (hardware collector)" || no "nvidia-smi missing"
 
 echo "${B}== Layer 2 scoring (rubric: start backend + build frontend) ==${N}"

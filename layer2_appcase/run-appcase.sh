@@ -14,7 +14,7 @@
 #
 # Env overrides:
 #   TASKFLOW_DIR (default ~/projects/taskflow-local-app-benchmark)
-#   BASELINE     (default baseline-v6)
+#   BASELINE     (default baseline-v7; the post-C1 contract-visible confirmatory tag)
 #   METRICS_URL  (default http://127.0.0.1:8000/metrics; use :8355 for TensorRT-LLM)
 #   PROVIDER     (default vllm-local; use trt-local for the TensorRT-LLM runtime)
 #   RUNTIME_TAG  (default empty; set e.g. "trt" so TRT-LLM run-ids don't collide with vLLM ones)
@@ -28,7 +28,7 @@ fi
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TASKFLOW_DIR="${TASKFLOW_DIR:-$HOME/projects/taskflow-local-app-benchmark}"
-BASELINE="${BASELINE:-baseline-v6}"
+BASELINE="${BASELINE:-baseline-v7}"
 METRICS_URL="${METRICS_URL:-http://127.0.0.1:8000/metrics}"
 PROVIDER="${PROVIDER:-vllm-local}"
 RUNTIME_TAG="${RUNTIME_TAG:-}"        # e.g. "trt"; empty keeps vLLM run-ids unchanged
