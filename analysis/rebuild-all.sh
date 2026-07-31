@@ -34,7 +34,11 @@ step "2/8  published figures -> reports/charts/*.png + *.csv"
 # quality/thesis figures (ablation, per-layer success, L3 truncation) for the report
 "$PY" analysis/figures_quality.py
 
-step "3/8  L2 C1 rescore (k/29 + k/25) -> l2-rescore-25.csv + l2-ablation-contract.csv"
+step "3/8  L2 C1 rescore (k/29 + k/25) -> l2-rescore-25.csv"
+# NOTE: this regenerates l2-rescore-25.csv (the post-C1 dual-report) only. The C1 ablation
+# table (l2-ablation-contract.csv, source of Fig. 4) is a committed FROZEN artifact: its
+# pre-C1 ("before") sweep was not retained in benchmark-long.csv, so it is not re-derivable
+# here and is versioned as-is rather than rebuilt.
 "$PY" analysis/l2-rescore.py --long "$LONG"
 
 step "4/8  L3 conditional / selection-bias analysis -> l3-conditional-analysis.csv"

@@ -6,7 +6,7 @@ A Systems and Methodology Case Study*.
 ```
 paper/
   main.tex          # the paper (self-contained; inline bibliography, no bibtex needed)
-  figures/          # PNGs copied from reports/charts/ + architecture.jpg
+  figures/          # PNGs copied from reports/charts/ + architecture.pdf (vector, Fig 1)
 ```
 
 ## Build
@@ -33,8 +33,8 @@ These are the deliberate placeholders you should fill/verify (they're marked wit
    OpenCode). Add citations for the model cards (gpt-oss, Qwen3-Coder, Nemotron-3-Super) and
    the MXFP4/NVFP4 microscaling formats if you want them.
 3. **arXiv categories** — primary `cs.SE`, cross-list `cs.PF`, `cs.LG` (per the publishing plan).
-4. Optionally add the architecture diagram (`figures/architecture.jpg`) as a system-overview
-   figure — it's copied in but not yet `\includegraphics`'d, to keep the figure count lean.
+4. The architecture diagram (`figures/architecture.pdf`, a vector export of
+   `docs/architecture/benchmark-architecture.drawio`) is included as Figure 1.
 
 ## Provenance
 

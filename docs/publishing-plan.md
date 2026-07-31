@@ -19,7 +19,7 @@ not a model-ranking paper** (see `docs/findings/2026-07-02-audit-verification-an
   systems + methodology framing, every table mapped to a source CSV + regeneration command, with
   the §3 coupling table, the C1 L2 before/after ablation, and the C2 L3 paired-subset correction).
   `reports/screenshots/` is still empty (optional; the architecture diagram at
-  `docs/architecture/benchmark-architecture.jpg` is the main figure).
+  `docs/architecture/benchmark-architecture.png` is the main figure).
 - Draw language **only** from the evergreen docs (`README`, `docs/HELP.md`,
   `docs/BENCHMARK_OVERVIEW.md`, `docs/methodology.md`) — they now tell one reconciled story.
 - Sections: motivation; setup (DGX Spark GB10 + vLLM/TensorRT-LLM + OpenCode); the

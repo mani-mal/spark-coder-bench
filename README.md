@@ -47,7 +47,7 @@ end-to-end description of the protocol.
 
 ## Architecture
 
-![DGX Spark coding-model benchmark architecture](docs/architecture/benchmark-architecture.jpg)
+![DGX Spark coding-model benchmark architecture](docs/architecture/benchmark-architecture.png)
 
 The diagram traces one run end-to-end through six bands, all on a single DGX Spark
 (GB10, 128 GB unified memory) serving **one large model at a time**:

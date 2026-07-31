@@ -39,8 +39,16 @@ def main():
     print(f"{'model':16} {'track':7} {'N':>3} {'mean29':>7} {'mean25':>7} {'work29':>7} {'work25':>7}")
     for k in sorted(grp):
         recs = grp[k]
-        r29 = [f(r["rubric_pass_rate"]) for r in recs if f(r["rubric_pass_rate"]) is not None]
-        r25 = [f(r["rubric_pass_rate_25"]) for r in recs if f(r["rubric_pass_rate_25"]) is not None]
+        # A run is "scored" if it produced a rubric result (k/29). The k/25 reachable-subset
+        # rate must use the SAME denominator: a scored run whose rubric_pass_rate_25 is empty
+        # (its rubric-score.json carried no per-check list or total, e.g. a 0-pass run) counts
+        # as 0, not as an excluded run. Averaging k/25 only over populated cells shrinks the
+        # denominator relative to k/29 and inflates the mean (finding F1: qwen node was 0.204
+        # over 18 populated runs vs the correct 0.184 over all 20 scored runs).
+        scored = [r for r in recs if f(r["rubric_pass_rate"]) is not None]
+        r29 = [f(r["rubric_pass_rate"]) for r in scored]
+        r25 = [f(r["rubric_pass_rate_25"]) if f(r["rubric_pass_rate_25"]) is not None else 0.0
+               for r in scored]
         n = len(recs)
         m29 = sum(r29) / len(r29) if r29 else 0.0
         m25 = sum(r25) / len(r25) if r25 else 0.0

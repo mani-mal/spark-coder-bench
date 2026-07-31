@@ -112,8 +112,9 @@ def main():
         out, "fig_walltime_by_layer", wlayers,
         {SHORT[m]: [fnum(pf.get((L, m), {}).get("dur_med_min")) for L in wlayers] for m in MODELS},
         "median minutes / task", "Wall-clock per task (median), agentic layers L1/L2",
-        note="Per-task median (nemotron L1 mean is skewed by a ~13 h verbose runaway). "
-             "L3 excluded: its duration is whole-run (512 problems), not per task — see report S7.")
+        # Footer note dropped: it is redundant with the LaTeX caption and rendered as
+        # unreadable grey text at print size (review F10).
+        note=None)
 
     # ---- 2) energy per SUCCESSFUL task (kJ), model x {L1,L2} ----
     qae = load(S / "quality-adjusted-efficiency.csv")
@@ -128,9 +129,8 @@ def main():
         out, "fig_energy_per_success", qlayers,
         {SHORT[m]: [fnum(qf.get((L, m), {}).get("energy_kJ_per_success")) for L in qlayers] for m in MODELS},
         "kJ per successful task", "Quality-adjusted efficiency: energy per SUCCESSFUL task",
-        note="Lower is better. Blank = 0 successes (nemotron L2). GPU-reported energy "
-             "(nvidia-smi power.draw, GPU package only). L1 excludes operational-failure energy; "
-             "L2 is Node-track only. Runtime-confounded (nemotron on TRT-LLM).")
+        # Footer note dropped: redundant with the LaTeX caption and unreadable at print size (F10).
+        note=None)
 
     # ---- 3) resolve vs regression rate (of applied L1 patches) ----
     reg = {r["model"]: r for r in load(S / "regression-rate.csv")}

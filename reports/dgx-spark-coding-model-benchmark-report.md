@@ -380,7 +380,7 @@ byte-reproducible rescoring** far more than it requires another leaderboard numb
 
 ### Appendix B — Source documents
 
-Architecture diagram: `docs/architecture/benchmark-architecture.jpg`. Canonical protocol:
+Architecture diagram: `docs/architecture/benchmark-architecture.png`. Canonical protocol:
 `docs/HELP.md`. Fairness controls + metric catalogue: `docs/methodology.md`. End-to-end map:
 `docs/BENCHMARK_OVERVIEW.md`. Reframing decision + audit verification:
 `docs/findings/2026-07-02-audit-verification-and-decision.md`. Consolidated
