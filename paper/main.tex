@@ -176,6 +176,16 @@ are highly sensitive to harness details, sample size, and token budgets---is con
 the wider reproducibility literature, but we ground it in specific, reproducible failures on
 this hardware rather than in the abstract.
 
+\textbf{Managed autonomy and governance.} A complementary line of work frames the
+reliability of tool-using agents as a governance problem: autonomous systems must be
+bounded by explicit safeguards---checks on whether an action was actually taken rather
+than merely described, escalation paths when it was not, and hard runtime limits on
+autonomous loops~\cite{managedautonomy, gearsafety}. Our study supplies empirical grounding
+for that framing on local hardware. The autonomous-tool-use gate
+(Appendix~\ref{app:gate}) operationalizes the ``did the agent
+actually act'' precondition, and the runaway watchdog (\S\ref{sec:opfindings}) is precisely
+the kind of runtime bound such frameworks prescribe against unbounded resource consumption.
+
 \section{Experimental Setup}
 
 \begin{figure*}[t]
@@ -266,7 +276,8 @@ layers: a model must return a well-formed \code{tool\_calls} response under
 \code{tool\_choice:"auto"} (not prose, not hallucinated tool-output tokens) \emph{and}
 actually create a file on disk (Appendix~\ref{app:gate}). gpt-oss-120b passed this gate and replaced DeepSeek. The case
 is itself a finding: agentic competence is not the same property as code-generation
-competence, and a benchmark that conflates them will mis-rank models.
+competence, and a benchmark that conflates them will mis-rank models---a distinction that
+governance frameworks for agentic AI treat as first-order~\cite{managedautonomy}.
 
 \subsection{The headline systems result: serving feasibility}
 \label{subsec:serving}
@@ -579,7 +590,8 @@ low) and is marked invalid in the ledger rather than published---the pass@1 resu
 unaffected because scoring is independent of the metrics window.
 
 \textbf{Robust energy statistics.} Arithmetic-mean Layer~1 energy is dominated by a single
-${\sim}13$\,h nemotron operational runaway (${\sim}655$\,kJ). We report median and IQR
+${\sim}13$\,h nemotron operational runaway (${\sim}655$\,kJ)---the class of unbounded
+autonomous loop that runtime safety governors are meant to arrest~\cite{gearsafety}. We report median and IQR
 with an operational-failure sensitivity, never a bare mean.
 
 \textbf{Telemetry asymmetry.} vLLM exposes Prometheus histograms (gpt-oss ${\sim}26.9$\,tok/s,
@@ -589,6 +601,7 @@ energy but no decode-throughput or TTFT figures. Those cells are blank by design
 data, and we do not impute them.
 
 \section{Operational Findings}
+\label{sec:opfindings}
 
 A few operational notes for anyone reproducing this. TensorRT-LLM 1.3.0rc9 on GB10 is
 fragile for non-NVIDIA MoE models---the FP4-native NVIDIA reasoning model serves, the others
@@ -788,6 +801,16 @@ NVIDIA.
 NVIDIA.
 \newblock NVIDIA DGX Spark (GB10 Grace Blackwell): product specifications.
 \newblock \url{https://www.nvidia.com/en-us/products/workstations/dgx-spark/}, 2025.
+
+\bibitem{managedautonomy}
+S. Ramaswamy.
+\newblock Intelligence as Managed Autonomy: Failure, Escalation, and Governance for Agentic AI Systems.
+\newblock \emph{Journal of Intelligent \& Robotic Systems}, to appear (accepted May 2026). arXiv:2605.27628.
+
+\bibitem{gearsafety}
+S. Ramaswamy and M. Wang.
+\newblock Managed Autonomy at Runtime: Gear-Based Safety and Governance for Single- and Multi-Agent Cyber-Physical Systems.
+\newblock 2026. arXiv:2607.00334.
 
 \end{thebibliography}
 
