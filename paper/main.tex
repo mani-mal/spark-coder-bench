@@ -127,7 +127,7 @@ specification file changed a headline conclusion, and a fixed token budget that 
 reasoning model's score in a way that looked like a capability gap but was an output-length
 artifact.
 
-We state the framing plainly because it governs how every result should be read. Model
+This framing governs how every result should be read. Model
 identity on this box is fully confounded with serving runtime, quantization, and agent
 scaffold, and that confound is a consequence of hardware, not a design choice we could
 relax. The closest available model-versus-model comparison is the quality axis between the
@@ -256,8 +256,8 @@ qwen3-coder-30b & MoE (128 exp, top-8) & 30.5B / 3.3B & bf16 & vLLM only &
 Table~\ref{tab:configs} lists the three arms. All are sparse MoE models with an
 active-parameter fraction of 4.4\% (gpt-oss), 10.0\% (nemotron), and 10.8\% (qwen). Serving
 settings cannot be equalized across all three arms, and we do not claim they are. Random seed
-(\code{0}) and sampling temperature are held identical across all three arms at the serving
-layer, but only the two vLLM arms (gpt-oss, qwen) additionally share KV-cache dtype policy,
+(\code{0}) and sampling temperature (\code{0.2}) are held identical across all three arms at the
+serving layer, but only the two vLLM arms (gpt-oss, qwen) additionally share KV-cache dtype policy,
 \code{max\_num\_seqs}, and the OpenCode and vLLM versions. The nemotron arm runs on
 TensorRT-LLM and necessarily differs: FP8 KV cache, a serving batch of 8 (against
 \code{max\_num\_seqs 1} for the vLLM arms), distinct reasoning/tool parsers, and---at
@@ -282,7 +282,7 @@ governance frameworks for agentic AI treat as first-order~\cite{managedautonomy}
 \subsection{The headline systems result: serving feasibility}
 \label{subsec:serving}
 
-The single most practitioner-useful finding is negative and structural. \textbf{No model in
+The most practitioner-useful finding here is negative and structural. \textbf{No model in
 our set serves on both runtimes on GB10/\code{sm\_121a}.} Nemotron is TensorRT-LLM-only:
 vLLM 0.15.1 as shipped in NGC \code{26.02-py3} rejects its checkpoint at configuration
 validation, before any weights load. The checkpoint declares
@@ -354,7 +354,9 @@ surviving 29 tasks and their per-repository distribution are listed in Appendix~
 \textbf{Layer 2} has each model build the same realistic full-stack application (``TaskFlow
 Local'') from an identical frozen specification, across a Node.js and a Python/FastAPI backend
 track. Scoring fires 29 equally weighted, fully automated HTTP assertions against a frozen API
-contract after booting the built app, reported as an acceptance-check fraction $k/29$. This is
+contract after booting the built app, reported as an acceptance-check fraction $k/29$.\footnote{The
+Layer~2 denominator of 29 acceptance checks is unrelated to the 29-task Layer~1 subset; the
+shared count is coincidental.} This is
 an API-acceptance signal, not a holistic app-quality score: it measures whether the app boots
 and satisfies the communicated contract, not user experience, design, or maintainability. We
 report a Bernoulli working-app rate---a run counts as a working app if the built app boots and
@@ -407,13 +409,13 @@ Model & Resolved (raw) & Model-valid rate & Notes \\
 \midrule
 gpt-oss-120b & 37.9\% (11/29) & 37.9\% (11/29) & no infra failures \\
 qwen3-coder-30b & 24.1\% (7/29) & 24.1\% (7/29) & no infra failures \\
-nemotron-super & 20.7\% (6/29) & 30.0\% (6/20) & 1 watchdog kill; 8 excluded \\
+nemotron-super & 20.7\% (6/29) & 30.0\% (6/20) & 9 excluded: 1 watchdog, 8 env \\
 \bottomrule
 \end{tabular}
 \end{table*}
 
 Table~\ref{tab:l1} gives the Layer~1 rates. Two points about denominators. First, the primary
-rate we report is the raw, intention-to-treat $6/29 = 20.7\%$: it charges every operational
+rate we report for nemotron is the raw, intention-to-treat $6/29 = 20.7\%$: it charges every operational
 failure (a watchdog kill and eight environment failures---clone/DNS/guard drops---that were
 never a measured model attempt) against the configuration. As a sensitivity analysis we also
 report a model-valid rate that excludes those nine non-attempts, $6/20 = 30.0\%$; we flag it as
@@ -460,7 +462,8 @@ model was graded against a contract it could not see. After restoring the contra
 \caption{Layer 2 after the C1 contract fix (contract-visible \code{baseline-v7}) for the two
 vLLM arms. Working-app rate counts a run that boots and passes at least half of the 29 checks; the
 python $k/29$ column gives the mean acceptance fraction with the working-app count in
-parentheses (zero for both). The nemotron row (starred) is a pre-C1 measurement that was
+parentheses (zero for both). For the starred nemotron row, parenthesized values are the sample
+size ($N{=}4$), not a working-app count. That row is a pre-C1 measurement that was
 \emph{not} rerun; it is shown for reference only and is not comparable to the corrected rows.}
 \label{tab:l2}
 \small
@@ -477,7 +480,7 @@ nemotron-super$^\ast$ & 0.009 (N=4) & 0/4 & 0.000 (N=4) \\
 
 Table~\ref{tab:l2} reports the corrected sweep. Under the bug, gpt-oss (node acceptance 0.252)
 and qwen (0.155) looked indistinguishable---the working-app Wilson intervals overlapped, and the
-honest read was ``too close to call.'' Corrected, gpt-oss (node acceptance 0.724)
+fair read was ``too close to call.'' Corrected, gpt-oss (node acceptance 0.724)
 substantially outperforms qwen (0.178) on the node track: 80\% working apps
 (16/20, Wilson 95\% $[58.4, 91.9]\%$) against 15\% (3/20, $[5.2, 36.0]\%$), and the
 working-app intervals no longer overlap. We report this descriptively: the 20 runs per cell are repeated
@@ -612,7 +615,11 @@ serves. A non-streaming request path wedged nemotron mid-generation, and switchi
 LiveCodeBench runner to stream (the path OpenCode already used) fixed it. Throughput is
 bandwidth-bound: nemotron's single-stream Layer~3 was estimated at ${\sim}130$\,h (a
 full-budget-decode extrapolation, not a measured single-stream run), so we ran it 8-way
-concurrently (${\sim}9.5$\,h measured). We did not run a 1-way-versus-8-way sensitivity check, so we
+concurrently (${\sim}9.5$\,h measured). The two figures are not an apples-to-apples speedup: the
+130\,h extrapolation assumes every request decodes to the full token budget, whereas 8-way
+batching also amortizes the bandwidth-bound expert-weight reads that dominate decode on this box,
+so the nominal ${\sim}13.7\times$ overstates any true concurrency gain. We did not run a
+1-way-versus-8-way sensitivity check, so we
 disclose this concurrency difference as a further configuration confound rather than assert it is
 quality-neutral; pass@1 is scored per problem and independent of the metrics window, and
 TensorRT-LLM exposes no throughput/energy histograms to lose. Finally, several silent-failure
@@ -663,8 +670,7 @@ Container image digests, upstream dataset snapshot revisions (SWE-bench Verified
 the exact HuggingFace revisions of all three model checkpoints, the Layer~1 subset checksums, and
 the frozen Layer~3 window are pinned in an immutable provenance record. Model-generated
 application code lives only in the companion app repository and is never edited by the
-maintainer's tooling; the coding assistant used to build the harness and write this report is not
-part of what was measured.
+maintainer's tooling.
 
 \section{Threats to Validity and Limitations}
 
@@ -697,7 +703,7 @@ not tested and could change that specific result.
 
 \section{Conclusion}
 
-On a single DGX Spark the story that survives scrutiny is not ``model X wins.'' It is that at
+On a single DGX Spark the durable finding is not that one model wins. It is that at
 local-evaluation scale, serving feasibility and harness validity dominate model effects. No model
 in our set serves on both runtimes on this box; a single missing specification file changed the
 Layer~2 conclusion until it was found; and a fixed token budget substantially depressed the
@@ -706,7 +712,7 @@ comparably to the field (whether a larger budget would recover its full-set scor
 The practitioner takeaways are concrete. Of the configurations measured here, gpt-oss-120b on
 vLLM is the strongest local agentic setup (L1 37.9\%, L2 node 80\% working apps, L3 89.3\%);
 nemotron serves only on TensorRT-LLM and its Layer~3 score is heavily affected by the shared
-token budget; and honest local benchmarking depends far more on a failure taxonomy, robust
+token budget; and credible local benchmarking depends far more on a failure taxonomy, robust
 energy statistics, and deterministic rescoring than on producing one more leaderboard number.
 
 \section*{Data and Code Availability}
@@ -721,6 +727,13 @@ versioned as a committed frozen artifact. The
 model-generated application code lives in the separate public companion repository
 \url{https://github.com/mani-mal/taskflow-local-app-benchmark}; all reported Layer~2 runs start
 from its frozen tag \code{baseline-v7} (commit \code{5b0b85b}).
+
+\section*{Acknowledgments}
+
+A coding assistant was used to help build the evaluation harness and draft this report. It is a
+tool used to produce the work, not a subject of it: no assistant-authored text is among the
+artifacts under measurement, and every reported number derives from committed run outputs and
+deterministic rescoring rather than from the assistant.
 
 \begin{thebibliography}{99}
 
